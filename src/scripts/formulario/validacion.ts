@@ -1,12 +1,12 @@
 /**
  * Validación en cliente con mensajes propios en castellano.
  * Las reglas se leen de los atributos HTML (required, type, minlength, pattern),
- * así el marcado es la única fuente de verdad y sigue funcionando sin JS.
+ * así el marcado es la única fuente de verdad. El servidor repite las comprobaciones
+ * esenciales (src/pages/api/contact.ts) con la misma expresión de correo.
  */
-export type Control = HTMLInputElement | HTMLTextAreaElement;
+import { EMAIL_RE } from '../../config/zoho';
 
-/** Formato de correo más estricto que el de type="email" (exige dominio con punto). */
-const EMAIL = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[a-z]{2,}$/i;
+export type Control = HTMLInputElement | HTMLTextAreaElement;
 
 /** Mensajes por campo (data-etiqueta) y tipo de error. */
 const MENSAJES: Record<string, Partial<Record<'vacio' | 'formato' | 'corto', string>>> = {
@@ -36,7 +36,7 @@ export function validar(control: Control): string | null {
   const valor = control.value.trim();
   if (!valor) return control.required ? (m.vacio ?? 'Este campo es obligatorio.') : null;
 
-  if (control.type === 'email' && (control.validity.typeMismatch || !EMAIL.test(valor))) {
+  if (control.type === 'email' && (control.validity.typeMismatch || !EMAIL_RE.test(valor))) {
     return m.formato ?? 'Revisa el formato.';
   }
   if (control instanceof HTMLInputElement && control.pattern && !new RegExp(`^(?:${control.pattern})$`, 'v').test(valor)) {

@@ -1,43 +1,32 @@
 /**
- * Envío del lead. ÚNICO punto que cambia en la fase 2.
- *
- * Fase 1 (actual): POST directo a Zoho Web-to-Lead en segundo plano.
- *   Zoho no envía cabeceras CORS, así que la petición va en modo `no-cors`:
- *   el navegador la entrega a Zoho, pero la respuesta es opaca. Solo podemos
- *   detectar fallos de red (sin conexión, bloqueo, timeout), no si Zoho
- *   rechazó el lead. Tras cualquier cambio de campos, haz un envío de prueba y
- *   comprueba que el lead aparece en Zoho CRM.
- *
- * Fase 2 (Turnstile + Vercel): cambia `enviarLead` para hacer
- *   fetch('/api/contacto', { method: 'POST', body: datos }) incluyendo el token
- *   `cf-turnstile-response` (Turnstile lo añade solo como campo del formulario).
- *   La función valida el token con Cloudflare, reenvía a Zoho desde el servidor
- *   y devuelve un estado real (200 / 4xx), que aquí ya se trata como Resultado.
+ * Envío del formulario al endpoint propio (/api/contact), que valida el captcha
+ * y reenvía el lead a Zoho desde el servidor. Aquí solo se traduce su respuesta.
  */
-export type Resultado = { ok: true } | { ok: false; motivo: 'red' | 'timeout' };
+export type MotivoError = 'captcha' | 'validacion' | 'zoho' | 'servidor' | 'red' | 'timeout';
+export type Resultado = { ok: true } | { ok: false; motivo: MotivoError; campos?: string[] };
 
-const TIMEOUT_MS = 15000;
+const TIMEOUT_MS = 20000;
+const CONOCIDOS: MotivoError[] = ['captcha', 'validacion', 'zoho', 'servidor'];
 
 export async function enviarLead(endpoint: string, datos: FormData): Promise<Resultado> {
-  // application/x-www-form-urlencoded: tipo «simple», permitido en no-cors y el que espera Zoho.
   const cuerpo = new URLSearchParams();
   for (const [clave, valor] of datos) if (typeof valor === 'string') cuerpo.append(clave, valor);
 
-  const control = new AbortController();
-  const temporizador = setTimeout(() => control.abort(), TIMEOUT_MS);
+  let res: Response;
   try {
-    await fetch(endpoint, {
+    res = await fetch(endpoint, {
       method: 'POST',
-      mode: 'no-cors',
       body: cuerpo,
-      credentials: 'omit',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      signal: control.signal,
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    return { ok: true };
   } catch (e) {
-    return { ok: false, motivo: e instanceof DOMException && e.name === 'AbortError' ? 'timeout' : 'red' };
-  } finally {
-    clearTimeout(temporizador);
+    return { ok: false, motivo: e instanceof DOMException && e.name === 'TimeoutError' ? 'timeout' : 'red' };
   }
+
+  const json = (await res.json().catch(() => null)) as { ok?: boolean; error?: string; campos?: string[] } | null;
+  if (res.ok && json?.ok === true) return { ok: true };
+
+  const motivo = CONOCIDOS.find((m) => m === json?.error) ?? 'servidor';
+  return { ok: false, motivo, campos: json?.campos };
 }
