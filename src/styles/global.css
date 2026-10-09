@@ -40,6 +40,11 @@ main {
   flex: 1;
 }
 
+/* [hidden] siempre gana a display: grid/flex de los componentes */
+[hidden] {
+  display: none !important;
+}
+
 img,
 svg,
 picture {

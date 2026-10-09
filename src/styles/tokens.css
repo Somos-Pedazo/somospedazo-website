@@ -9,6 +9,7 @@
   --c-mandarina: #ff8936;
   --c-amarillo: #f7c600;
   --c-blanco: #ffffff;
+  --c-error: #a8241b; /* solo para avisos de error; > 6:1 sobre blanco y crema */
 
   /* Roles */
   --bg: var(--c-crema);

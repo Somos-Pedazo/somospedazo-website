@@ -1,110 +1,161 @@
 ---
 /**
- * Formulario de contacto, maquetado y accesible. SIN CONEXIÓN TODAVÍA.
+ * Formulario de contacto conectado a Zoho CRM (Web-to-Lead).
  *
- * TODO CRM: para conectarlo
- *  1. Pon la URL del CRM/servicio en `CRM_ENDPOINT` (o en `action`) y ajusta `method`.
- *  2. Los atributos `name` son estables: nombre, apellidos, email, empresa, telefono,
- *     mensaje, privacidad. Mapéalos a los campos del CRM.
- *  3. Si el CRM exige campos ocultos (token, origen, utm…), añádelos como
- *     <input type="hidden"> dentro del <form>.
- *  4. El campo `web` es un honeypot antispam: si llega relleno, descarta el envío.
- * Mientras CRM_ENDPOINT esté vacío, el script evita el envío y muestra un aviso.
+ * - Marcado y estilos propios: de Zoho solo se usan el endpoint y los nombres de campo
+ *   (src/config/zoho.ts).
+ * - Con JS: validación con mensajes propios, envío en segundo plano y mensaje de
+ *   éxito sin salir de la web (src/scripts/formulario/).
+ * - Sin JS: POST normal a Zoho con validación nativa; el lead llega igualmente.
+ * - La casilla de privacidad no lleva `name`: es obligatoria, pero no se envía a Zoho.
+ *
+ * Fase 2 (Turnstile): añade el widget en el hueco marcado más abajo y cambia
+ * `action` a /api/contacto. Ver src/scripts/formulario/envio.ts.
  */
 import { SITE } from '../../config/site';
+import { CAMPOS, ZOHO_WEB_TO_LEAD } from '../../config/zoho';
 
-const CRM_ENDPOINT = ''; // TODO CRM
+const { endpoint, ocultos, honeypot } = ZOHO_WEB_TO_LEAD;
 ---
 
 <form
   class="formulario"
   id="formulario-contacto"
   method="post"
-  action={CRM_ENDPOINT || undefined}
-  data-crm-endpoint={CRM_ENDPOINT}
+  action={endpoint}
+  accept-charset="UTF-8"
+  data-formulario-contacto
+  data-exito="formulario-exito"
   aria-describedby="formulario-ayuda"
 >
-  <p id="formulario-ayuda" class="formulario__ayuda">Los campos marcados con <span aria-hidden="true">*</span><span class="sr-only">asterisco</span> son obligatorios.</p>
+  {Object.entries(ocultos).map(([name, value]) => <input type="hidden" name={name} value={value} />)}
+
+  <p id="formulario-ayuda" class="formulario__ayuda">
+    Los campos marcados con <span aria-hidden="true">*</span><span class="sr-only">asterisco</span> son obligatorios.
+  </p>
 
   <div class="formulario__rejilla">
     <div class="campo">
       <label for="nombre">Nombre <span aria-hidden="true">*</span></label>
-      <input id="nombre" name="nombre" type="text" autocomplete="given-name" required maxlength="80" />
+      <input
+        id="nombre"
+        name={CAMPOS.nombre.name}
+        data-etiqueta="nombre"
+        type="text"
+        autocomplete="given-name"
+        required
+        maxlength={CAMPOS.nombre.max}
+        aria-describedby="nombre-error"
+      />
+      <p id="nombre-error" class="campo__error" hidden></p>
     </div>
 
     <div class="campo">
       <label for="apellidos">Apellidos <span aria-hidden="true">*</span></label>
-      <input id="apellidos" name="apellidos" type="text" autocomplete="family-name" required maxlength="120" />
+      <input
+        id="apellidos"
+        name={CAMPOS.apellidos.name}
+        data-etiqueta="apellidos"
+        type="text"
+        autocomplete="family-name"
+        required
+        maxlength={CAMPOS.apellidos.max}
+        aria-describedby="apellidos-error"
+      />
+      <p id="apellidos-error" class="campo__error" hidden></p>
     </div>
 
     <div class="campo">
       <label for="email">Correo electrónico <span aria-hidden="true">*</span></label>
-      <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="160" spellcheck="false" />
+      <input
+        id="email"
+        name={CAMPOS.email.name}
+        data-etiqueta="email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        spellcheck="false"
+        required
+        maxlength={CAMPOS.email.max}
+        aria-describedby="email-error"
+      />
+      <p id="email-error" class="campo__error" hidden></p>
     </div>
 
     <div class="campo">
       <label for="empresa">Empresa <span class="campo__opcional">(opcional)</span></label>
-      <input id="empresa" name="empresa" type="text" autocomplete="organization" maxlength="120" />
+      <input id="empresa" name={CAMPOS.empresa.name} type="text" autocomplete="organization" maxlength={CAMPOS.empresa.max} />
     </div>
 
     <div class="campo campo--ancho">
       <label for="telefono">Teléfono <span class="campo__opcional">(opcional)</span></label>
       <input
         id="telefono"
-        name="telefono"
+        name={CAMPOS.telefono.name}
+        data-etiqueta="telefono"
         type="tel"
         autocomplete="tel"
         inputmode="tel"
-        maxlength="20"
-        pattern="[0-9+()\s\-]{9,20}"
-        aria-describedby="telefono-ayuda"
+        maxlength={CAMPOS.telefono.max}
+        pattern="[\d\s\(\)\+\-]{9,30}"
+        aria-describedby="telefono-ayuda telefono-error"
       />
       <p id="telefono-ayuda" class="campo__ayuda">Solo si prefieres que te llamemos.</p>
+      <p id="telefono-error" class="campo__error" hidden></p>
     </div>
 
     <div class="campo campo--ancho">
       <label for="mensaje">Cuéntanos tu proyecto <span aria-hidden="true">*</span></label>
-      <textarea id="mensaje" name="mensaje" rows="6" required minlength="10" maxlength="3000" aria-describedby="mensaje-ayuda"></textarea>
+      <textarea
+        id="mensaje"
+        name={CAMPOS.mensaje.name}
+        data-etiqueta="mensaje"
+        rows="6"
+        required
+        minlength="10"
+        maxlength={CAMPOS.mensaje.max}
+        aria-describedby="mensaje-ayuda mensaje-error"></textarea>
       <p id="mensaje-ayuda" class="campo__ayuda">¿Qué quieres conseguir? ¿Qué te frena ahora mismo? Con dos líneas nos vale.</p>
+      <p id="mensaje-error" class="campo__error" hidden></p>
     </div>
 
-    <!-- Honeypot antispam: oculto para personas y lectores de pantalla -->
-    <div class="campo--trampa" aria-hidden="true">
-      <label for="web">No rellenes este campo</label>
-      <input id="web" name="web" type="text" tabindex="-1" autocomplete="off" />
-    </div>
+    <!-- Honeypot antispam de Zoho: debe llegar vacío. Oculto para personas y lectores de pantalla. -->
+    <input class="campo--trampa" type="text" name={honeypot} value="" tabindex="-1" autocomplete="off" aria-hidden="true" data-honeypot />
 
-    <div class="campo campo--ancho campo--casilla">
-      <input id="privacidad" name="privacidad" type="checkbox" value="acepto" required />
-      <label for="privacidad">
-        He leído y acepto la <a href="/privacidad">política de privacidad</a>. <span aria-hidden="true">*</span>
-      </label>
+    <div class="campo campo--ancho">
+      <div class="campo--casilla">
+        <input id="privacidad" data-etiqueta="privacidad" type="checkbox" required aria-describedby="privacidad-error" />
+        <label for="privacidad">
+          He leído y acepto la <a href="/privacidad">política de privacidad</a>. <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <p id="privacidad-error" class="campo__error" hidden></p>
     </div>
   </div>
 
   <p class="formulario__rgpd">
-    <strong>Responsable:</strong>
-    {SITE.legalName}. <strong>Finalidad:</strong> responder a tu consulta. <strong>Derechos:</strong> acceso, rectificación, supresión
+    <strong>Responsable:</strong> {SITE.legalName}. <strong>Finalidad:</strong> responder a tu consulta. <strong>Derechos:</strong> acceso, rectificación, supresión
     y otros, como explicamos en la <a href="/privacidad">política de privacidad</a>.
   </p>
+
+  <!-- FASE 2 · Turnstile: <div class="cf-turnstile" data-sitekey="…" data-language="es"></div> -->
 
   <div class="formulario__acciones">
     <button type="submit" class="formulario__enviar">Enviar mensaje</button>
   </div>
 
-  <p class="formulario__estado" role="status" aria-live="polite"></p>
+  <p class="formulario__estado" data-estado role="status" aria-live="polite"></p>
 </form>
 
-<script is:inline>
-  (() => {
-    const form = document.getElementById('formulario-contacto');
-    if (!form || form.dataset.crmEndpoint) return;
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const estado = form.querySelector('.formulario__estado');
-      if (estado) estado.textContent = 'Estamos terminando de conectar el formulario. Mientras tanto, escríbenos por correo y te respondemos enseguida.';
-    });
-  })();
+<div id="formulario-exito" class="formulario__exito" tabindex="-1" hidden>
+  <p class="formulario__exito-titulo">¡Recibido! Ya tenemos tu pedazo.</p>
+  <p>Gracias por contarnos tu proyecto. Lo leemos con calma y te escribimos muy pronto para ver por dónde empezar.</p>
+  <p>Si es urgente, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+  <button type="button" class="formulario__otro" data-otro>Enviar otro mensaje</button>
+</div>
+
+<script>
+  import '../../scripts/formulario';
 </script>
 
 <style>
@@ -159,13 +210,40 @@ const CRM_ENDPOINT = ''; // TODO CRM
     outline-offset: 2px;
   }
 
+  /* Sin JS: estilo nativo tras interactuar. Con JS: aria-invalid. */
   .campo input:user-invalid,
-  .campo textarea:user-invalid {
-    border-color: #b3261e;
+  .campo textarea:user-invalid,
+  .campo [aria-invalid='true'] {
+    border-color: var(--c-error);
     border-width: 3px;
   }
 
+  .campo__error {
+    display: flex;
+    gap: 0.4rem;
+    align-items: baseline;
+    color: var(--c-error);
+    font-size: var(--t-xs);
+    font-weight: 700;
+  }
+
+  .campo__error::before {
+    content: '!' / '';
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: var(--radio-pildora);
+    background: var(--c-error);
+    color: var(--c-blanco);
+    font-size: 0.75rem;
+    line-height: 1;
+    translate: 0 0.15rem;
+  }
+
   .campo--casilla {
+    display: grid;
     grid-template-columns: auto 1fr;
     align-items: start;
     gap: var(--s-2);
@@ -178,6 +256,11 @@ const CRM_ENDPOINT = ''; // TODO CRM
     accent-color: var(--c-navy);
   }
 
+  .campo--casilla input[aria-invalid='true'] {
+    outline: 3px solid var(--c-error);
+    outline-offset: 2px;
+  }
+
   .campo--casilla label {
     font-family: var(--font-texto);
     font-weight: 400;
@@ -188,13 +271,15 @@ const CRM_ENDPOINT = ''; // TODO CRM
     left: -9999px;
     width: 1px;
     height: 1px;
-    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
   }
 
-  .formulario__enviar {
+  .formulario__enviar,
+  .formulario__otro {
     min-height: 3.25rem;
     padding: 0.75rem 2rem;
-    border: 0;
+    border: 3px solid var(--c-navy);
     border-radius: var(--radio-pildora);
     background: var(--c-navy);
     color: var(--c-crema);
@@ -204,8 +289,14 @@ const CRM_ENDPOINT = ''; // TODO CRM
     transition: transform var(--transicion);
   }
 
-  .formulario__enviar:hover {
+  .formulario__enviar:hover:not(:disabled),
+  .formulario__otro:hover {
     transform: translateY(-2px);
+  }
+
+  .formulario__enviar:disabled {
+    cursor: progress;
+    opacity: 0.75;
   }
 
   .formulario__estado:not(:empty) {
@@ -213,6 +304,36 @@ const CRM_ENDPOINT = ''; // TODO CRM
     border-radius: var(--radio);
     background: var(--c-sol);
     font-weight: 700;
+  }
+
+  .formulario__estado[data-tono='error']:not(:empty) {
+    background: var(--c-chicle);
+  }
+
+  .formulario__exito {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    padding: var(--s-4);
+    border-radius: var(--radio);
+    background: var(--c-sol);
+  }
+
+  .formulario__exito:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .formulario__exito-titulo {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: var(--t-xl);
+    line-height: 1.15;
+  }
+
+  .formulario__otro {
+    margin-block-start: var(--s-1);
+    background: transparent;
+    color: var(--c-navy);
   }
 
   @media (min-width: 40rem) {
