@@ -1,13 +1,12 @@
 ---
-/** Datos identificativos del titular (LSSI art. 10 y RGPD art. 13). Salen de src/config/site.ts. */
+/**
+ * Datos identificativos del titular (LSSI art. 10 y RGPD art. 13). Salen de src/config/site.ts.
+ * El domicilio no se muestra por decisión del titular. La LSSI lo exige en el aviso legal:
+ * cuando se quiera añadir, va aquí (datos en SITE.address).
+ */
 import { SITE } from '../../config/site';
 
-const { address: a, legal } = SITE;
-const domicilio = `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} (${a.addressRegion}), España`;
-
-if (a.streetAddress === 'Calle Ejemplo, 1') {
-  console.warn('[legal] La dirección de src/config/site.ts es la de ejemplo: sustitúyela por el domicilio social real.');
-}
+const { legal } = SITE;
 ---
 
 <dl>
@@ -21,8 +20,6 @@ if (a.streetAddress === 'Calle Ejemplo, 1') {
       </>
     )
   }
-  <dt>Domicilio</dt>
-  <dd>{domicilio}</dd>
   <dt>Correo electrónico</dt>
   <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
   {

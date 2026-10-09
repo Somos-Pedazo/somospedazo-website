@@ -61,7 +61,7 @@ export function localBusiness(): Nodo {
     email: SITE.email,
     ...telefono,
     priceRange: SITE.priceRange,
-    address: { '@type': 'PostalAddress', ...SITE.address },
+    ...(SITE.address ? { address: { '@type': 'PostalAddress', ...SITE.address } } : {}),
     ...(SITE.geo ? { geo: { '@type': 'GeoCoordinates', ...SITE.geo } } : {}),
     openingHours: SITE.openingHours,
     areaServed: { '@type': 'Country', name: SITE.areaServed },

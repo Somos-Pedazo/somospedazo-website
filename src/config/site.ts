@@ -26,14 +26,14 @@ export const SITE = {
     nif: '', // TODO: NIF/CIF
     registro: '', // TODO: p. ej. «Registro Mercantil de Madrid, tomo X, folio Y, hoja M-Z»
   },
-  address: {
-    // TODO: dirección real. Google necesita una dirección válida para LocalBusiness.
-    streetAddress: 'Calle Ejemplo, 1',
-    addressLocality: 'Madrid',
-    addressRegion: 'Comunidad de Madrid',
-    postalCode: '28001',
-    addressCountry: 'ES',
-  },
+  /**
+   * Domicilio. Opcional: de momento no se publica. Si se rellena, se añade a los datos
+   * estructurados (LocalBusiness). Formato:
+   * { streetAddress: 'Calle…, 1', addressLocality: 'Madrid', addressRegion: 'Comunidad de Madrid', postalCode: '28001', addressCountry: 'ES' }
+   */
+  address: undefined as
+    | undefined
+    | { streetAddress: string; addressLocality: string; addressRegion: string; postalCode: string; addressCountry: string },
   geo: null as null | { latitude: number; longitude: number }, // TODO: coordenadas si se quieren
   openingHours: ['Mo-Fr 09:00-18:00'],
   priceRange: '€€',
