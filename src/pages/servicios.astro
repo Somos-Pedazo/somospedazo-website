@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CabeceraPagina from '../components/ui/CabeceraPagina.astro';
+import Escalera from '../components/ui/Escalera.astro';
+import CtaBanda from '../components/ui/CtaBanda.astro';
+import { PAGINAS } from '../data/paginas';
+import { FAQ_SERVICIOS, NIVELES } from '../data/servicios';
+import { absoluteUrl } from '../config/site';
+import { IDS } from '../utils/schema';
+
+const pagina = PAGINAS.servicios;
+const url = absoluteUrl(pagina.path);
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${url}#servicio`,
+    name: 'Estrategia digital: diagnóstico, acompañamiento y ejecución',
+    serviceType: 'Consultoría de estrategia digital',
+    description: pagina.description,
+    provider: { '@id': IDS.organization },
+    areaServed: { '@type': 'Country', name: 'España' },
+    url,
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Escalones de colaboración',
+      itemListElement: NIVELES.map((n) => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          '@id': `${url}#${n.id}`,
+          name: n.nombre,
+          description: n.resumen,
+        },
+      })),
+    },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: FAQ_SERVICIOS.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta },
+    })),
+  },
+];
+---
+
+<BaseLayout pagina={pagina} schema={schema}>
+  <CabeceraPagina pagina={pagina} antetitulo="Servicios" titulo="Elige tu escalón.">
+    <p>
+      Unos necesitan un mapa. Otros, alguien que empuje. Otros, manos que lo hagan. Por eso trabajamos en tres escalones. Cada uno incluye todo lo
+      del anterior. Tú eliges hasta dónde subimos.
+    </p>
+  </CabeceraPagina>
+
+  <div class="seccion seccion--pegada">
+    <div class="contenedor">
+      <Escalera variante="completa" />
+    </div>
+  </div>
+
+  <section class="seccion faq" aria-labelledby="faq-titulo">
+    <div class="contenedor faq__rejilla">
+      <div class="flujo">
+        <h2 id="faq-titulo">¿No sabes qué escalón te toca?</h2>
+        <p class="lead">Normal. Lo vemos juntos en una primera conversación. Mientras, aquí van las dudas más habituales.</p>
+      </div>
+      <div class="faq__lista">
+        {
+          FAQ_SERVICIOS.map((f) => (
+            <details class="faq__item">
+              <summary>
+                <h3>{f.pregunta}</h3>
+              </summary>
+              <p>{f.respuesta}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBanda titulo="Sube el primer escalón." texto="Cuéntanos tu situación y te decimos, sin rodeos, por dónde empezar." />
+</BaseLayout>
+
+<style>
+  .seccion--pegada {
+    padding-block-start: var(--s-2);
+  }
+
+  .faq__rejilla {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  @media (min-width: 56rem) {
+    .faq__rejilla {
+      grid-template-columns: 1fr 1.3fr;
+      align-items: start;
+    }
+  }
+
+  .faq__lista {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .faq__item {
+    border-radius: var(--radio);
+    background: var(--c-blanco);
+  }
+
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--radio);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__item summary::after {
+    content: '+' / '';
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radio-pildora);
+    background: var(--c-sol);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .faq__item[open] summary::after {
+    content: '−' / '';
+  }
+
+  .faq__item h3 {
+    font-size: var(--t-base);
+    font-weight: var(--peso-fuerte);
+    line-height: 1.3;
+  }
+
+  .faq__item p {
+    padding: 0 var(--s-3) var(--s-3);
+  }
+</style>

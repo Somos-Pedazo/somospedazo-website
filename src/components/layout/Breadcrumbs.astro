@@ -1,0 +1,43 @@
+---
+import type { Pagina } from '../../data/paginas';
+
+interface Props {
+  pagina: Pagina;
+}
+
+const { pagina } = Astro.props;
+---
+
+<nav class="migas" aria-label="Migas de pan">
+  <ol role="list">
+    <li><a href="/">Inicio</a></li>
+    <li><a href={pagina.path} aria-current="page">{pagina.nombre}</a></li>
+  </ol>
+</nav>
+
+<style>
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-xs);
+  }
+
+  .migas li + li::before {
+    content: '/';
+    margin-inline-end: var(--s-1);
+    color: var(--fg-suave);
+  }
+
+  .migas a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+
+  .migas a[aria-current='page'] {
+    text-decoration: none;
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+/**
+ * Hueco reservado para una imagen o ilustración definitiva (mascota, fotos…).
+ * Mientras tanto muestra lo que se le pase como contenido (normalmente <Pedazos />).
+ *
+ * Para sustituirlo, cambia <Placeholder nombre="…">…</Placeholder> por:
+ *   import { Image } from 'astro:assets';
+ *   import mascota from '../assets/mascota.png';
+ *   <Image src={mascota} alt="Descripción de lo que muestra" widths={[320, 640, 960]}
+ *          sizes="(min-width: 60rem) 28rem, 90vw" loading="eager" />  // eager solo si está en el primer pantallazo
+ *
+ * Busca en el proyecto `data-placeholder` para localizar todos los huecos.
+ */
+interface Props {
+  /** Identificador del activo pendiente (p. ej. «mascota-hero»). */
+  nombre: string;
+  class?: string;
+}
+
+const { nombre, class: className } = Astro.props;
+const dev = import.meta.env.DEV;
+---
+
+<Fragment set:html={`<!-- PLACEHOLDER: ${nombre} -->`} />
+<div class:list={['placeholder', className]} data-placeholder={nombre}>
+  <slot />
+  {dev && <span class="placeholder__aviso" aria-hidden="true">Placeholder · {nombre}</span>}
+</div>
+
+<style>
+  .placeholder {
+    position: relative;
+  }
+
+  .placeholder__aviso {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radio-pildora);
+    background: var(--c-navy);
+    color: var(--c-crema);
+    font: 600 0.75rem/1.4 var(--font-texto);
+    pointer-events: none;
+  }
+</style>

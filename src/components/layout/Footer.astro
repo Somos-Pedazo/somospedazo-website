@@ -1,0 +1,125 @@
+---
+import Logo from '../brand/Logo.astro';
+import { LEGAL_NAV, NAV, SITE } from '../../config/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="pie oscuro">
+  <div class="contenedor pie__rejilla">
+    <div class="pie__marca">
+      <a href="/" class="pie__logo" aria-label={`${SITE.name}, ir al inicio`}>
+        <Logo tono="oscuro" />
+      </a>
+      <p class="pie__lema">{SITE.slogan}</p>
+    </div>
+
+    <nav aria-label="Pie de página">
+      <ul class="pie__lista" role="list">
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <address class="pie__contacto">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={`tel:${SITE.telephone.replace(/\s/g, '')}`}>{SITE.telephone}</a>
+      <span>{SITE.address.addressLocality}, España</span>
+    </address>
+  </div>
+
+  <div class="contenedor pie__legal">
+    <p>© {year} {SITE.legalName}</p>
+    <nav aria-label="Legal">
+      <ul class="pie__lista pie__lista--fila" role="list">
+        {
+          LEGAL_NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    padding-block: var(--s-8) var(--s-4);
+    margin-block-start: auto;
+  }
+
+  .pie a {
+    color: var(--c-crema);
+  }
+
+  .pie__rejilla {
+    display: grid;
+    gap: var(--s-4);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .pie__logo {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .pie__lema {
+    margin-block-start: var(--s-2);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-demi);
+    max-width: 22rem;
+  }
+
+  .pie__lista {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .pie__lista a,
+  .pie__contacto a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .pie__lista--fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-3);
+  }
+
+  .pie__contacto {
+    display: grid;
+    align-content: start;
+    font-style: normal;
+  }
+
+  .pie__contacto span {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .pie__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    margin-block-start: var(--s-6);
+    padding-block-start: var(--s-3);
+    border-top: 1px solid color-mix(in srgb, var(--c-crema) 25%, transparent);
+    font-size: var(--t-xs);
+  }
+</style>

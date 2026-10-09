@@ -1,0 +1,64 @@
+---
+/**
+ * Plantilla para textos legales. Las páginas legales llevan noindex
+ * hasta que se publique el texto definitivo revisado por un profesional.
+ */
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import type { Pagina } from '../data/paginas';
+
+interface Props {
+  pagina: Pagina;
+  actualizado: string;
+}
+
+const { pagina, actualizado } = Astro.props;
+---
+
+<BaseLayout pagina={pagina}>
+  <article class="contenedor legal">
+    <Breadcrumbs pagina={pagina} />
+    <h1>{pagina.nombre}</h1>
+    <p class="legal__fecha">Última actualización: {actualizado}</p>
+    <div class="legal__aviso" role="note">
+      <strong>Texto provisional.</strong> Este contenido es una plantilla y debe sustituirse por el texto legal definitivo antes de publicar.
+    </div>
+    <div class="legal__cuerpo flujo">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal {
+    max-width: calc(48rem + var(--gutter) * 2);
+    padding-block: var(--s-4) var(--seccion);
+  }
+
+  .legal h1 {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-2xl);
+  }
+
+  .legal__fecha {
+    margin-block-start: var(--s-1);
+    color: var(--fg-suave);
+    font-size: var(--t-xs);
+  }
+
+  .legal__aviso {
+    margin-block: var(--s-4);
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--radio);
+    background: var(--c-chicle);
+  }
+
+  .legal__cuerpo :global(h2) {
+    font-size: var(--t-xl);
+    margin-block-start: var(--s-6);
+  }
+
+  .legal__cuerpo :global(ul) {
+    padding-inline-start: 1.25rem;
+  }
+</style>

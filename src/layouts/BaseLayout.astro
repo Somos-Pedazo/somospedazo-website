@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+import Fonts from '../components/brand/Fonts.astro';
+import SEO from '../components/seo/SEO.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { SITE } from '../config/site';
+import type { Pagina } from '../data/paginas';
+import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
+
+interface Props {
+  pagina: Pagina;
+  /** Nodos schema.org extra para esta página (Service, FAQPage…). */
+  schema?: Record<string, unknown>[];
+  /** Tipo de WebPage (ContactPage, AboutPage…). */
+  tipoPagina?: string;
+}
+
+const { pagina, schema = [], tipoPagina } = Astro.props;
+const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina, tipoPagina), breadcrumb(pagina), ...schema]);
+---
+
+<!doctype html>
+<html lang={SITE.locale} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Fonts />
+    <SEO pagina={pagina} />
+    <meta name="theme-color" content={SITE.themeColor} />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </head>
+  <body>
+    <a class="salto" href="#contenido">Saltar al contenido</a>
+    <Header />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  .salto {
+    position: absolute;
+    inset-inline-start: var(--s-2);
+    inset-block-start: -10rem;
+    z-index: 100;
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--radio-pildora);
+    background: var(--c-navy);
+    color: var(--c-crema);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    text-decoration: none;
+  }
+
+  .salto:focus {
+    inset-block-start: var(--s-2);
+    --focus: var(--c-sol);
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

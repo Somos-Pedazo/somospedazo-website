@@ -1,0 +1,227 @@
+---
+/**
+ * Formulario de contacto, maquetado y accesible. SIN CONEXIÓN TODAVÍA.
+ *
+ * TODO CRM: para conectarlo
+ *  1. Pon la URL del CRM/servicio en `CRM_ENDPOINT` (o en `action`) y ajusta `method`.
+ *  2. Los atributos `name` son estables: nombre, apellidos, email, empresa, telefono,
+ *     mensaje, privacidad. Mapéalos a los campos del CRM.
+ *  3. Si el CRM exige campos ocultos (token, origen, utm…), añádelos como
+ *     <input type="hidden"> dentro del <form>.
+ *  4. El campo `web` es un honeypot antispam: si llega relleno, descarta el envío.
+ * Mientras CRM_ENDPOINT esté vacío, el script evita el envío y muestra un aviso.
+ */
+import { SITE } from '../../config/site';
+
+const CRM_ENDPOINT = ''; // TODO CRM
+---
+
+<form
+  class="formulario"
+  id="formulario-contacto"
+  method="post"
+  action={CRM_ENDPOINT || undefined}
+  data-crm-endpoint={CRM_ENDPOINT}
+  aria-describedby="formulario-ayuda"
+>
+  <p id="formulario-ayuda" class="formulario__ayuda">Los campos marcados con <span aria-hidden="true">*</span><span class="sr-only">asterisco</span> son obligatorios.</p>
+
+  <div class="formulario__rejilla">
+    <div class="campo">
+      <label for="nombre">Nombre <span aria-hidden="true">*</span></label>
+      <input id="nombre" name="nombre" type="text" autocomplete="given-name" required maxlength="80" />
+    </div>
+
+    <div class="campo">
+      <label for="apellidos">Apellidos <span aria-hidden="true">*</span></label>
+      <input id="apellidos" name="apellidos" type="text" autocomplete="family-name" required maxlength="120" />
+    </div>
+
+    <div class="campo">
+      <label for="email">Correo electrónico <span aria-hidden="true">*</span></label>
+      <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="160" spellcheck="false" />
+    </div>
+
+    <div class="campo">
+      <label for="empresa">Empresa <span class="campo__opcional">(opcional)</span></label>
+      <input id="empresa" name="empresa" type="text" autocomplete="organization" maxlength="120" />
+    </div>
+
+    <div class="campo campo--ancho">
+      <label for="telefono">Teléfono <span class="campo__opcional">(opcional)</span></label>
+      <input
+        id="telefono"
+        name="telefono"
+        type="tel"
+        autocomplete="tel"
+        inputmode="tel"
+        maxlength="20"
+        pattern="[0-9+()\s\-]{9,20}"
+        aria-describedby="telefono-ayuda"
+      />
+      <p id="telefono-ayuda" class="campo__ayuda">Solo si prefieres que te llamemos.</p>
+    </div>
+
+    <div class="campo campo--ancho">
+      <label for="mensaje">Cuéntanos tu proyecto <span aria-hidden="true">*</span></label>
+      <textarea id="mensaje" name="mensaje" rows="6" required minlength="10" maxlength="3000" aria-describedby="mensaje-ayuda"></textarea>
+      <p id="mensaje-ayuda" class="campo__ayuda">¿Qué quieres conseguir? ¿Qué te frena ahora mismo? Con dos líneas nos vale.</p>
+    </div>
+
+    <!-- Honeypot antispam: oculto para personas y lectores de pantalla -->
+    <div class="campo--trampa" aria-hidden="true">
+      <label for="web">No rellenes este campo</label>
+      <input id="web" name="web" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="campo campo--ancho campo--casilla">
+      <input id="privacidad" name="privacidad" type="checkbox" value="acepto" required />
+      <label for="privacidad">
+        He leído y acepto la <a href="/privacidad">política de privacidad</a>. <span aria-hidden="true">*</span>
+      </label>
+    </div>
+  </div>
+
+  <p class="formulario__rgpd">
+    <strong>Responsable:</strong>
+    {SITE.legalName}. <strong>Finalidad:</strong> responder a tu consulta. <strong>Derechos:</strong> acceso, rectificación, supresión
+    y otros, como explicamos en la <a href="/privacidad">política de privacidad</a>.
+  </p>
+
+  <div class="formulario__acciones">
+    <button type="submit" class="formulario__enviar">Enviar mensaje</button>
+  </div>
+
+  <p class="formulario__estado" role="status" aria-live="polite"></p>
+</form>
+
+<script is:inline>
+  (() => {
+    const form = document.getElementById('formulario-contacto');
+    if (!form || form.dataset.crmEndpoint) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const estado = form.querySelector('.formulario__estado');
+      if (estado) estado.textContent = 'Estamos terminando de conectar el formulario. Mientras tanto, escríbenos por correo y te respondemos enseguida.';
+    });
+  })();
+</script>
+
+<style>
+  .formulario {
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .formulario__ayuda,
+  .campo__ayuda,
+  .campo__opcional,
+  .formulario__rgpd {
+    font-size: var(--t-xs);
+    color: var(--fg-suave);
+  }
+
+  .formulario__rejilla {
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .campo {
+    display: grid;
+    gap: 0.35rem;
+    align-content: start;
+  }
+
+  .campo label {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-demi);
+  }
+
+  .campo input:not([type='checkbox']),
+  .campo textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--c-navy);
+    border-radius: 0.875rem;
+    background: var(--c-blanco);
+    color: var(--c-navy);
+  }
+
+  .campo textarea {
+    resize: vertical;
+    min-height: 9rem;
+  }
+
+  .campo input:focus-visible,
+  .campo textarea:focus-visible {
+    outline: 3px solid var(--c-mandarina);
+    outline-offset: 2px;
+  }
+
+  .campo input:user-invalid,
+  .campo textarea:user-invalid {
+    border-color: #b3261e;
+    border-width: 3px;
+  }
+
+  .campo--casilla {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--s-2);
+  }
+
+  .campo--casilla input {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-block-start: 0.15rem;
+    accent-color: var(--c-navy);
+  }
+
+  .campo--casilla label {
+    font-family: var(--font-texto);
+    font-weight: 400;
+  }
+
+  .campo--trampa {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .formulario__enviar {
+    min-height: 3.25rem;
+    padding: 0.75rem 2rem;
+    border: 0;
+    border-radius: var(--radio-pildora);
+    background: var(--c-navy);
+    color: var(--c-crema);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    cursor: pointer;
+    transition: transform var(--transicion);
+  }
+
+  .formulario__enviar:hover {
+    transform: translateY(-2px);
+  }
+
+  .formulario__estado:not(:empty) {
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--radio);
+    background: var(--c-sol);
+    font-weight: 700;
+  }
+
+  @media (min-width: 40rem) {
+    .formulario__rejilla {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .campo--ancho {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

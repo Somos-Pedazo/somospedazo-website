@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Boton from '../components/ui/Boton.astro';
+import Escalera from '../components/ui/Escalera.astro';
+import CtaBanda from '../components/ui/CtaBanda.astro';
+import Pedazos from '../components/brand/Pedazos.astro';
+import Placeholder from '../components/brand/Placeholder.astro';
+import { HERO } from '../data/composiciones';
+import { PAGINAS } from '../data/paginas';
+import { SITE } from '../config/site';
+
+const pagina = PAGINAS.inicio;
+
+const piezas = [
+  {
+    titulo: 'Estrategia',
+    texto: 'Ponemos orden. Analizamos tu negocio, fijamos objetivos y decidimos qué hacer primero. Sin informes eternos.',
+    color: 'sol',
+  },
+  {
+    titulo: 'Marketing',
+    texto: 'Atraemos a quien te interesa. Marca, contenidos, campañas y canales trabajando hacia el mismo lado.',
+    color: 'chicle',
+  },
+  {
+    titulo: 'Tecnología',
+    texto: 'Elegimos las herramientas que te ahorran tiempo. Web, datos y automatizaciones al servicio del plan.',
+    color: 'mandarina',
+  },
+];
+---
+
+<BaseLayout pagina={pagina}>
+  <section class="hero" aria-labelledby="hero-titulo">
+    <div class="contenedor hero__rejilla">
+      <div class="hero__texto flujo">
+        <p class="antetitulo">Agencia de estrategia digital</p>
+        <h1 id="hero-titulo">Tu negocio tiene piezas sueltas. Nosotros las encajamos.</h1>
+        <p class="lead">
+          Unimos estrategia, marketing y tecnología en un plan claro. Te decimos qué hacer, te acompañamos y, si quieres, lo hacemos contigo.
+        </p>
+        <div class="hero__acciones">
+          <Boton href="/contacto">Cuéntanos tu proyecto</Boton>
+          <Boton href="/servicios" variante="secundario">Ver cómo trabajamos</Boton>
+        </div>
+      </div>
+      <Placeholder nombre="mascota-hero" class="hero__arte">
+        <Pedazos
+          {...HERO}
+          label="Ilustración de piezas redondeadas de colores que encajan en una retícula, con un hueco libre para la pieza que aporta cada cliente."
+        />
+      </Placeholder>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="que-hacemos">
+    <div class="contenedor">
+      <div class="intro flujo">
+        <p class="antetitulo">Qué hacemos</p>
+        <h2 id="que-hacemos">Tres piezas. Un mismo plan.</h2>
+        <p class="lead">
+          Casi siempre el problema no es una pieza. Es que no encajan. Por eso trabajamos las tres a la vez.
+        </p>
+      </div>
+      <ul class="piezas" role="list">
+        {
+          piezas.map((p) => (
+            <li class="pieza" style={`--color: var(--c-${p.color})`}>
+              <span class="pieza__forma" aria-hidden="true" />
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion escalera-home" aria-labelledby="escalera-titulo">
+    <div class="contenedor">
+      <div class="intro flujo">
+        <p class="antetitulo">Servicios</p>
+        <h2 id="escalera-titulo">Tú eliges hasta dónde subimos.</h2>
+        <p class="lead">Tres escalones. Cada uno incluye todo lo del anterior. Empieza donde lo necesites y sube cuando quieras.</p>
+      </div>
+      <Escalera />
+      <p class="escalera-home__mas">
+        <Boton href="/servicios" variante="secundario">Ver los tres escalones en detalle</Boton>
+      </p>
+    </div>
+  </section>
+
+  <section class="seccion lema" aria-labelledby="lema-titulo">
+    <div class="contenedor lema__caja">
+      <h2 id="lema-titulo">{SITE.slogan}</h2>
+      <div class="flujo">
+        <p class="lead">
+          Tú conoces tu negocio mejor que nadie. Nosotros sabemos cómo hacerlo crecer en digital. Juntamos los dos pedazos y salimos a por ello.
+        </p>
+        <p>
+          Hablamos claro, sin tecnicismos. Priorizamos lo que mueve la aguja. Y medimos todo, para que sepas en cada momento qué funciona.
+        </p>
+        <p><a class="enlace-flecha" href="/enfoque">Conoce nuestro enfoque</a></p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBanda />
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--s-4) var(--seccion);
+  }
+
+  .hero__rejilla {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+
+  .hero__texto .antetitulo {
+    margin-block-end: 0;
+  }
+
+  .hero__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding-block-start: var(--s-2);
+  }
+
+  .hero :global(.hero__arte) {
+    max-width: 26rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__rejilla {
+      grid-template-columns: 1.35fr 1fr;
+    }
+  }
+
+  .intro {
+    max-width: var(--ancho-texto);
+    margin-block-end: var(--s-6);
+  }
+
+  .intro .antetitulo {
+    margin-block-end: 0;
+  }
+
+  .piezas {
+    display: grid;
+    gap: var(--s-3);
+    padding: 0;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .pieza {
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+    padding: var(--s-4);
+    border-radius: calc(var(--radio) * 1.4);
+    background: var(--c-blanco);
+  }
+
+  .pieza__forma {
+    display: block;
+    width: 4.5rem;
+    height: 2.25rem;
+    border-radius: var(--radio-pildora);
+    background: var(--color);
+  }
+
+  .escalera-home {
+    background: color-mix(in srgb, var(--c-blanco) 55%, var(--c-crema));
+  }
+
+  .escalera-home__mas {
+    margin-block-start: var(--s-6);
+    text-align: center;
+  }
+
+  .lema__caja {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .lema h2 {
+    font-size: var(--t-3xl);
+    font-weight: var(--peso-impacto);
+  }
+
+  @media (min-width: 56rem) {
+    .lema__caja {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+/** Banda final de llamada a la acción hacia /contacto. */
+import Boton from './Boton.astro';
+import Pedazos from '../brand/Pedazos.astro';
+import { TRIO } from '../../data/composiciones';
+
+interface Props {
+  titulo?: string;
+  texto?: string;
+  id?: string;
+}
+
+const {
+  titulo = '¿Encajamos?',
+  texto = 'Cuéntanos dónde estás y adónde quieres llegar. Te proponemos el primer paso. Sin compromiso.',
+  id = 'cta',
+} = Astro.props;
+---
+
+<section class="cta oscuro" aria-labelledby={`${id}-titulo`}>
+  <div class="contenedor cta__rejilla">
+    <div class="flujo">
+      <h2 id={`${id}-titulo`}>{titulo}</h2>
+      <p class="lead">{texto}</p>
+      <p><Boton href="/contacto" variante="sol">Hablemos de tu proyecto</Boton></p>
+    </div>
+    <Pedazos {...TRIO} class="cta__pedazos" />
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: var(--seccion);
+  }
+
+  .cta__rejilla {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+
+  .cta :global(.cta__pedazos) {
+    max-width: 16rem;
+  }
+
+  .cta h2 {
+    font-size: var(--t-3xl);
+    font-weight: var(--peso-impacto);
+  }
+
+  @media (min-width: 48rem) {
+    .cta__rejilla {
+      grid-template-columns: 1fr auto;
+    }
+
+    .cta :global(.cta__pedazos) {
+      width: 16rem;
+    }
+  }
+</style>

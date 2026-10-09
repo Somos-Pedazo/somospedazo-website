@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CabeceraPagina from '../components/ui/CabeceraPagina.astro';
+import FormularioContacto from '../components/ui/FormularioContacto.astro';
+import { PAGINAS } from '../data/paginas';
+import { SITE } from '../config/site';
+
+const pagina = PAGINAS.contacto;
+---
+
+<BaseLayout pagina={pagina} tipoPagina="ContactPage">
+  <CabeceraPagina pagina={pagina} antetitulo="Contacto" titulo="Cuéntanos tu proyecto.">
+    <p>Dinos dónde estás y adónde quieres llegar. Te respondemos con una propuesta de primer paso, sin compromiso.</p>
+  </CabeceraPagina>
+
+  <div class="seccion seccion--pegada">
+    <div class="contenedor contacto">
+      <section class="contacto__formulario" aria-labelledby="formulario-titulo">
+        <h2 id="formulario-titulo">Escríbenos</h2>
+        <FormularioContacto />
+      </section>
+
+      <aside class="contacto__lateral oscuro" aria-labelledby="otras-vias">
+        <h2 id="otras-vias">¿Prefieres otra vía?</h2>
+        <dl class="contacto__datos">
+          <div>
+            <dt>Correo</dt>
+            <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+          </div>
+          <div>
+            <dt>Teléfono</dt>
+            <dd><a href={`tel:${SITE.telephone.replace(/\s/g, '')}`}>{SITE.telephone}</a></dd>
+          </div>
+          <div>
+            <dt>Dónde estamos</dt>
+            <dd>{SITE.address.addressLocality}. Atendemos a empresas de toda España.</dd>
+          </div>
+        </dl>
+        <p class="contacto__lema">{SITE.slogan}</p>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .seccion--pegada {
+    padding-block-start: var(--s-2);
+  }
+
+  .contacto {
+    display: grid;
+    gap: var(--s-6);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .contacto {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+
+  .contacto__formulario h2,
+  .contacto__lateral h2 {
+    font-size: var(--t-xl);
+    margin-block-end: var(--s-3);
+  }
+
+  .contacto__formulario {
+    padding: var(--s-4);
+    border-radius: calc(var(--radio) * 1.4);
+    background: color-mix(in srgb, var(--c-blanco) 60%, var(--c-crema));
+  }
+
+  .contacto__lateral {
+    padding: var(--s-4);
+    border-radius: calc(var(--radio) * 1.4);
+  }
+
+  .contacto__lateral a {
+    color: var(--c-crema);
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .contacto__datos {
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .contacto__datos dt {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    color: var(--c-sol);
+  }
+
+  .contacto__datos dd {
+    margin: 0;
+  }
+
+  .contacto__lema {
+    margin-block-start: var(--s-4);
+    padding-block-start: var(--s-3);
+    border-top: 1px solid color-mix(in srgb, var(--c-crema) 25%, transparent);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-demi);
+  }
+</style>

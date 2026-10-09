@@ -1,0 +1,58 @@
+/* Tokens de marca · manual v2.0
+   Colores sincronizados con src/data/brand.ts */
+:root {
+  /* Colores */
+  --c-navy: #0f1b3b;
+  --c-crema: #f5f1e6;
+  --c-sol: #ffd500;
+  --c-chicle: #ffbfbf;
+  --c-mandarina: #ff8936;
+  --c-amarillo: #f7c600;
+  --c-blanco: #ffffff;
+
+  /* Roles */
+  --bg: var(--c-crema);
+  --fg: var(--c-navy);
+  --fg-suave: #3a4560; /* navy aclarado: contraste > 8:1 sobre crema (AAA) */
+  --focus: var(--c-navy);
+
+  /* Tipografía. Avenir y Calibri primero (si están instaladas o licenciadas),
+     después alternativas libres autoalojadas (ver src/components/brand/Fonts.astro). */
+  --font-titular: 'Avenir Next', Avenir, 'Figtree Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-texto: Calibri, Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --peso-impacto: 900; /* Avenir Black */
+  --peso-fuerte: 800; /* Avenir Heavy */
+  --peso-demi: 600; /* Avenir Demi */
+
+  --t-xs: 0.9375rem;
+  --t-sm: 1.0625rem;
+  --t-base: 1.1875rem; /* Calibri tiene ojo pequeño: base algo mayor */
+  --t-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --t-xl: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --t-2xl: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --t-3xl: clamp(2.375rem, 1.6rem + 3.6vw, 4.5rem);
+
+  /* Retícula y espacio */
+  --modulo: 0.5rem;
+  --s-1: calc(var(--modulo) * 1);
+  --s-2: calc(var(--modulo) * 2);
+  --s-3: calc(var(--modulo) * 3);
+  --s-4: calc(var(--modulo) * 4);
+  --s-6: calc(var(--modulo) * 6);
+  --s-8: calc(var(--modulo) * 8);
+  --s-12: calc(var(--modulo) * 12);
+  --s-16: calc(var(--modulo) * 16);
+  --seccion: clamp(var(--s-8), 6vw, var(--s-16));
+
+  --ancho: 72rem;
+  --ancho-texto: 40rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Formas */
+  --radio: 1.25rem;
+  --radio-pildora: 999px;
+  --hueco: 6px; /* hueco crema entre pedazos */
+
+  --transicion: 160ms ease-out;
+}

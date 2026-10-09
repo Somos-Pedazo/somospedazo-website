@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CabeceraPagina from '../components/ui/CabeceraPagina.astro';
+import CtaBanda from '../components/ui/CtaBanda.astro';
+import { PAGINAS } from '../data/paginas';
+import type { BrandColor } from '../data/brand';
+
+const pagina = PAGINAS.enfoque;
+
+const principios: { titulo: string; texto: string; color: BrandColor }[] = [
+  {
+    titulo: 'Claridad antes que ruido',
+    texto: 'Primero entendemos. Luego actuamos. Nada de lanzar acciones por lanzar: cada paso tiene un porqué.',
+    color: 'sol',
+  },
+  {
+    titulo: 'Hablamos claro',
+    texto: 'Sin tecnicismos ni humo. Te contamos qué pasa, qué proponemos y qué esperamos conseguir. Como un amigo que sabe de esto.',
+    color: 'chicle',
+  },
+  {
+    titulo: 'Medimos lo que importa',
+    texto: 'Ventas, clientes, tiempo ahorrado. Elegimos pocas métricas, las seguimos de cerca y decidimos con datos.',
+    color: 'mandarina',
+  },
+  {
+    titulo: 'Tu equipo, más fuerte',
+    texto: 'No venimos a sustituir a nadie. Sumamos a tu equipo, compartimos lo que sabemos y dejamos capacidades en casa.',
+    color: 'amarillo',
+  },
+  {
+    titulo: 'Cada pedazo cuenta',
+    texto: 'Estrategia, marketing y tecnología no van por separado. Las hacemos encajar para que empujen en la misma dirección.',
+    color: 'sol',
+  },
+];
+
+const pasos = [
+  { titulo: 'Escuchamos', texto: 'Una conversación para entender tu negocio, tus objetivos y lo que te quita el sueño.' },
+  { titulo: 'Analizamos', texto: 'Revisamos tu marketing, tus herramientas y tus datos. Buscamos lo que funciona y lo que frena.' },
+  { titulo: 'Proponemos', texto: 'Te presentamos un plan con prioridades, plazos y métricas. Claro y accionable.' },
+  { titulo: 'Avanzamos juntos', texto: 'Tú eliges el escalón: te acompañamos, ejecutamos contigo o te dejamos el plan listo para tu equipo.' },
+];
+---
+
+<BaseLayout pagina={pagina} tipoPagina="AboutPage">
+  <CabeceraPagina pagina={pagina} antetitulo="Enfoque" titulo="Así trabajamos.">
+    <p>
+      Nos gusta pensar que somos ese amigo que entiende de negocio. El que te dice las cosas claras, te ayuda a decidir y se remanga cuando hace
+      falta. Cada uno aporta su pedazo. Juntos, encajamos.
+    </p>
+  </CabeceraPagina>
+
+  <section class="seccion" aria-labelledby="principios-titulo">
+    <div class="contenedor">
+      <h2 id="principios-titulo" class="titulo-seccion">Lo que nos mueve</h2>
+      <ul class="principios" role="list">
+        {
+          principios.map((p, i) => (
+            <li class="principio" style={`--color: var(--c-${p.color})`}>
+              <span class="principio__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion proceso" aria-labelledby="proceso-titulo">
+    <div class="contenedor">
+      <div class="flujo proceso__intro">
+        <h2 id="proceso-titulo">Cómo es trabajar con nosotros</h2>
+        <p class="lead">Cuatro pasos. Sin sorpresas. Siempre sabes en qué punto estamos.</p>
+      </div>
+      <ol class="pasos" role="list">
+        {
+          pasos.map((p, i) => (
+            <li class="paso">
+              <span class="paso__num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <div class="flujo">
+                <h3>{p.titulo}</h3>
+                <p>{p.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <CtaBanda titulo="¿Aportamos nuestro pedazo?" texto="Cuéntanos qué quieres conseguir. Te respondemos con ideas, no con un catálogo." />
+</BaseLayout>
+
+<style>
+  .titulo-seccion {
+    margin-block-end: var(--s-6);
+  }
+
+  .principios {
+    display: grid;
+    gap: var(--s-3);
+    padding: 0;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  }
+
+  .principio {
+    position: relative;
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+    padding: var(--s-4);
+    padding-block-start: var(--s-3);
+    border-radius: calc(var(--radio) * 1.4);
+    background: var(--c-blanco);
+  }
+
+  .principio__num {
+    justify-self: start;
+    padding: 0.1rem 0.9rem;
+    border-radius: var(--radio-pildora);
+    background: var(--color);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+  }
+
+  .proceso {
+    background: color-mix(in srgb, var(--c-blanco) 55%, var(--c-crema));
+  }
+
+  .proceso__intro {
+    max-width: var(--ancho-texto);
+    margin-block-end: var(--s-6);
+  }
+
+  .pasos {
+    display: grid;
+    gap: var(--s-4);
+    padding: 0;
+    counter-reset: paso;
+  }
+
+  .paso {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--s-3);
+    align-items: start;
+  }
+
+  .paso__num {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radio-pildora);
+    background: var(--c-navy);
+    color: var(--c-sol);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: var(--t-xl);
+  }
+
+  .paso h3 {
+    padding-block-start: 0.6rem;
+  }
+
+  @media (min-width: 56rem) {
+    .pasos {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .paso {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

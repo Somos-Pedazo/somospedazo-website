@@ -1,0 +1,57 @@
+---
+interface Props {
+  href: string;
+  variante?: 'primario' | 'secundario' | 'sol';
+  class?: string;
+}
+
+const { href, variante = 'primario', class: className } = Astro.props;
+---
+
+<a href={href} class:list={['boton', `boton--${variante}`, className]}><slot /></a>
+
+<style>
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.75rem;
+    border: 3px solid var(--c-navy);
+    border-radius: var(--radio-pildora);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    font-size: var(--t-sm);
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      transform var(--transicion),
+      background-color var(--transicion);
+  }
+
+  .boton:hover {
+    transform: translateY(-2px);
+  }
+
+  .boton--primario {
+    background: var(--c-navy);
+    color: var(--c-crema);
+  }
+
+  .boton--secundario {
+    background: transparent;
+    color: var(--c-navy);
+  }
+
+  .boton--secundario:hover {
+    background: var(--c-sol);
+  }
+
+  .boton--sol {
+    background: var(--c-sol);
+    border-color: var(--c-sol);
+    color: var(--c-navy);
+  }
+</style>

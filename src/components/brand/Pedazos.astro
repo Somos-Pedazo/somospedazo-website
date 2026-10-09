@@ -1,0 +1,40 @@
+---
+/**
+ * Recurso gráfico «pedazos»: piezas redondeadas sobre retícula.
+ * Cada pieza ocupa celdas enteras; sus extremos son medio círculo
+ * (rx = mitad del lado corto) y se separan con un hueco color crema.
+ * La geometría vive en src/utils/pedazos.ts (compartida con las imágenes OG).
+ */
+import type { Pieza } from '../../data/brand';
+import { U, piezasARects, rectsASvg } from '../../utils/pedazos';
+
+interface Props {
+  piezas: Pieza[];
+  columnas: number;
+  filas: number;
+  /** Texto alternativo. Si falta, el gráfico es decorativo (aria-hidden). */
+  label?: string;
+  class?: string;
+}
+
+const { piezas, columnas, filas, label, class: className } = Astro.props;
+const contenido = rectsASvg(piezasARects(piezas));
+const a11y = label ? { role: 'img' as const, 'aria-label': label } : { 'aria-hidden': 'true' as const };
+---
+
+<svg
+  class:list={['pedazos', className]}
+  viewBox={`0 0 ${columnas * U} ${filas * U}`}
+  width={columnas * U}
+  height={filas * U}
+  focusable="false"
+  {...a11y}
+  set:html={contenido}
+/>
+
+<style>
+  .pedazos {
+    width: 100%;
+    height: auto;
+  }
+</style>

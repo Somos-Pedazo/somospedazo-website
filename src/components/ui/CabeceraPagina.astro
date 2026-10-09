@@ -1,0 +1,51 @@
+---
+/** Cabecera de página interior: migas, h1 (único), entradilla y franja de pedazos. */
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import Pedazos from '../brand/Pedazos.astro';
+import { FRANJA } from '../../data/composiciones';
+import type { Pagina } from '../../data/paginas';
+
+interface Props {
+  pagina: Pagina;
+  titulo: string;
+  antetitulo?: string;
+}
+
+const { pagina, titulo, antetitulo } = Astro.props;
+---
+
+<div class="cabecera-pagina">
+  <div class="contenedor">
+    <Breadcrumbs pagina={pagina} />
+    <div class="cabecera-pagina__texto flujo">
+      {antetitulo && <p class="antetitulo">{antetitulo}</p>}
+      <h1>{titulo}</h1>
+      <div class="lead flujo"><slot /></div>
+    </div>
+  </div>
+  <div class="contenedor">
+    <Pedazos {...FRANJA} class="cabecera-pagina__franja" />
+  </div>
+</div>
+
+<style>
+  .cabecera-pagina {
+    padding-block: var(--s-4) var(--s-6);
+  }
+
+  .cabecera-pagina__texto {
+    margin-block-start: var(--s-4);
+    max-width: 52rem;
+  }
+
+  .cabecera-pagina__texto .antetitulo {
+    margin-block-end: 0;
+  }
+
+  .cabecera-pagina :global(.cabecera-pagina__franja) {
+    margin-block-start: var(--s-6);
+    max-height: 3.5rem;
+    width: auto;
+    max-width: 100%;
+  }
+</style>

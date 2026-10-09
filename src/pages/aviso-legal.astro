@@ -1,0 +1,21 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PAGINAS } from '../data/paginas';
+import { SITE } from '../config/site';
+---
+
+<LegalLayout pagina={PAGINAS.avisoLegal} actualizado="octubre de 2026">
+  <h2>Datos identificativos</h2>
+  <p>
+    En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), te informamos de
+    que este sitio web es titularidad de {SITE.legalName}, con domicilio en {SITE.address.streetAddress}, {SITE.address.postalCode}
+    {SITE.address.addressLocality}, y correo electrónico <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+  </p>
+  <p>NIF y datos registrales: pendiente de completar.</p>
+
+  <h2>Condiciones de uso</h2>
+  <p>El acceso a este sitio web es libre y gratuito. Al navegar por él, aceptas usarlo de forma lícita y respetuosa.</p>
+
+  <h2>Propiedad intelectual</h2>
+  <p>Los textos, diseños, logotipos y demás contenidos de este sitio pertenecen a {SITE.legalName} o a sus legítimos titulares.</p>
+</LegalLayout>

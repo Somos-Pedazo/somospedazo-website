@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Boton from '../components/ui/Boton.astro';
+import Pedazos from '../components/brand/Pedazos.astro';
+import { PAGINAS } from '../data/paginas';
+
+const pagina = PAGINAS.noEncontrada;
+---
+
+<BaseLayout pagina={pagina}>
+  <div class="contenedor error">
+    <Pedazos
+      columnas={3}
+      filas={1}
+      piezas={[
+        { x: 0, y: 0, w: 1, h: 1, color: 'sol' },
+        { x: 1, y: 0, w: 1, h: 1, color: 'hueco' },
+        { x: 2, y: 0, w: 1, h: 1, color: 'mandarina' },
+      ]}
+      class="error__pedazos"
+    />
+    <p class="antetitulo">Error 404</p>
+    <h1>Este pedazo no está aquí.</h1>
+    <p class="lead">La página que buscas no existe o ha cambiado de sitio. Volvamos a encajar las piezas.</p>
+    <p class="error__acciones">
+      <Boton href="/">Ir al inicio</Boton>
+      <Boton href="/servicios" variante="secundario">Ver servicios</Boton>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .error {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-3);
+    padding-block: var(--seccion);
+    text-align: center;
+  }
+
+  .error :global(.error__pedazos) {
+    max-width: 14rem;
+  }
+
+  .error .antetitulo {
+    margin: 0;
+  }
+
+  .error__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-2);
+  }
+</style>

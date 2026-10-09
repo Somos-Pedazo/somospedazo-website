@@ -1,0 +1,23 @@
+---
+/**
+ * Punto único de tipografías.
+ * Avenir y Calibri no tienen licencia web: se usan si el sistema las tiene y,
+ * si no, sus alternativas libres autoalojadas (sin peticiones a terceros):
+ *  - Figtree (variable) ≈ Avenir para titulares.
+ *  - Carlito: métricamente idéntica a Calibri para texto.
+ * Solo subconjunto latin (cubre todo el castellano). Si llega la licencia web de
+ * Avenir, sustituye los ficheros aquí y en --font-titular (src/styles/tokens.css).
+ */
+import figtree from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url';
+import carlito400 from '@fontsource/carlito/files/carlito-latin-400-normal.woff2?url';
+import carlito700 from '@fontsource/carlito/files/carlito-latin-700-normal.woff2?url';
+
+const css = `
+@font-face{font-family:'Figtree Variable';font-style:normal;font-display:swap;font-weight:300 900;src:url(${figtree}) format('woff2-variations'),url(${figtree}) format('woff2');}
+@font-face{font-family:'Carlito';font-style:normal;font-display:swap;font-weight:400;src:url(${carlito400}) format('woff2');}
+@font-face{font-family:'Carlito';font-style:normal;font-display:swap;font-weight:700;src:url(${carlito700}) format('woff2');}
+`;
+---
+
+<link rel="preload" href={figtree} as="font" type="font/woff2" crossorigin />
+<style is:inline set:html={css}></style>

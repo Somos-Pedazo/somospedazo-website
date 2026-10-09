@@ -1,0 +1,106 @@
+---
+import Logo from '../brand/Logo.astro';
+import { NAV, SITE } from '../../config/site';
+
+const actual = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="cabecera">
+  <div class="contenedor cabecera__fila">
+    <a href="/" class="cabecera__marca" aria-label={`${SITE.name}, ir al inicio`} aria-current={actual === '/' ? 'page' : undefined}>
+      <Logo />
+    </a>
+    <nav aria-label="Principal">
+      <ul class="cabecera__menu" role="list">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={['cabecera__enlace', { 'cabecera__enlace--cta': item.href === '/contacto' }]}
+                aria-current={actual === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    padding-block: var(--s-2);
+  }
+
+  .cabecera__fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-1) var(--s-4);
+  }
+
+  .cabecera__marca {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cabecera__menu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-1);
+    padding: 0;
+    list-style: none;
+  }
+
+  .cabecera__enlace {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--s-2);
+    border-radius: var(--radio-pildora);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-demi);
+    font-size: var(--t-sm);
+    text-decoration: none;
+    transition: background-color var(--transicion);
+  }
+
+  .cabecera__enlace:hover {
+    background: color-mix(in srgb, var(--c-sol) 55%, transparent);
+  }
+
+  .cabecera__enlace[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 0.14em;
+    text-underline-offset: 0.3em;
+  }
+
+  .cabecera__enlace--cta {
+    background: var(--c-navy);
+    color: var(--c-crema);
+    padding-inline: var(--s-3);
+  }
+
+  .cabecera__enlace--cta:hover {
+    background: var(--c-navy);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 30rem) {
+    .cabecera__fila nav {
+      width: 100%;
+    }
+
+    .cabecera__menu {
+      justify-content: space-between;
+    }
+  }
+</style>

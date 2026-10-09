@@ -1,0 +1,171 @@
+---
+/**
+ * La escalera de colaboración: tres escalones acumulativos.
+ * Visualmente, cada escalón es un pedazo más alto que el anterior.
+ * Semánticamente, una lista ordenada.
+ *  - variante «resumen» (Inicio): nombre, lema y resumen; h3.
+ *  - variante «completa» (Servicios): añade qué incluye, para quién y CTA; h2 por escalón.
+ */
+import { NIVELES } from '../../data/servicios';
+import Boton from './Boton.astro';
+
+interface Props {
+  variante?: 'resumen' | 'completa';
+}
+
+const { variante = 'resumen' } = Astro.props;
+const completa = variante === 'completa';
+const Titulo = completa ? 'h2' : 'h3';
+const Sub = completa ? 'h3' : 'h4';
+---
+
+<ol class:list={['escalera', `escalera--${variante}`]} role="list">
+  {
+    NIVELES.map((n) => (
+      <li class="escalon" id={completa ? n.id : undefined} style={`--color: var(--c-${n.color}); --nivel: ${n.numero}`}>
+        <article class="escalon__tarjeta" aria-labelledby={`${n.id}-${variante}-titulo`}>
+          <div class="escalon__peldano" aria-hidden="true">
+            <span class="escalon__numero">{n.numero}</span>
+          </div>
+          <div class="escalon__cuerpo flujo">
+            <p class="escalon__nivel">Escalón {n.numero}</p>
+            <Titulo class="escalon__titulo" id={`${n.id}-${variante}-titulo`}>
+              {n.nombre}
+            </Titulo>
+            <p class="subtitulo">{n.lema}</p>
+            <p>{n.resumen}</p>
+            {completa && (
+              <>
+                <Sub class="escalon__sub">Qué incluye</Sub>
+                <ul class="escalon__lista">
+                  {n.incluye.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+                <Sub class="escalon__sub">Es para ti si…</Sub>
+                <p>{n.paraTi}</p>
+                <Sub class="escalon__sub">Te llevas</Sub>
+                <p>
+                  <strong>{n.teLlevas}</strong>
+                </p>
+                <p>
+                  <Boton href="/contacto" variante={n.numero === 3 ? 'primario' : 'secundario'}>
+                    Quiero el escalón {n.numero}
+                    <span class="sr-only">: {n.nombre}</span>
+                  </Boton>
+                </p>
+              </>
+            )}
+          </div>
+        </article>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .escalera {
+    display: grid;
+    gap: var(--s-3);
+    padding: 0;
+    list-style: none;
+    align-items: end;
+  }
+
+  .escalon__tarjeta {
+    display: grid;
+    height: 100%;
+    border-radius: calc(var(--radio) * 1.4);
+    background: var(--c-blanco);
+    overflow: hidden;
+    /* hueco crema alrededor de cada pedazo */
+    box-shadow: 0 0 0 var(--hueco) var(--c-crema);
+  }
+
+  /* El peldaño: un pedazo de color que crece con cada nivel */
+  .escalon__peldano {
+    display: flex;
+    align-items: flex-end;
+    padding: var(--s-2) var(--s-3);
+    background: var(--color);
+    border-radius: calc(var(--radio) * 1.4) calc(var(--radio) * 1.4) 0 0;
+    min-height: calc(var(--s-6) + var(--nivel) * var(--s-4));
+  }
+
+  .escalon__numero {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: var(--t-3xl);
+    line-height: 0.9;
+    color: var(--c-navy);
+  }
+
+  .escalon__cuerpo {
+    padding: var(--s-3) var(--s-3) var(--s-4);
+  }
+
+  .escalon__nivel {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    font-size: var(--t-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-suave);
+  }
+
+  .escalon__cuerpo .escalon__titulo {
+    margin-block-start: var(--s-1);
+    font-size: var(--t-xl);
+  }
+
+  .escalon__cuerpo .subtitulo {
+    margin-block-start: var(--s-1);
+  }
+
+  .escalon__sub {
+    font-size: var(--t-base);
+    font-weight: var(--peso-fuerte);
+    padding-block-start: var(--s-1);
+  }
+
+  .escalon__lista {
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .escalon__lista li {
+    position: relative;
+    padding-inline-start: 1.75rem;
+  }
+
+  /* viñeta-pedazo: cápsula pequeña */
+  .escalon__lista li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.55em;
+    width: 1.1rem;
+    height: 0.55rem;
+    border-radius: var(--radio-pildora);
+    background: var(--color);
+    box-shadow: inset 0 0 0 1.5px var(--c-navy);
+  }
+
+  .escalera--completa .escalon__titulo {
+    font-size: var(--t-2xl);
+  }
+
+  @media (min-width: 56rem) {
+    .escalera {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* Desplazamiento escalonado: el 1 abajo, el 3 arriba */
+    .escalon {
+      align-self: stretch;
+      padding-block-start: calc((3 - var(--nivel)) * var(--s-6));
+    }
+  }
+</style>
