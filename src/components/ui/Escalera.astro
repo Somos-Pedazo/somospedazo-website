@@ -74,6 +74,9 @@ const Sub = completa ? 'h3' : 'h4';
 
   .escalon__tarjeta {
     display: grid;
+    /* la columna nunca crece más que la tarjeta, aunque haya palabras largas */
+    grid-template-columns: minmax(0, 1fr);
+    container-type: inline-size;
     height: 100%;
     border-radius: calc(var(--radio) * 1.4);
     background: var(--c-blanco);
@@ -113,9 +116,12 @@ const Sub = completa ? 'h3' : 'h4';
     color: var(--fg-suave);
   }
 
+  /* El título se ajusta al ancho de la tarjeta: «Acompañamiento» mide ~8,4 em en
+     la fuente de titular; con divisor 9 cabe con margen (también con Avenir). */
   .escalon__cuerpo .escalon__titulo {
+    --titulo-max: var(--t-xl);
     margin-block-start: var(--s-1);
-    font-size: var(--t-xl);
+    font-size: min(var(--titulo-max), (100cqi - var(--s-6)) / 9);
   }
 
   .escalon__cuerpo .subtitulo {
@@ -154,7 +160,7 @@ const Sub = completa ? 'h3' : 'h4';
   }
 
   .escalera--completa .escalon__titulo {
-    font-size: var(--t-2xl);
+    --titulo-max: var(--t-2xl);
   }
 
   @media (min-width: 56rem) {
