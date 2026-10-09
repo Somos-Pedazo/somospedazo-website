@@ -20,6 +20,20 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   prefetch: false,
+  vite: {
+    build: {
+      rolldownOptions: {
+        treeshake: {
+          // @astrojs/vercel 11.0.13: su entrypoint de servidor importa constantes de su
+          // integración de build, que importa `rolldown` y `@vercel/routing-utils`. Como el
+          // paquete no declara `sideEffects: false`, esas importaciones vacías quedaban en la
+          // función y `rolldown` falla al cargar su binario nativo en Vercel
+          // (FUNCTION_INVOCATION_FAILED). Se marcan sin efectos para que se eliminen.
+          moduleSideEffects: (id, external) => !(external && (id === 'rolldown' || id === '@vercel/routing-utils')),
+        },
+      },
+    },
+  },
   integrations: [
     sitemap({
       filter: (page) => {
