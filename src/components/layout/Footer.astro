@@ -6,7 +6,7 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="pie oscuro">
-  <div class="contenedor pie__rejilla">
+  <div class="contenedor pie__principal">
     <div class="pie__marca">
       <a href="/" class="pie__logo" aria-label={`${SITE.name}, ir al inicio`}>
         <Logo tono="oscuro" />
@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
     </div>
 
     <nav aria-label="Pie de página">
-      <ul class="pie__lista" role="list">
+      <ul class="pie__lista pie__lista--principal" role="list">
         {
           NAV.map((item) => (
             <li>
@@ -25,18 +25,12 @@ const year = new Date().getFullYear();
         }
       </ul>
     </nav>
-
-    <address class="pie__contacto">
-      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-      <a href={`tel:${SITE.telephone.replace(/\s/g, '')}`}>{SITE.telephone}</a>
-      <span>{SITE.address.addressLocality}, España</span>
-    </address>
   </div>
 
   <div class="contenedor pie__legal">
     <p>© {year} {SITE.legalName}</p>
     <nav aria-label="Legal">
-      <ul class="pie__lista pie__lista--fila" role="list">
+      <ul class="pie__lista" role="list">
         {
           LEGAL_NAV.map((item) => (
             <li>
@@ -59,10 +53,13 @@ const year = new Date().getFullYear();
     color: var(--c-crema);
   }
 
-  .pie__rejilla {
-    display: grid;
-    gap: var(--s-4);
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  /* Marca a la izquierda y enlaces a la derecha; en móvil, uno debajo del otro. */
+  .pie__principal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-4) var(--s-8);
   }
 
   .pie__logo {
@@ -80,35 +77,24 @@ const year = new Date().getFullYear();
   }
 
   .pie__lista {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    gap: var(--s-1);
-  }
-
-  .pie__lista a,
-  .pie__contacto a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  .pie__lista--fila {
     display: flex;
     flex-wrap: wrap;
     gap: 0 var(--s-3);
+    padding: 0;
+    list-style: none;
   }
 
-  .pie__contacto {
-    display: grid;
-    align-content: start;
-    font-style: normal;
-  }
-
-  .pie__contacto span {
-    min-height: 44px;
+  .pie__lista a {
     display: inline-flex;
     align-items: center;
+    min-height: 44px;
+  }
+
+  .pie__lista--principal {
+    gap: 0 var(--s-4);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-demi);
+    font-size: var(--t-lg);
   }
 
   .pie__legal {

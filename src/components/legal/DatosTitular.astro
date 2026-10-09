@@ -1,0 +1,38 @@
+---
+/** Datos identificativos del titular (LSSI art. 10 y RGPD art. 13). Salen de src/config/site.ts. */
+import { SITE } from '../../config/site';
+
+const { address: a, legal } = SITE;
+const domicilio = `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} (${a.addressRegion}), España`;
+
+if (a.streetAddress === 'Calle Ejemplo, 1') {
+  console.warn('[legal] La dirección de src/config/site.ts es la de ejemplo: sustitúyela por el domicilio social real.');
+}
+---
+
+<dl>
+  <dt>Titular</dt>
+  <dd>{SITE.legalName}</dd>
+  {
+    legal.nif && (
+      <>
+        <dt>NIF</dt>
+        <dd>{legal.nif}</dd>
+      </>
+    )
+  }
+  <dt>Domicilio</dt>
+  <dd>{domicilio}</dd>
+  <dt>Correo electrónico</dt>
+  <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+  {
+    legal.registro && (
+      <>
+        <dt>Datos registrales</dt>
+        <dd>{legal.registro}</dd>
+      </>
+    )
+  }
+  <dt>Sitio web</dt>
+  <dd>{new URL(SITE.url).host}</dd>
+</dl>

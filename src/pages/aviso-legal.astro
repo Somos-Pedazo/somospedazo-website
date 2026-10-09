@@ -1,21 +1,98 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
+import DatosTitular from '../components/legal/DatosTitular.astro';
 import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
+
+const dominio = new URL(SITE.url).host;
 ---
 
-<LegalLayout pagina={PAGINAS.avisoLegal} actualizado="octubre de 2026">
-  <h2>Datos identificativos</h2>
+<LegalLayout pagina={PAGINAS.avisoLegal} actualizado="9 de octubre de 2026">
+  <h2>1. Datos identificativos</h2>
   <p>
-    En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), te informamos de
-    que este sitio web es titularidad de {SITE.legalName}, con domicilio en {SITE.address.streetAddress}, {SITE.address.postalCode}
-    {SITE.address.addressLocality}, y correo electrónico <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio
+    Electrónico (LSSI-CE), te informamos de los datos del titular de este sitio web:
   </p>
-  <p>NIF y datos registrales: pendiente de completar.</p>
+  <DatosTitular />
 
-  <h2>Condiciones de uso</h2>
-  <p>El acceso a este sitio web es libre y gratuito. Al navegar por él, aceptas usarlo de forma lícita y respetuosa.</p>
+  <h2>2. Objeto</h2>
+  <p>
+    Este aviso legal regula el acceso y el uso del sitio web {dominio} (en adelante, «el sitio web»), a través del cual {SITE.name} presenta
+    sus servicios de agencia de estrategia y growth: consultoría estratégica, auditoría y planificación de marketing y tecnología,
+    seguimiento de proyectos (PMO) y ejecución de acciones de marketing, comunicación, desarrollo web, automatización y analítica.
+  </p>
+  <p>
+    Se considera usuario a cualquier persona que acceda al sitio web. El acceso y la navegación implican la aceptación de este aviso legal.
+    Si no estás de acuerdo con su contenido, te pedimos que no utilices el sitio web.
+  </p>
 
-  <h2>Propiedad intelectual</h2>
-  <p>Los textos, diseños, logotipos y demás contenidos de este sitio pertenecen a {SITE.legalName} o a sus legítimos titulares.</p>
+  <h2>3. Condiciones de uso</h2>
+  <p>El acceso al sitio web es libre y gratuito. Como usuario, te comprometes a:</p>
+  <ul>
+    <li>Hacer un uso adecuado y lícito del sitio web y de sus contenidos, conforme a la ley, la buena fe y el orden público.</li>
+    <li>No realizar actividades que puedan dañar, inutilizar, sobrecargar o impedir el normal funcionamiento del sitio web.</li>
+    <li>No introducir ni difundir virus, código malicioso o cualquier otro sistema que pueda causar daños.</li>
+    <li>No intentar acceder a áreas restringidas de los sistemas del titular o de terceros.</li>
+    <li>Facilitar datos veraces cuando uses el formulario de contacto.</li>
+  </ul>
+
+  <h2>4. Información sobre los servicios</h2>
+  <p>
+    Los contenidos del sitio web son informativos y no constituyen una oferta vinculante. Cada colaboración se concreta en una propuesta y,
+    en su caso, en un contrato específico, que prevalecen sobre la información publicada aquí.
+  </p>
+  <p>
+    Los servicios de estrategia, marketing y growth implican trabajo con variables que no dependen solo de {SITE.name}: el mercado, la
+    competencia, las plataformas de terceros o la ejecución interna del cliente. Por eso, salvo que se pacte expresamente por escrito, no
+    garantizamos resultados concretos de negocio, tráfico, posicionamiento o ventas.
+  </p>
+
+  <h2>5. Propiedad intelectual e industrial</h2>
+  <p>
+    Todos los contenidos del sitio web (textos, diseño, logotipos, marcas, gráficos, imágenes, código fuente y su selección y disposición)
+    son titularidad de {SITE.legalName} o de terceros que han autorizado su uso, y están protegidos por la normativa de propiedad
+    intelectual e industrial.
+  </p>
+  <p>
+    Queda prohibida su reproducción, distribución, comunicación pública o transformación, total o parcial, con fines comerciales sin la
+    autorización previa y por escrito del titular. Puedes visualizar los contenidos y guardar copias para uso personal y privado, siempre
+    que cites la fuente.
+  </p>
+
+  <h2>6. Enlaces</h2>
+  <p>
+    El sitio web puede incluir enlaces a sitios de terceros. {SITE.name} no controla ni se responsabiliza de su contenido, disponibilidad,
+    políticas de privacidad o prácticas. Si quieres enlazar a este sitio web, el enlace debe dirigir a su página principal o a páginas
+    concretas, sin reproducir sus contenidos ni dar a entender una relación o aval que no exista.
+  </p>
+
+  <h2>7. Responsabilidad</h2>
+  <p>
+    Trabajamos para que la información del sitio web sea correcta y esté actualizada, pero puede contener errores u omisiones que
+    corregiremos en cuanto los detectemos. {SITE.name} no se responsabiliza de:
+  </p>
+  <ul>
+    <li>Las decisiones que tomes basándote solo en la información general del sitio web, sin un análisis específico de tu caso.</li>
+    <li>Las interrupciones, errores o fallos técnicos ajenos a nuestro control, ni de los daños causados por virus o ataques de terceros.</li>
+    <li>El uso indebido del sitio web por parte de los usuarios.</li>
+  </ul>
+
+  <h2>8. Protección de datos y cookies</h2>
+  <p>
+    El tratamiento de los datos personales que nos facilites se rige por nuestra <a href="/privacidad">política de privacidad</a>. El uso
+    de cookies y tecnologías similares se explica en la <a href="/cookies">política de cookies</a>.
+  </p>
+
+  <h2>9. Modificaciones</h2>
+  <p>
+    {SITE.name} puede modificar este aviso legal y los contenidos del sitio web en cualquier momento. Los cambios se aplican desde su
+    publicación, por lo que te recomendamos revisarlo periódicamente.
+  </p>
+
+  <h2>10. Legislación aplicable y jurisdicción</h2>
+  <p>
+    Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales
+    del domicilio del titular, salvo que la normativa aplicable, en particular la de defensa de consumidores y usuarios, establezca otro
+    fuero.
+  </p>
 </LegalLayout>

@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel';
 const SITE_URL = 'https://somospedazo.com';
 
 // Páginas que no deben indexarse (también llevan <meta name="robots" content="noindex">).
-const NOINDEX = ['/404', '/aviso-legal', '/privacidad', '/cookies'];
+const NOINDEX = ['/404'];
 
 export default defineConfig({
   site: SITE_URL,

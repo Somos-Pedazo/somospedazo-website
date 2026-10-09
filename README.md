@@ -37,7 +37,7 @@ En el build, Astro inserta `TURNSTILE_SECRET_KEY` en el código de la función d
 | `src/utils/imagenes.ts` | Imágenes OG, logo e iconos PNG generados en el build |
 | `src/pages/` | Páginas, `robots.txt`, `site.webmanifest` e imágenes |
 
-El sitemap (`/sitemap-index.xml`) lo genera `@astrojs/sitemap` y excluye las páginas `noindex` (legales y 404). Si añades otra página `noindex`, inclúyela también en `NOINDEX` dentro de `astro.config.mjs`.
+El sitemap (`/sitemap-index.xml`) lo genera `@astrojs/sitemap` y excluye las páginas `noindex` (solo la 404). Si añades otra página `noindex`, inclúyela también en `NOINDEX` dentro de `astro.config.mjs`.
 
 ## Activos y datos pendientes
 
@@ -45,8 +45,11 @@ Para localizar todos los huecos, busca `PLACEHOLDER` y `TODO` en el proyecto.
 
 1. **Logo.** Sustituye el marcado de `src/components/brand/Logo.astro` por el SVG final. Después borra `src/pages/logo.png.ts`, `apple-touch-icon.png.ts` e `icono-[tamano].png.ts` y deja en `public/` los archivos `logo.png` (512×512), `apple-touch-icon.png` (180×180), `icono-192.png` e `icono-512.png`. Sustituye también `public/favicon.svg`.
 2. **Mascota o ilustraciones.** Están en `<Placeholder nombre="…">` (atributo `data-placeholder`). Las instrucciones para cambiarlas por `<Image>` de `astro:assets` están en el propio componente. En `npm run dev` cada hueco muestra una etiqueta.
-3. **Datos de empresa** (`src/config/site.ts`): dominio, razón social, teléfono, dirección, redes y Twitter/X. Si cambia el dominio, actualízalo también en `astro.config.mjs`. **No publiques con la dirección y el teléfono de ejemplo**: aparecen en el pie, en Contacto y en el JSON-LD.
-4. **Textos legales** (aviso legal, privacidad y cookies): son plantillas marcadas como provisionales y llevan `noindex`. Cuando tengas el texto definitivo, quita `noindex: true` en `src/data/paginas.ts` y saca la ruta de `NOINDEX` si quieres indexarlas.
+3. **Datos de empresa** (`src/config/site.ts`): dominio, razón social, **NIF**, **datos registrales**, **domicilio social**, correo, redes y Twitter/X. Si cambia el dominio, actualízalo también en `astro.config.mjs`.
+   - Contacto y el pie no muestran correo, teléfono ni dirección. Los textos legales sí los necesitan (LSSI y RGPD), igual que los datos estructurados.
+   - El build avisa (`[legal]`) mientras falten el NIF o los datos registrales, o siga la dirección de ejemplo. **No publiques con esos avisos.**
+   - El teléfono es opcional: si lo rellenas, solo se añade a los datos estructurados.
+4. **Textos legales** (aviso legal, privacidad y cookies): son textos completos, basados en la LSSI-CE, el RGPD, la LOPDGDD y la guía de cookies de la AEPD, y redactados según cómo funciona el sitio: formulario → Zoho CRM, alojamiento en Vercel y antispam con Cloudflare Turnstile. Si añades herramientas (por ejemplo, analítica), actualiza la política de cookies y la de privacidad.
 5. **Tipografías.** Avenir y Calibri se usan si están instaladas en el dispositivo. Si no lo están, entran Figtree (titulares) y Carlito (texto, con las mismas métricas que Calibri), ambas alojadas en el propio sitio. Si compráis una licencia web de Avenir, cambia los archivos en `src/components/brand/Fonts.astro`.
 
 ## Formulario de contacto

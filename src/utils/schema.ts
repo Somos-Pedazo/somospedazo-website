@@ -10,7 +10,8 @@ export const IDS = {
   logo: absoluteUrl('/#logo'),
 };
 
-const telefonoE164 = SITE.telephone.replace(/[^\d+]/g, '');
+/** Teléfono en formato E.164, solo si está configurado. */
+const telefono = SITE.telephone ? { telephone: SITE.telephone.replace(/[^\d+]/g, '') } : {};
 
 export function organization(): Nodo {
   return {
@@ -22,7 +23,7 @@ export function organization(): Nodo {
     description: SITE.description,
     slogan: SITE.slogan,
     email: SITE.email,
-    telephone: telefonoE164,
+    ...telefono,
     // PLACEHOLDER LOGO: sustituir por el PNG/SVG definitivo (mín. 112×112 px).
     logo: {
       '@type': 'ImageObject',
@@ -38,11 +39,11 @@ export function organization(): Nodo {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       email: SITE.email,
-      telephone: telefonoE164,
+      ...telefono,
       areaServed: 'ES',
       availableLanguage: ['es'],
     },
-    knowsAbout: ['Estrategia digital', 'Marketing digital', 'Transformación digital', 'Gestión de proyectos (PMO)'],
+    knowsAbout: ['Estrategia de negocio', 'Growth marketing', 'Marketing digital', 'Transformación digital', 'Gestión de proyectos (PMO)'],
     ...(SITE.foundingDate ? { foundingDate: SITE.foundingDate } : {}),
     ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
   };
@@ -58,7 +59,7 @@ export function localBusiness(): Nodo {
     image: absoluteUrl('/og/inicio.png'),
     logo: { '@id': IDS.logo },
     email: SITE.email,
-    telephone: telefonoE164,
+    ...telefono,
     priceRange: SITE.priceRange,
     address: { '@type': 'PostalAddress', ...SITE.address },
     ...(SITE.geo ? { geo: { '@type': 'GeoCoordinates', ...SITE.geo } } : {}),

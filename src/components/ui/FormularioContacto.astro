@@ -7,7 +7,7 @@
  * - Validación con mensajes propios, envío por fetch y mensaje de éxito sin salir
  *   de la web (src/scripts/formulario/).
  * - El botón está deshabilitado hasta que Turnstile emite un token. Sin JS no hay
- *   captcha, así que el formulario no puede enviarse: se ofrece el correo.
+ *   captcha, así que el formulario no puede enviarse: se muestra un aviso.
  * - La casilla de privacidad no lleva `name`: es obligatoria, pero no se envía.
  */
 import { SITE } from '../../config/site';
@@ -25,10 +25,7 @@ import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
   aria-describedby="formulario-ayuda"
 >
   <noscript>
-    <p class="formulario__noscript">
-      Para enviar el formulario necesitas activar JavaScript. También puedes escribirnos a
-      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
-    </p>
+    <p class="formulario__noscript">Para enviar el formulario necesitas activar JavaScript en tu navegador.</p>
   </noscript>
 
   <p id="formulario-ayuda" class="formulario__ayuda">
@@ -155,22 +152,29 @@ import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
 </form>
 
 <script is:inline>
-  // Debe existir antes de que cargue el script de Cloudflare (async): avisa al controlador.
+  // Callback de Cloudflare: avisa al controlador (src/scripts/formulario/turnstile.ts).
   window.onTurnstileListo = function () {
     window.__turnstileListo = true;
     document.dispatchEvent(new Event('turnstile:listo'));
   };
+  // El script de Turnstile (async + defer) se pide tras el evento load, para que no
+  // compita con el primer pintado de la página (LCP).
+  (function () {
+    function cargar() {
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileListo';
+      s.async = true;
+      s.defer = true;
+      document.head.appendChild(s);
+    }
+    if (document.readyState === 'complete') cargar();
+    else window.addEventListener('load', cargar, { once: true });
+  })();
 </script>
-<script
-  is:inline
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileListo"
-  async
-  defer></script>
 
 <div id="formulario-exito" class="formulario__exito" tabindex="-1" hidden>
   <p class="formulario__exito-titulo">¡Recibido! Ya tenemos tu pedazo.</p>
   <p>Gracias por contarnos tu proyecto. Lo leemos con calma y te escribimos muy pronto para ver por dónde empezar.</p>
-  <p>Si es urgente, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
   <button type="button" class="formulario__otro" data-otro>Enviar otro mensaje</button>
 </div>
 

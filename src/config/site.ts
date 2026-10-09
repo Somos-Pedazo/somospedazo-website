@@ -1,19 +1,31 @@
 /**
  * Fuente única de datos de la empresa.
- * Todo lo que aparece en SEO, JSON-LD, pie y contacto sale de aquí.
- * Los campos marcados con TODO son provisionales: confírmalos antes de publicar.
+ * Todo lo que aparece en SEO, JSON-LD y textos legales sale de aquí.
+ * Los campos marcados con TODO están sin confirmar: complétalos antes de publicar.
  */
 export const SITE = {
   name: 'Somos Pedazo',
-  legalName: 'Somos Pedazo', // TODO: razón social completa (S.L., etc.)
+  legalName: 'Somos Pedazo', // TODO: razón social completa (p. ej. «Somos Pedazo, S.L.»)
   url: 'https://somospedazo.com', // TODO: confirmar dominio (sincronizar con astro.config.mjs)
   locale: 'es-ES',
   ogLocale: 'es_ES',
   slogan: 'Cada uno aporta su pedazo. Juntos, encajamos.',
+  /** Categoría que aparece en portada, títulos y datos estructurados. */
+  categoria: 'Agencia de estrategia y growth',
   description:
-    'Agencia de estrategia digital. Unimos marketing, tecnología y estrategia para que tu negocio crezca con un plan claro.',
+    'Agencia de estrategia y growth. Unimos estrategia, marketing y tecnología para que tu negocio crezca con un plan claro.',
+  /** No se muestra en Contacto ni en el pie; solo en textos legales y datos estructurados. */
   email: 'hola@somospedazo.com', // TODO: confirmar
-  telephone: '+34 600 000 000', // TODO: teléfono real (formato E.164 en JSON-LD)
+  /** Opcional. Si se rellena, se añade a los datos estructurados (formato +34 600 000 000). */
+  telephone: undefined as string | undefined,
+  /**
+   * Datos registrales exigidos por la LSSI (art. 10) en el aviso legal.
+   * Si quedan vacíos, la línea correspondiente no se muestra y el build avisa.
+   */
+  legal: {
+    nif: '', // TODO: NIF/CIF
+    registro: '', // TODO: p. ej. «Registro Mercantil de Madrid, tomo X, folio Y, hoja M-Z»
+  },
   address: {
     // TODO: dirección real. Google necesita una dirección válida para LocalBusiness.
     streetAddress: 'Calle Ejemplo, 1',

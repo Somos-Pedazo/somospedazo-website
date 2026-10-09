@@ -11,8 +11,8 @@ import { mostrarError, validar, type Control } from './validacion';
 const MENSAJES_ERROR: Record<MotivoError, string> = {
   captcha: 'No hemos podido comprobar que eres una persona. Completa de nuevo la verificación y vuelve a enviar.',
   validacion: 'Hay datos que no hemos podido validar. Revisa los campos marcados y vuelve a enviar.',
-  zoho: 'No hemos podido registrar tu mensaje. Inténtalo de nuevo en unos minutos o escríbenos por correo.',
-  servidor: 'Algo ha fallado de nuestro lado. Inténtalo de nuevo en unos minutos o escríbenos por correo.',
+  zoho: 'No hemos podido registrar tu mensaje. Inténtalo de nuevo en unos minutos.',
+  servidor: 'Algo ha fallado de nuestro lado. Inténtalo de nuevo en unos minutos.',
   red: 'No hemos podido enviar el mensaje. Comprueba tu conexión y vuelve a intentarlo.',
   timeout: 'El envío está tardando demasiado. Comprueba tu conexión y vuelve a intentarlo.',
 };
@@ -20,7 +20,7 @@ const MENSAJES_ERROR: Record<MotivoError, string> = {
 const AYUDA_CAPTCHA = {
   pendiente: 'El botón se activará cuando se complete la verificación de seguridad.',
   caducado: 'La verificación de seguridad ha caducado. Complétala de nuevo para activar el botón.',
-  error: 'No se ha podido cargar la verificación de seguridad. Recarga la página o escríbenos por correo.',
+  error: 'No se ha podido cargar la verificación de seguridad. Recarga la página e inténtalo de nuevo.',
 };
 
 function iniciar(form: HTMLFormElement): void {

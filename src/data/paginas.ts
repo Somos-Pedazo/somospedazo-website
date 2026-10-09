@@ -21,9 +21,9 @@ export const PAGINAS = definir({
     slug: 'inicio',
     path: '/',
     nombre: 'Inicio',
-    title: 'Somos Pedazo · Agencia de estrategia digital',
+    title: 'Somos Pedazo · Agencia de estrategia y growth',
     description:
-      'Agencia de estrategia digital que une marketing, tecnología y estrategia. Auditamos, planificamos y ejecutamos contigo para que tu negocio crezca.',
+      'Agencia de estrategia y growth: unimos estrategia, marketing y tecnología. Auditamos, planificamos y ejecutamos contigo para que tu negocio crezca.',
     ogTitulo: 'Tu negocio tiene piezas sueltas. Nosotros las encajamos.',
   },
   servicios: {
@@ -60,7 +60,6 @@ export const PAGINAS = definir({
     title: 'Aviso legal · Somos Pedazo',
     description: 'Aviso legal de Somos Pedazo: datos identificativos del titular del sitio web, condiciones de uso y propiedad intelectual.',
     ogTitulo: 'Aviso legal',
-    noindex: true,
   },
   privacidad: {
     slug: 'privacidad',
@@ -69,7 +68,6 @@ export const PAGINAS = definir({
     title: 'Política de privacidad · Somos Pedazo',
     description: 'Política de privacidad de Somos Pedazo: qué datos tratamos, con qué finalidad, durante cuánto tiempo y cómo ejercer tus derechos.',
     ogTitulo: 'Política de privacidad',
-    noindex: true,
   },
   cookies: {
     slug: 'cookies',
@@ -78,14 +76,13 @@ export const PAGINAS = definir({
     title: 'Política de cookies · Somos Pedazo',
     description: 'Política de cookies de Somos Pedazo: este sitio no usa cookies de análisis ni de publicidad. Te explicamos qué almacenamos y por qué.',
     ogTitulo: 'Política de cookies',
-    noindex: true,
   },
   noEncontrada: {
     slug: '404',
     path: '/404',
     nombre: 'Página no encontrada',
     title: 'Página no encontrada · Somos Pedazo',
-    description: 'Esta página no existe o ha cambiado de sitio. Vuelve al inicio o descubre nuestros servicios de estrategia digital, marketing y tecnología.',
+    description: 'Esta página no existe o ha cambiado de sitio. Vuelve al inicio o descubre nuestros servicios de estrategia, growth, marketing y tecnología.',
     ogTitulo: 'Este pedazo no está aquí.',
     noindex: true,
   },
