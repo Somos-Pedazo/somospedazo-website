@@ -5,6 +5,7 @@
  */
 import { CAMPO_TURNSTILE } from '../../config/zoho';
 import { enviarLead, type MotivoError } from './envio';
+import { iniciarTelefono } from './telefono';
 import { iniciarTurnstile } from './turnstile';
 import { mostrarError, validar, type Control } from './validacion';
 import { atribucionParaFormulario } from '../atribucion';
@@ -90,7 +91,11 @@ function iniciar(form: HTMLFormElement): void {
     const revalidar = () => intentado && mostrarError(control, validar(control));
     control.addEventListener(control.type === 'checkbox' ? 'change' : 'input', revalidar);
     control.addEventListener('blur', revalidar);
+    // Teléfono: al cambiar de país cambian las reglas del número.
+    if (control.dataset.pais) document.getElementById(control.dataset.pais)?.addEventListener('change', revalidar);
   }
+
+  for (const telefono of form.querySelectorAll<HTMLElement>('[data-telefono]')) iniciarTelefono(telefono);
 
   form.addEventListener('submit', async (evento) => {
     evento.preventDefault();

@@ -85,6 +85,18 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
   - El valor de ambas y su fecha y hora quedan registrados en «Description»: `privacy_consent` y `newsletter_consent`.
 - **Primera capa informativa:** el texto facilitado por Somos Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
 
+**Teléfono internacional** (`src/components/ui/CampoTelefono.astro`, `src/scripts/formulario/telefono.ts`)
+- **Desplegable de país** con bandera y prefijo, buscador (por nombre sin tildes, código ISO o prefijo: «japon», «JP», «+81») y teclado completo (↑/↓, RePág/AvPág, Intro, Esc). Es un combobox + listbox de WAI-ARIA; sin JS queda un `<select>` nativo. España por defecto.
+- **Datos:** los 245 países y territorios de libphonenumber-js (los metadatos de Google libphonenumber), con nombres en castellano (`Intl.DisplayNames`). Banderas de `country-flag-icons` (SVG 3:2, MIT), publicadas en build en `/banderas/XX.svg`. Las de la lista se cargan en diferido.
+- **Carga diferida:** el HTML solo lleva España; la lista completa (`/telefono/paises.json`, ~7 KB con brotli) se pide en segundo plano tras cargar la página, o antes si se toca el campo.
+- **Validación con expresiones regulares** (`src/utils/telefono.ts`, la misma en navegador y servidor):
+  - caracteres admitidos: `^\+?[\d\s().\-]{4,30}$`;
+  - número nacional contra el patrón de su país (por ejemplo, España: `(?:400|[5-9]\d\d)\d{6}`), quitando antes el prefijo nacional si lo lleva («07400 123456» en Reino Unido, «011 15…» en Argentina);
+  - resultado contra E.164: `^\+[1-9]\d{6,14}$`.
+- Admite el número con o sin prefijo internacional («+34 612…», «0034 612…», «612…»). Si se escribe el prefijo de otro país («+44…»), el desplegable cambia solo a ese país.
+- Los errores dicen el país y ponen un ejemplo válido («no es un número válido de España. Ejemplo: 612 34 56 78.»). El ejemplo también aparece como pista en el campo.
+- **A Zoho** llega solo `Phone` en **E.164** (`+34612345678`), compuesto en el servidor a partir de `telefono_pais` y `telefono_numero`. Un `Phone` enviado directamente en la petición se ignora. Si el número no es válido, responde 400 con `telefono_numero` en la lista de campos.
+
 **Atribución de marketing** (Zoho Free: sin campos personalizados)
 - **Captura** (`src/scripts/atribucion.ts`, en todas las páginas): en cada visita lee de la URL los UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) y los click IDs (`gclid`, `fbclid`, `li_fat_id`, `ttclid`, `msclkid`), junto con `landing_page`, `referrer` y `touch_ts` (fecha y hora ISO 8601 del toque).
 - **Persistencia** en `localStorage` (`sp_atribucion`), 90 días desde el último toque guardado:
@@ -128,7 +140,7 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 
    El resultado (`success`, `hostname`, `challenge_ts` y `action`) va a `captcha_verification`. Cada rechazo deja su motivo en los logs de Vercel (`[contact] Turnstile rechazado: …`).
    - **Claves de test prohibidas en producción.** Si `VERCEL_ENV=production` y la clave secreta es de test (`1x/2x/3x000…`), el endpoint responde 500 y no acepta envíos. Además, el build de producción falla si `TURNSTILE_SECRET_KEY` o la site key son de test.
-3. Valida los campos obligatorios, el formato del correo, la longitud de cada campo y la casilla de privacidad. Si algo falla, responde 400 con la lista de campos.
+3. Valida los campos obligatorios, el formato del correo, el teléfono (y lo pasa a E.164), la longitud de cada campo y la casilla de privacidad. Si algo falla, responde 400 con la lista de campos.
 4. Calcula el Lead Source y compone el Description.
 5. **Límite por IP:** 3 envíos cada 10 minutos. Si se supera, responde `429` (`limite`, con `Retry-After`) sin crear lead ni enviar correo. El contador está en memoria de la función: es por instancia de Vercel y se reinicia al reciclarse (`src/server/limite.ts`).
 6. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
@@ -143,6 +155,7 @@ Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captch
 
 **Archivos de configuración**
 - `src/config/zoho.ts`: nombres de campo, longitudes, honeypot y site key. Se comparte entre navegador y servidor.
+- `src/config/telefono.ts`: campos del teléfono, país por defecto y reglas de cada país (servidor y build).
 - `src/server/`: campos ocultos de Zoho y verificación de Turnstile. Solo los usa el servidor.
 
 **Pruebas en local**

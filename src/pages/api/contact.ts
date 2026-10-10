@@ -3,7 +3,7 @@
  * (Cloudflare Turnstile) y los campos, y reenvía el lead a Zoho CRM.
  * Única ruta del sitio que se ejecuta en servidor (función de Vercel).
  *
- * A Zoho llegan: los campos visibles, «Lead Source» (calculado aquí) y «Description»
+ * A Zoho llegan: los campos visibles (el teléfono, compuesto aquí en E.164), «Lead Source» (calculado aquí) y «Description»
  * compuesto aquí: línea técnica de atribución y consentimientos + línea en blanco + mensaje.
  * Con el lead aceptado, se envía el correo de confirmación con Resend (src/server/resend.ts).
  *
@@ -23,6 +23,8 @@ import {
   HONEYPOT,
 } from '../../config/zoho';
 import { CAMPO_SUBMISSION_URL } from '../../config/atribucion';
+import { CAMPO_TELEFONO_NUMERO, CAMPO_TELEFONO_PAIS, PAISES_TELEFONO } from '../../config/telefono';
+import { aE164 } from '../../utils/telefono';
 import { calcularLeadSource, componerDescription, leerAtribucion, limpiarUrl, resumenCaptcha } from '../../utils/atribucion';
 import { verificarTurnstile, type RespuestaSiteverify } from '../../server/turnstile';
 import { enviarAZoho } from '../../server/zoho';
@@ -54,12 +56,23 @@ function ipCliente(contexto: APIContext): string | undefined {
   }
 }
 
+/** Teléfono en E.164 (+34600000000); '' si no se ha escrito; null si no es válido para el país elegido. */
+function telefonoE164(form: FormData): string | null {
+  const numero = form.get(CAMPO_TELEFONO_NUMERO);
+  if (typeof numero !== 'string' || !numero.trim()) return '';
+  const iso = form.get(CAMPO_TELEFONO_PAIS);
+  if (typeof iso !== 'string' || !Object.hasOwn(PAISES_TELEFONO, iso)) return null;
+  const resultado = aE164(numero, PAISES_TELEFONO[iso]!);
+  return resultado.ok ? resultado.e164 : null;
+}
+
 /** Normaliza y valida los campos visibles. Devuelve los datos para Zoho o la lista de campos no válidos. */
 function validar(form: FormData): { ok: true; datos: Record<string, string> } | { ok: false; campos: string[] } {
   const datos: Record<string, string> = {};
   const invalidos: string[] = [];
 
   for (const { name, max, obligatorio } of Object.values(CAMPOS)) {
+    if (name === CAMPOS.telefono.name) continue; // «Phone» se compone abajo; nunca se toma tal cual del formulario
     const bruto = form.get(name);
     const valor = typeof bruto === 'string' ? bruto.trim() : '';
     if ((obligatorio && !valor) || valor.length > max) invalidos.push(name);
@@ -68,6 +81,11 @@ function validar(form: FormData): { ok: true; datos: Record<string, string> } | 
 
   const email = datos[CAMPOS.email.name];
   if (email && !EMAIL_RE.test(email)) invalidos.push(CAMPOS.email.name);
+
+  // Teléfono (opcional): país + número → E.164 con las mismas expresiones regulares que el navegador.
+  const telefono = telefonoE164(form);
+  if (telefono === null) invalidos.push(CAMPO_TELEFONO_NUMERO);
+  else if (telefono) datos[CAMPOS.telefono.name] = telefono;
 
   // La casilla de privacidad es obligatoria también en el servidor.
   if (form.get(CAMPO_PRIVACIDAD) !== 'si') invalidos.push(CAMPO_PRIVACIDAD);
