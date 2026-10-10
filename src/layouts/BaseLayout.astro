@@ -4,6 +4,7 @@ import Fonts from '../components/brand/Fonts.astro';
 import SEO from '../components/seo/SEO.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import { SITE } from '../config/site';
 import type { Pagina } from '../data/paginas';
 import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
@@ -41,6 +42,7 @@ const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina
       <slot />
     </main>
     <Footer />
+    <SpeedInsights />
   </body>
 </html>
 
