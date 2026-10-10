@@ -24,8 +24,9 @@ export const CAMPO_PRIVACIDAD = 'privacidad';
 export const CAMPO_NEWSLETTER = 'newsletter';
 
 /**
- * Campo estándar «Lead Source» de Zoho (lista desplegable). Sus valores tienen que existir en
- * la lista de Zoho (Configuración → Módulos → Leads → Lead Source); si no, Zoho puede ignorarlos.
+ * Campo estándar «Lead Source» de Zoho (lista desplegable cerrada). Zoho descarta cualquier valor
+ * que no coincida exactamente con la lista: los valores permitidos están en LEAD_SOURCE_ZOHO
+ * (src/config/atribucion.ts).
  */
 export const CAMPO_LEAD_SOURCE = 'Lead Source';
 
