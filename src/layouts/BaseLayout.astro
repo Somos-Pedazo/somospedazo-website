@@ -7,6 +7,7 @@ import Footer from '../components/layout/Footer.astro';
 import { SITE } from '../config/site';
 import type { Pagina } from '../data/paginas';
 import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   pagina: Pagina;
@@ -33,6 +34,7 @@ const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <script is:inline type="application/ld+json" set:html={jsonLd} />
+    <Analytics />
   </head>
   <body>
     <a class="salto" href="#contenido">Saltar al contenido</a>
