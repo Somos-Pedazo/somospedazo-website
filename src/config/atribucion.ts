@@ -10,14 +10,22 @@ export const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm
 export const CLICK_IDS = ['gclid', 'fbclid', 'li_fat_id', 'ttclid', 'msclkid'] as const;
 
 /** Datos que el navegador persiste y envía con el formulario (campos ocultos con estos `name`). */
-export const CAMPOS_ATRIBUCION = ['landing_page', 'referrer', 'first_seen', ...UTM, ...CLICK_IDS] as const;
+export const CAMPOS_ATRIBUCION = ['landing_page', 'referrer', 'touch_ts', ...UTM, ...CLICK_IDS] as const;
 export type CampoAtribucion = (typeof CAMPOS_ATRIBUCION)[number];
 export type Atribucion = Record<CampoAtribucion, string>;
 
 /** Campo oculto con la URL completa desde la que se envía el formulario. */
 export const CAMPO_SUBMISSION_URL = 'submission_url';
 
-/** Persistencia en localStorage. */
+/**
+ * Persistencia en localStorage. Reglas (src/scripts/atribucion.ts):
+ * - Visita con UTM o click IDs → reemplaza el registro (nuevos touch_ts, landing_page,
+ *   referrer y parámetros) y renueva la caducidad de 90 días.
+ * - Visita sin parámetros (directa, orgánica o referida) → no modifica un registro vigente;
+ *   si no hay registro, se guarda.
+ * - El registro no se borra tras enviar el formulario; solo caduca o se borra si se retira
+ *   el consentimiento.
+ */
 export const PERSISTENCIA = {
   clave: 'sp_atribucion',
   caducidadDias: 90,
@@ -62,7 +70,7 @@ export const CLAVES_LINEA = [
   'submission_url',
   'landing_page',
   'referrer',
-  'first_seen',
+  'touch_ts',
   'lead_source',
   ...UTM,
   ...CLICK_IDS,
