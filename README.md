@@ -87,11 +87,12 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 **Atribución de marketing** (Zoho Free: sin campos personalizados)
 - **Captura** (`src/scripts/atribucion.ts`, en todas las páginas): en cada visita lee de la URL los UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) y los click IDs (`gclid`, `fbclid`, `li_fat_id`, `ttclid`, `msclkid`), junto con `landing_page`, `referrer` y `touch_ts` (fecha y hora ISO 8601 del toque).
 - **Persistencia** en `localStorage` (`sp_atribucion`), 90 días desde el último toque guardado:
-  - Una visita **con UTM o click IDs** reemplaza el registro (nuevos `touch_ts`, `landing_page`, `referrer` y parámetros) y renueva los 90 días.
-  - Una visita **sin parámetros** (directa, orgánica o referida) no modifica un registro vigente. Si no hay registro, se guarda.
+  - Una visita **con UTM, click IDs o referrer externo** reemplaza el registro (nuevos `touch_ts`, `landing_page`, `referrer` y parámetros) y renueva los 90 días.
+  - Una visita **directa** (sin parámetros y sin referrer externo) no modifica un registro vigente. Si no hay registro, se guarda.
+  - El referrer del **propio dominio** (incluidos `www` y subdominios) cuenta como directo: la navegación interna, por ejemplo de Inicio a Contacto, no falsea el origen.
   - El registro **no se borra** al enviar el formulario.
   - **Requiere consentimiento de Marketing en Cookiebot** (`PERSISTENCIA.requiereConsentimiento` en `src/config/atribucion.ts`). Si se retira el consentimiento, el registro se borra.
-  - Sin consentimiento no se guarda nada, pero el formulario envía con la misma regla: los parámetros de la visita en curso si los trae y, si no, el registro guardado o la visita en curso.
+  - Sin consentimiento no se guarda nada, pero el formulario envía con la misma regla: la visita en curso si es un nuevo toque y, si es directa, el registro guardado o la visita en curso.
   - Los registros antiguos con `first_seen` se migran automáticamente a `touch_ts`.
   - Clasifica la clave `sp_atribucion` como «Marketing» en el panel de Cookiebot.
 - **Envío:** el formulario manda esos datos y `submission_url` en campos ocultos. El servidor los vuelve a validar (`src/utils/atribucion.ts`):

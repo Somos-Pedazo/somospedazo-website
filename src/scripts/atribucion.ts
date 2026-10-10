@@ -4,9 +4,10 @@
  * - Captura de cada visita: UTM y click IDs de la URL, landing_page (URL completa),
  *   referrer y touch_ts (ISO 8601).
  * - Persistencia en localStorage durante 90 días desde el último toque guardado:
- *   · Visita con UTM o click IDs → reemplaza el registro y renueva los 90 días.
- *   · Visita sin parámetros (directa, orgánica o referida) → no toca un registro vigente;
- *     si no hay registro, se guarda.
+ *   · Visita con UTM, click IDs o referrer externo → reemplaza el registro y renueva los 90 días.
+ *   · Visita directa (sin parámetros y sin referrer externo) → no toca un registro vigente;
+ *     si no hay registro, se guarda. El referrer del propio dominio cuenta como directo, para
+ *     que la navegación interna (Inicio → Contacto) no falsee el origen.
  *   · El registro no se borra al enviar el formulario.
  * - Consentimiento: si PERSISTENCIA.requiereConsentimiento, solo se guarda cuando el visitante
  *   acepta la categoría de Cookiebot configurada; si la retira, se borra. Sin consentimiento,
@@ -35,8 +36,29 @@ const capturaActual: Atribucion = (() => {
   return datos;
 })();
 
-/** ¿Trae esta visita UTM o click IDs? Solo estas visitas reemplazan un registro guardado. */
-const tieneParametros = [...UTM, ...CLICK_IDS].some((p) => capturaActual[p] !== '');
+/** Dominio sin «www.», para comparar el referrer con el propio sitio. */
+const dominio = (host: string) => host.toLowerCase().replace(/^www\./, '');
+
+/**
+ * ¿El referrer es de otro dominio? El del propio sitio (incluidos www y subdominios) cuenta
+ * como directo: navegar de Inicio a Contacto no es un nuevo origen.
+ */
+const referrerExterno = (() => {
+  if (!capturaActual.referrer) return false;
+  try {
+    const ref = dominio(new URL(capturaActual.referrer).hostname);
+    const propio = dominio(location.hostname);
+    return ref !== propio && !ref.endsWith(`.${propio}`) && !propio.endsWith(`.${ref}`);
+  } catch {
+    return false;
+  }
+})();
+
+/**
+ * ¿Es un nuevo toque? Lo es si trae UTM, click IDs o un referrer externo. Solo la visita directa
+ * (sin parámetros y sin referrer externo) deja intacto el registro guardado.
+ */
+const esNuevoToque = referrerExterno || [...UTM, ...CLICK_IDS].some((p) => capturaActual[p] !== '');
 
 function almacen(): Storage | null {
   try {
@@ -94,17 +116,17 @@ function hayConsentimiento(): boolean {
 let yaPersistida = false;
 function persistirSiProcede(): void {
   if (yaPersistida || !hayConsentimiento()) return;
-  if (tieneParametros || !leer()) guardar(capturaActual);
+  if (esNuevoToque || !leer()) guardar(capturaActual);
   yaPersistida = true;
 }
 
 /**
  * Datos que se envían con el formulario, con la misma regla que la persistencia:
- * si esta visita trae parámetros, manda la visita; si no, el registro guardado (o, sin registro,
- * la visita en curso).
+ * si esta visita es un nuevo toque, manda la visita; si es directa, el registro guardado
+ * (o, sin registro, la visita en curso).
  */
 export function atribucionParaFormulario(): Atribucion {
-  if (tieneParametros) return capturaActual;
+  if (esNuevoToque) return capturaActual;
   return leer() ?? capturaActual;
 }
 

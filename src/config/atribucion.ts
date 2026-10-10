@@ -19,10 +19,10 @@ export const CAMPO_SUBMISSION_URL = 'submission_url';
 
 /**
  * Persistencia en localStorage. Reglas (src/scripts/atribucion.ts):
- * - Visita con UTM o click IDs → reemplaza el registro (nuevos touch_ts, landing_page,
- *   referrer y parámetros) y renueva la caducidad de 90 días.
- * - Visita sin parámetros (directa, orgánica o referida) → no modifica un registro vigente;
- *   si no hay registro, se guarda.
+ * - Visita con UTM, click IDs o referrer externo → reemplaza el registro (nuevos touch_ts,
+ *   landing_page, referrer y parámetros) y renueva la caducidad de 90 días.
+ * - Visita directa (sin parámetros y sin referrer externo) → no modifica un registro vigente;
+ *   si no hay registro, se guarda. El referrer del propio dominio cuenta como directo.
  * - El registro no se borra tras enviar el formulario; solo caduca o se borra si se retira
  *   el consentimiento.
  */
