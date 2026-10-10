@@ -35,6 +35,7 @@ npm run build          # astro check + build en .vercel/output
 | --- | --- | --- |
 | `TURNSTILE_SECRET_KEY` | Secret, obligatoria | Clave secreta de Turnstile, solo en servidor |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Opcional | Site key pública. Si falta, se usa la del código (`src/config/zoho.ts`) |
+| `RESEND_API_KEY` | Secret, obligatoria (Production y Preview) | Clave de Resend para el correo de confirmación del formulario, solo en servidor. El dominio `somospedazo.com` tiene que estar verificado en Resend. |
 
 En el build, Astro inserta `TURNSTILE_SECRET_KEY` en el código de la función de servidor (nunca en el del navegador). Si cambias la clave en Vercel, vuelve a desplegar.
 
@@ -123,15 +124,22 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 2. Verifica el token con Cloudflare **en cada envío** (`siteverify`, con la clave secreta y la IP de `x-forwarded-for`). Responde 400 (`captcha`), sin enviar nada a Zoho, si:
    - falta el token o tiene más de 2048 caracteres;
    - Cloudflare devuelve `success` distinto de `true`;
-   - el `hostname` de la respuesta no es `somospedazo.com` (`HOSTNAMES_TURNSTILE` en `src/config/zoho.ts`). Fuera de producción se admiten además `localhost` y, con claves de test, `example.com`.
+   - el `hostname` de la respuesta no es `somospedazo.com` (`HOSTNAMES_TURNSTILE` en `src/config/zoho.ts`). Fuera de producción se admiten además el dominio del propio despliegue de Vercel (Preview), `localhost` y, con claves de test, `example.com`.
 
    El resultado (`success`, `hostname`, `challenge_ts` y `action`) va a `captcha_verification`. Cada rechazo deja su motivo en los logs de Vercel (`[contact] Turnstile rechazado: …`).
    - **Claves de test prohibidas en producción.** Si `VERCEL_ENV=production` y la clave secreta es de test (`1x/2x/3x000…`), el endpoint responde 500 y no acepta envíos. Además, el build de producción falla si `TURNSTILE_SECRET_KEY` o la site key son de test.
 3. Valida los campos obligatorios, el formato del correo, la longitud de cada campo y la casilla de privacidad. Si algo falla, responde 400 con la lista de campos.
 4. Calcula el Lead Source y compone el Description.
-5. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
+5. **Límite por IP:** 3 envíos cada 10 minutos. Si se supera, responde `429` (`limite`, con `Retry-After`) sin crear lead ni enviar correo. El contador está en memoria de la función: es por instancia de Vercel y se reinicia al reciclarse (`src/server/limite.ts`).
+6. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
+7. **Correo de confirmación con Resend** (`src/server/resend.ts`), solo si Zoho ha aceptado el lead:
+   - Se envía **siempre**, marque o no la newsletter: es transaccional, no comercial. No depende de `newsletter_consent` ni de Email Opt Out.
+   - Remitente `Somos Pedazo <hola@somospedazo.com>`, Reply-To `hola@somospedazo.com` y asunto «Hemos recibido tu mensaje - Somos Pedazo».
+   - HTML a partir de la plantilla `src/server/email/confirmacion.html`, más una versión en texto plano. Lo único variable es el nombre, escapado como HTML. El mensaje y el resto de lo que escribe el usuario **no** se incluyen, para que el formulario no sirva para mandar contenido a terceros.
+   - Si Resend falla o falta `RESEND_API_KEY`, se registra en los logs y se responde éxito igualmente, porque el lead ya está guardado. Un único intento, sin reintentos.
+   - Sustituye al autoresponder de Zoho, que no se envía con Email Opt Out marcado. **Desactiva el autoresponder en Zoho** para no mandar dos correos.
 
-Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captcha`, `validacion`, `zoho` o `servidor`.
+Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captcha`, `validacion`, `limite`, `zoho` o `servidor`.
 
 **Archivos de configuración**
 - `src/config/zoho.ts`: nombres de campo, longitudes, honeypot y site key. Se comparte entre navegador y servidor.
