@@ -127,7 +127,10 @@ export const POST: APIRoute = async (contexto) => {
   let captcha: RespuestaSiteverify;
   try {
     const verificacion = await verificarTurnstile(typeof token === 'string' ? token : '', ipCliente(contexto));
-    if (!verificacion.ok) return json(400, { ok: false, error: 'captcha' });
+    if (!verificacion.ok) {
+      console.warn('[contact] Turnstile rechazado:', verificacion.codigos.join(', '));
+      return json(400, { ok: false, error: 'captcha' });
+    }
     captcha = verificacion.datos;
   } catch (e) {
     console.error('[contact] Error verificando Turnstile:', e instanceof Error ? e.message : e);

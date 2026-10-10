@@ -6,6 +6,18 @@ import vercel from '@astrojs/vercel';
 // Dominio de producción. Mantener sincronizado con SITE.url en src/config/site.ts.
 const SITE_URL = 'https://somospedazo.com';
 
+// Seguridad: el build de PRODUCCIÓN de Vercel falla si alguna clave de Turnstile es de test
+// (aprueban cualquier token y devuelven hostname example.com). Mismo patrón que
+// esClaveTestTurnstile() en src/config/zoho.ts. El servidor lo comprueba también en cada envío.
+if (process.env.VERCEL_ENV === 'production') {
+  for (const variable of ['TURNSTILE_SECRET_KEY', 'PUBLIC_TURNSTILE_SITE_KEY']) {
+    const valor = process.env[variable];
+    if (valor && /^[123]x0{20,}[A-Z]{2}$/.test(valor)) {
+      throw new Error(`${variable} es una clave de test de Cloudflare Turnstile: no se admite en producción.`);
+    }
+  }
+}
+
 // Páginas que no deben indexarse (también llevan <meta name="robots" content="noindex">).
 const NOINDEX = ['/404'];
 
