@@ -120,7 +120,13 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 
 **Servidor (`src/pages/api/contact.ts`)**
 1. Si el honeypot `aG9uZXlwb3Q` llega relleno, responde 200 y no envía nada.
-2. Verifica el token con Cloudflare (`siteverify`, con la IP de `x-forwarded-for`). Si falla, responde 400. El resultado (`success`, `hostname`, `challenge_ts` y `action`) va a `captcha_verification`.
+2. Verifica el token con Cloudflare **en cada envío** (`siteverify`, con la clave secreta y la IP de `x-forwarded-for`). Responde 400 (`captcha`), sin enviar nada a Zoho, si:
+   - falta el token o tiene más de 2048 caracteres;
+   - Cloudflare devuelve `success` distinto de `true`;
+   - el `hostname` de la respuesta no es `somospedazo.com` (`HOSTNAMES_TURNSTILE` en `src/config/zoho.ts`). Fuera de producción se admiten además `localhost` y, con claves de test, `example.com`.
+
+   El resultado (`success`, `hostname`, `challenge_ts` y `action`) va a `captcha_verification`. Cada rechazo deja su motivo en los logs de Vercel (`[contact] Turnstile rechazado: …`).
+   - **Claves de test prohibidas en producción.** Si `VERCEL_ENV=production` y la clave secreta es de test (`1x/2x/3x000…`), el endpoint responde 500 y no acepta envíos. Además, el build de producción falla si `TURNSTILE_SECRET_KEY` o la site key son de test.
 3. Valida los campos obligatorios, el formato del correo, la longitud de cada campo y la casilla de privacidad. Si algo falla, responde 400 con la lista de campos.
 4. Calcula el Lead Source y compone el Description.
 5. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
@@ -132,7 +138,7 @@ Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captch
 - `src/server/`: campos ocultos de Zoho y verificación de Turnstile. Solo los usa el servidor.
 
 **Pruebas en local**
-- `.env` usa las claves de prueba de Cloudflare, que siempre aprueban la verificación.
+- `.env` usa las claves de prueba de Cloudflare, que siempre aprueban la verificación y devuelven `hostname=example.com`. Solo funcionan fuera de producción: en Vercel, producción tiene que tener las claves reales.
 - Con `TURNSTILE_SECRET_KEY=2x0000000000000000000000000000000AA` puedes probar el rechazo del captcha.
 - Para no crear leads reales en Zoho, apunta `ZOHO_WEB_TO_LEAD_URL` a un servidor local.
 

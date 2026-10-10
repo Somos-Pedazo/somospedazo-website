@@ -14,7 +14,12 @@
  *   (src/scripts/atribucion.ts). El servidor los valida y compone Description y Lead Source.
  */
 import { SITE } from '../../config/site';
-import { CAMPOS, CAMPO_NEWSLETTER, CAMPO_PRIVACIDAD, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
+import { CAMPOS, CAMPO_NEWSLETTER, CAMPO_PRIVACIDAD, HONEYPOT, TURNSTILE_SITE_KEY, esClaveTestTurnstile } from '../../config/zoho';
+
+// El build de producción no puede publicar el widget con una site key de test.
+if (process.env.VERCEL_ENV === 'production' && esClaveTestTurnstile(TURNSTILE_SITE_KEY)) {
+  throw new Error('La site key de Turnstile es de test: no se admite en producción.');
+}
 import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion';
 ---
 

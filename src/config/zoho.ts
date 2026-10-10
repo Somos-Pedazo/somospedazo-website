@@ -54,3 +54,18 @@ export const EMAIL_RE = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[a-z]{2,}$/i;
 
 /** Site key de Turnstile (pública). La variable de entorno tiene prioridad. */
 export const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAFScGVcpAqXY-59a';
+
+/**
+ * Hostnames válidos en la respuesta de siteverify en producción: el dominio donde se pinta el
+ * widget (www.somospedazo.com redirige a somospedazo.com, así que nunca aparece).
+ */
+export const HOSTNAMES_TURNSTILE = ['somospedazo.com'] as const;
+
+/**
+ * Claves de test de Cloudflare (site keys 1x/2x/3x00000000000000000000AA… y secretos
+ * 1x/2x/3x0000000000000000000000000000000AA): aprueban o rechazan siempre, sin desafío real,
+ * y devuelven hostname «example.com». Nunca deben usarse en producción.
+ */
+export function esClaveTestTurnstile(clave: string): boolean {
+  return /^[123]x0{20,}[A-Z]{2}$/.test(clave);
+}
