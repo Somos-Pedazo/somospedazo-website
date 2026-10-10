@@ -17,13 +17,17 @@ export const CAMPOS = {
 export const HONEYPOT = 'aG9uZXlwb3Q';
 
 /**
- * Casilla de newsletter (opcional). No es un campo de Zoho: el servidor registra su valor,
- * con fecha y hora, al final de «Description» del lead como prueba del consentimiento.
- * Si se crea un campo propio en Zoho, pon aquí su nombre de API en ZOHO_CAMPO_NEWSLETTER
- * y el servidor lo enviará también en ese campo.
+ * Casillas de consentimiento. No son campos de Zoho: el servidor registra su valor, con fecha
+ * y hora ISO 8601, en la línea técnica de «Description» (privacy_consent / newsletter_consent).
  */
+export const CAMPO_PRIVACIDAD = 'privacidad';
 export const CAMPO_NEWSLETTER = 'newsletter';
-export const ZOHO_CAMPO_NEWSLETTER: string | null = null;
+
+/**
+ * Campo estándar «Lead Source» de Zoho (lista desplegable). Sus valores tienen que existir en
+ * la lista de Zoho (Configuración → Módulos → Leads → Lead Source); si no, Zoho puede ignorarlos.
+ */
+export const CAMPO_LEAD_SOURCE = 'Lead Source';
 
 /** Campo en el que Turnstile deja su token. */
 export const CAMPO_TURNSTILE = 'cf-turnstile-response';
