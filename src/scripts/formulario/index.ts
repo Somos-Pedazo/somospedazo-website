@@ -7,6 +7,8 @@ import { CAMPO_TURNSTILE } from '../../config/zoho';
 import { enviarLead, type MotivoError } from './envio';
 import { iniciarTurnstile } from './turnstile';
 import { mostrarError, validar, type Control } from './validacion';
+import { atribucionParaFormulario } from '../atribucion';
+import { CAMPO_SUBMISSION_URL } from '../../config/atribucion';
 
 const MENSAJES_ERROR: Record<MotivoError, string> = {
   captcha: 'No hemos podido comprobar que eres una persona. Completa de nuevo la verificación y vuelve a enviar.',
@@ -22,6 +24,18 @@ const AYUDA_CAPTCHA = {
   caducado: 'La verificación de seguridad ha caducado. Complétala de nuevo para activar el botón.',
   error: 'No se ha podido cargar la verificación de seguridad. Recarga la página e inténtalo de nuevo.',
 };
+
+/**
+ * Rellena los campos ocultos de atribución justo antes de enviar: el registro persistido de la
+ * primera visita (o, si no hay, la visita en curso) y la URL desde la que se envía.
+ * El servidor revalida estos datos y calcula Lead Source y Description.
+ */
+function rellenarAtribucion(form: HTMLFormElement): void {
+  const valores: Record<string, string> = { ...atribucionParaFormulario(), [CAMPO_SUBMISSION_URL]: location.href };
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[data-atribucion]')) {
+    input.value = valores[input.name] ?? '';
+  }
+}
 
 function iniciar(form: HTMLFormElement): void {
   const controles = [...form.querySelectorAll<Control>('[data-etiqueta]')];
@@ -99,6 +113,7 @@ function iniciar(form: HTMLFormElement): void {
     actualizarBoton();
     anunciar('Enviando…');
 
+    rellenarAtribucion(form);
     const resultado = await enviarLead(form.action, new FormData(form));
 
     enviando = false;
