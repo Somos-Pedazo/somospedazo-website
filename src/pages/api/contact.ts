@@ -5,9 +5,10 @@
  *
  * A Zoho llegan: los campos visibles, «Lead Source» (calculado aquí) y «Description»
  * compuesto aquí: línea técnica de atribución y consentimientos + línea en blanco + mensaje.
+ * Con el lead aceptado, se envía el correo de confirmación con Resend (src/server/resend.ts).
  *
  * Respuestas: 200 { ok: true } · 4xx/5xx { ok: false, error }
- *   error: 'captcha' | 'validacion' | 'zoho' | 'servidor'
+ *   error: 'captcha' | 'validacion' | 'limite' (429) | 'zoho' | 'servidor'
  */
 import type { APIContext, APIRoute } from 'astro';
 import {
@@ -25,15 +26,21 @@ import { CAMPO_SUBMISSION_URL } from '../../config/atribucion';
 import { calcularLeadSource, componerDescription, leerAtribucion, limpiarUrl, resumenCaptcha } from '../../utils/atribucion';
 import { verificarTurnstile, type RespuestaSiteverify } from '../../server/turnstile';
 import { enviarAZoho } from '../../server/zoho';
+import { enviarConfirmacion } from '../../server/resend';
+import { registrarEnvio } from '../../server/limite';
 
 export const prerender = false;
 
-type CodigoError = 'captcha' | 'validacion' | 'zoho' | 'servidor';
+type CodigoError = 'captcha' | 'validacion' | 'limite' | 'zoho' | 'servidor';
 
-const json = (estado: number, cuerpo: { ok: true } | { ok: false; error: CodigoError; campos?: string[] }) =>
+const json = (
+  estado: number,
+  cuerpo: { ok: true } | { ok: false; error: CodigoError; campos?: string[] },
+  cabeceras: Record<string, string> = {},
+) =>
   new Response(JSON.stringify(cuerpo), {
     status: estado,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...cabeceras },
   });
 
 /** Primera IP de x-forwarded-for (la del visitante en Vercel); si falta, la que da el adaptador. */
@@ -141,11 +148,18 @@ export const POST: APIRoute = async (contexto) => {
   const validacion = validar(form);
   if (!validacion.ok) return json(400, { ok: false, error: 'validacion', campos: validacion.campos });
 
-  // 3. Atribución y consentimientos → Lead Source + Description (se compone aquí, nunca en el cliente).
+  // 3. Límite por IP (3 envíos cada 10 minutos): frena el uso del formulario para mandar correos.
+  const limite = registrarEnvio(ipCliente(contexto) ?? 'desconocida');
+  if (!limite.permitido) {
+    console.warn(`[contact] Límite de envíos superado; reintentar en ${limite.reintentarEn} s`);
+    return json(429, { ok: false, error: 'limite' }, { 'Retry-After': String(limite.reintentarEn) });
+  }
+
+  // 4. Atribución y consentimientos → Lead Source + Description (se compone aquí, nunca en el cliente).
   const mensaje = validacion.datos[CAMPOS.mensaje.name] ?? '';
   const datos = { ...validacion.datos, ...datosDeAtribucion(request, form, captcha, mensaje) };
 
-  // 4. Reenvío a Zoho.
+  // 5. Reenvío a Zoho.
   try {
     const zoho = await enviarAZoho(datos);
     if (!zoho.ok) {
@@ -156,6 +170,12 @@ export const POST: APIRoute = async (contexto) => {
     console.error('[contact] Error enviando a Zoho:', e instanceof Error ? e.message : e);
     return json(502, { ok: false, error: 'zoho' });
   }
+
+  // 6. Correo de confirmación (transaccional): siempre, marque o no la newsletter.
+  //    Solo aquí, con Turnstile validado y el lead aceptado por Zoho. Si falla, queda en los logs
+  //    y se responde éxito igualmente: el lead ya está guardado. Sin reintentos.
+  const correo = await enviarConfirmacion(validacion.datos[CAMPOS.email.name]!, validacion.datos[CAMPOS.nombre.name]!);
+  if (!correo.ok) console.error(`[contact] Lead guardado, pero el correo de confirmación no se envió (${correo.motivo})`);
 
   return json(200, { ok: true });
 };

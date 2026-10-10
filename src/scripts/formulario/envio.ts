@@ -2,11 +2,11 @@
  * Envío del formulario al endpoint propio (/api/contact), que valida el captcha
  * y reenvía el lead a Zoho desde el servidor. Aquí solo se traduce su respuesta.
  */
-export type MotivoError = 'captcha' | 'validacion' | 'zoho' | 'servidor' | 'red' | 'timeout';
+export type MotivoError = 'captcha' | 'validacion' | 'limite' | 'zoho' | 'servidor' | 'red' | 'timeout';
 export type Resultado = { ok: true } | { ok: false; motivo: MotivoError; campos?: string[] };
 
 const TIMEOUT_MS = 20000;
-const CONOCIDOS: MotivoError[] = ['captcha', 'validacion', 'zoho', 'servidor'];
+const CONOCIDOS: MotivoError[] = ['captcha', 'validacion', 'limite', 'zoho', 'servidor'];
 
 export async function enviarLead(endpoint: string, datos: FormData): Promise<Resultado> {
   const cuerpo = new URLSearchParams();

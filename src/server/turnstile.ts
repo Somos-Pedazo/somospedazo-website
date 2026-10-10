@@ -41,12 +41,14 @@ function claveSecreta(): string | undefined {
 /**
  * Hostnames aceptados en la respuesta de Cloudflare.
  * - Producción: solo somospedazo.com.
- * - Fuera de producción (local y previews) se admite además el de las claves de test
- *   (example.com) y localhost, para poder desarrollar y probar.
+ * - Fuera de producción se admiten además, para poder desarrollar y probar:
+ *   el dominio del propio despliegue de Vercel (Preview: VERCEL_URL y VERCEL_BRANCH_URL),
+ *   localhost y, solo con claves de test, example.com.
  */
 function hostnamesPermitidos(secret: string): readonly string[] {
   if (esProduccion()) return HOSTNAMES_TURNSTILE;
-  return [...HOSTNAMES_TURNSTILE, 'localhost', ...(esClaveTestTurnstile(secret) ? ['example.com'] : [])];
+  const despliegue = [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL].filter((h): h is string => !!h).map((h) => h.toLowerCase());
+  return [...HOSTNAMES_TURNSTILE, ...despliegue, 'localhost', ...(esClaveTestTurnstile(secret) ? ['example.com'] : [])];
 }
 
 export async function verificarTurnstile(token: string, ip: string | undefined): Promise<Verificacion> {
