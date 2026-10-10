@@ -30,6 +30,14 @@ export const CAMPO_NEWSLETTER = 'newsletter';
  */
 export const CAMPO_LEAD_SOURCE = 'Lead Source';
 
+/**
+ * Campo estándar «Email Opt Out» de Zoho (casilla). Lógica inversa a la newsletter:
+ * sin newsletter → «true» (no enviar comunicaciones comerciales); con newsletter → no se envía
+ * (casilla sin marcar, como hace un formulario HTML).
+ * En Description, newsletter_consent refleja lo que marcó la persona, sin invertir.
+ */
+export const CAMPO_EMAIL_OPT_OUT = 'Email Opt Out';
+
 /** Campo en el que Turnstile deja su token. */
 export const CAMPO_TURNSTILE = 'cf-turnstile-response';
 

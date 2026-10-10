@@ -12,6 +12,7 @@
 import type { APIContext, APIRoute } from 'astro';
 import {
   CAMPOS,
+  CAMPO_EMAIL_OPT_OUT,
   CAMPO_LEAD_SOURCE,
   CAMPO_NEWSLETTER,
   CAMPO_PRIVACIDAD,
@@ -98,7 +99,13 @@ function datosDeAtribucion(request: Request, form: FormData, captcha: RespuestaS
     mensaje,
   );
 
-  return { [CAMPO_LEAD_SOURCE]: leadSource, [CAMPOS.mensaje.name]: description };
+  return {
+    // Mismo valor que lead_source= de Description: siempre uno de la lista de Zoho.
+    [CAMPO_LEAD_SOURCE]: leadSource,
+    // Inverso a la newsletter: sin newsletter → «true»; con newsletter, la casilla no se envía.
+    ...(newsletter ? {} : { [CAMPO_EMAIL_OPT_OUT]: 'true' }),
+    [CAMPOS.mensaje.name]: description,
+  };
 }
 
 export const POST: APIRoute = async (contexto) => {

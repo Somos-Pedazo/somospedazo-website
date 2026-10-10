@@ -108,6 +108,11 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
   5. Sin referrer externo, o referrer del propio dominio → `Direct`.
   - `Manual creation` nunca se envía: está reservado a los leads creados a mano en Zoho.
   - Si cambia la lista en Zoho, actualiza `LEAD_SOURCE_ZOHO`. TypeScript impide devolver un valor que no esté en ella.
+- **Email Opt Out** (casilla estándar de Zoho). Funciona al revés que la newsletter:
+  - Sin newsletter → `Email Opt Out=true`.
+  - Con newsletter → no se envía (casilla sin marcar).
+  - En Description, `newsletter_consent` refleja lo que marcó la persona, sin invertir.
+- **Formulario web de Zoho:** Web-to-Lead solo guarda los campos incluidos en el formulario web configurado en Zoho. «Lead Source» y «Email Opt Out» tienen que estar en él, y sin valor fijo por defecto; si no, Zoho ignora o sustituye lo que envía la web.
 - **Description**, en dos partes separadas por una línea en blanco:
   - **Parte 1:** una línea técnica con 18 claves en orden fijo, siempre presentes, separadas por ` | `: `submission_url | landing_page | referrer | touch_ts | lead_source | utm_* | click IDs | privacy_consent | newsletter_consent | captcha_verification`.
   - **Parte 2:** `form_message=` y, en la línea siguiente, el mensaje.
