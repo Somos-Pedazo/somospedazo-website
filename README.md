@@ -85,16 +85,19 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 - **Primera capa informativa:** el texto facilitado por Somos Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
 
 **Atribución de marketing** (Zoho Free: sin campos personalizados)
-- **Captura** (`src/scripts/atribucion.ts`, en todas las páginas): en el primer aterrizaje lee de la URL los UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) y los click IDs (`gclid`, `fbclid`, `li_fat_id`, `ttclid`, `msclkid`), y guarda también `landing_page`, `referrer` y `first_seen`.
-- **Persistencia:**
-  - Se guarda en `localStorage` (`sp_atribucion`) durante **90 días**.
-  - Un registro vigente nunca se sobrescribe: la primera atribución manda.
+- **Captura** (`src/scripts/atribucion.ts`, en todas las páginas): en cada visita lee de la URL los UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) y los click IDs (`gclid`, `fbclid`, `li_fat_id`, `ttclid`, `msclkid`), junto con `landing_page`, `referrer` y `touch_ts` (fecha y hora ISO 8601 del toque).
+- **Persistencia** en `localStorage` (`sp_atribucion`), 90 días desde el último toque guardado:
+  - Una visita **con UTM, click IDs o referrer externo** reemplaza el registro (nuevos `touch_ts`, `landing_page`, `referrer` y parámetros) y renueva los 90 días.
+  - Una visita **directa** (sin parámetros y sin referrer externo) no modifica un registro vigente. Si no hay registro, se guarda.
+  - El referrer del **propio dominio** (incluidos `www` y subdominios) cuenta como directo: la navegación interna, por ejemplo de Inicio a Contacto, no falsea el origen.
+  - El registro **no se borra** al enviar el formulario.
   - **Requiere consentimiento de Marketing en Cookiebot** (`PERSISTENCIA.requiereConsentimiento` en `src/config/atribucion.ts`). Si se retira el consentimiento, el registro se borra.
-  - Sin consentimiento no se guarda nada, pero el formulario envía la atribución de la visita en curso.
+  - Sin consentimiento no se guarda nada, pero el formulario envía con la misma regla: la visita en curso si es un nuevo toque y, si es directa, el registro guardado o la visita en curso.
+  - Los registros antiguos con `first_seen` se migran automáticamente a `touch_ts`.
   - Clasifica la clave `sp_atribucion` como «Marketing» en el panel de Cookiebot.
 - **Envío:** el formulario manda esos datos y `submission_url` en campos ocultos. El servidor los vuelve a validar (`src/utils/atribucion.ts`):
   - solo se aceptan URLs http(s);
-  - `first_seen` tiene que ser una fecha ISO válida dentro de los 90 días;
+  - `touch_ts` tiene que ser una fecha ISO válida dentro de los 90 días;
   - se eliminan pipes y saltos de línea;
   - `submission_url` sale del `Referer` del propio sitio.
 - **Lead Source** (campo estándar de Zoho), calculado en el servidor con este orden:
@@ -104,7 +107,7 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
   4. Sin referrer: Directo.
   - Los valores tienen que existir en la lista desplegable «Lead Source» de Zoho.
 - **Description**, en dos partes separadas por una línea en blanco:
-  - **Parte 1:** una línea técnica con 18 claves en orden fijo, siempre presentes, separadas por ` | `: `submission_url | landing_page | referrer | first_seen | lead_source | utm_* | click IDs | privacy_consent | newsletter_consent | captcha_verification`.
+  - **Parte 1:** una línea técnica con 18 claves en orden fijo, siempre presentes, separadas por ` | `: `submission_url | landing_page | referrer | touch_ts | lead_source | utm_* | click IDs | privacy_consent | newsletter_consent | captcha_verification`.
   - **Parte 2:** `form_message=` y, en la línea siguiente, el mensaje.
 
 **Servidor (`src/pages/api/contact.ts`)**

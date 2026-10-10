@@ -56,7 +56,7 @@ export function leerAtribucion(form: FormData, ahora = new Date()): Atribucion {
     datos[campo] =
       campo === 'landing_page' || campo === 'referrer'
         ? limpiarUrl(bruto)
-        : campo === 'first_seen'
+        : campo === 'touch_ts'
           ? limpiarFecha(bruto, ahora)
           : limpiarValor(bruto);
   }
