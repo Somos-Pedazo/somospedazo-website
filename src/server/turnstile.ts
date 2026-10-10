@@ -4,7 +4,16 @@
  */
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
-export type Verificacion = { ok: true } | { ok: false; codigos: string[] };
+/** Respuesta de siteverify (campos que usamos). */
+export type RespuestaSiteverify = {
+  success?: boolean;
+  hostname?: string;
+  challenge_ts?: string;
+  action?: string;
+  'error-codes'?: string[];
+};
+
+export type Verificacion = { ok: true; datos: RespuestaSiteverify } | { ok: false; codigos: string[] };
 
 /**
  * Clave secreta. En el build, Astro sustituye import.meta.env por su valor;
@@ -25,6 +34,6 @@ export async function verificarTurnstile(token: string, ip: string | undefined):
   const res = await fetch(SITEVERIFY, { method: 'POST', body: cuerpo, signal: AbortSignal.timeout(10_000) });
   if (!res.ok) return { ok: false, codigos: [`http-${res.status}`] };
 
-  const datos = (await res.json()) as { success?: boolean; 'error-codes'?: string[] };
-  return datos.success === true ? { ok: true } : { ok: false, codigos: datos['error-codes'] ?? [] };
+  const datos = (await res.json()) as RespuestaSiteverify;
+  return datos.success === true ? { ok: true, datos } : { ok: false, codigos: datos['error-codes'] ?? [] };
 }

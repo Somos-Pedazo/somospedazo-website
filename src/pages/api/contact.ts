@@ -3,12 +3,25 @@
  * (Cloudflare Turnstile) y los campos, y reenvía el lead a Zoho CRM.
  * Única ruta del sitio que se ejecuta en servidor (función de Vercel).
  *
+ * A Zoho llegan: los campos visibles, «Lead Source» (calculado aquí) y «Description»
+ * compuesto aquí: línea técnica de atribución y consentimientos + línea en blanco + mensaje.
+ *
  * Respuestas: 200 { ok: true } · 4xx/5xx { ok: false, error }
  *   error: 'captcha' | 'validacion' | 'zoho' | 'servidor'
  */
 import type { APIContext, APIRoute } from 'astro';
-import { CAMPOS, CAMPO_NEWSLETTER, CAMPO_TURNSTILE, EMAIL_RE, HONEYPOT, ZOHO_CAMPO_NEWSLETTER } from '../../config/zoho';
-import { verificarTurnstile } from '../../server/turnstile';
+import {
+  CAMPOS,
+  CAMPO_LEAD_SOURCE,
+  CAMPO_NEWSLETTER,
+  CAMPO_PRIVACIDAD,
+  CAMPO_TURNSTILE,
+  EMAIL_RE,
+  HONEYPOT,
+} from '../../config/zoho';
+import { CAMPO_SUBMISSION_URL } from '../../config/atribucion';
+import { calcularLeadSource, componerDescription, leerAtribucion, limpiarUrl, resumenCaptcha } from '../../utils/atribucion';
+import { verificarTurnstile, type RespuestaSiteverify } from '../../server/turnstile';
 import { enviarAZoho } from '../../server/zoho';
 
 export const prerender = false;
@@ -47,22 +60,45 @@ function validar(form: FormData): { ok: true; datos: Record<string, string> } | 
   const email = datos[CAMPOS.email.name];
   if (email && !EMAIL_RE.test(email)) invalidos.push(CAMPOS.email.name);
 
+  // La casilla de privacidad es obligatoria también en el servidor.
+  if (form.get(CAMPO_PRIVACIDAD) !== 'si') invalidos.push(CAMPO_PRIVACIDAD);
+
   return invalidos.length ? { ok: false, campos: invalidos } : { ok: true, datos };
 }
 
 /**
- * Prueba del consentimiento de newsletter: valor de la casilla + fecha y hora (UTC y hora de Madrid),
- * añadido al final de «Description». Si hay campo propio en Zoho (ZOHO_CAMPO_NEWSLETTER), también se envía ahí.
+ * URL desde la que se envía: la cabecera Referer que pone el navegador (misma web) y, si falta,
+ * el campo oculto del formulario. En ambos casos solo se acepta una URL del propio sitio.
  */
-function registroNewsletter(acepta: boolean, datos: Record<string, string>): Record<string, string> {
-  const ahora = new Date();
-  const madrid = ahora.toLocaleString('es-ES', { timeZone: 'Europe/Madrid', dateStyle: 'short', timeStyle: 'medium' });
-  const linea = `Newsletter y comunicaciones comerciales: ${acepta ? 'SÍ acepta' : 'NO acepta'} (${madrid} hora de Madrid · ${ahora.toISOString()})`;
-  const descripcion = CAMPOS.mensaje.name;
-  return {
-    [descripcion]: `${datos[descripcion] ?? ''}\n\n---\n${linea}`,
-    ...(ZOHO_CAMPO_NEWSLETTER ? { [ZOHO_CAMPO_NEWSLETTER]: acepta ? 'true' : 'false' } : {}),
-  };
+function urlDeEnvio(request: Request, form: FormData): string {
+  const propio = new URL(request.url).host;
+  for (const candidata of [request.headers.get('referer'), form.get(CAMPO_SUBMISSION_URL)]) {
+    const url = limpiarUrl(candidata);
+    if (url && new URL(url).host === propio) return url;
+  }
+  return '';
+}
+
+/** Lead Source y Description para Zoho a partir de los datos ya validados. */
+function datosDeAtribucion(request: Request, form: FormData, captcha: RespuestaSiteverify, mensaje: string): Record<string, string> {
+  const ahora = new Date().toISOString();
+  const atribucion = leerAtribucion(form);
+  const leadSource = calcularLeadSource(atribucion, new URL(request.url).hostname);
+  const newsletter = form.get(CAMPO_NEWSLETTER) === 'si';
+
+  const description = componerDescription(
+    {
+      submission_url: urlDeEnvio(request, form),
+      ...atribucion,
+      lead_source: leadSource,
+      privacy_consent: `sí ${ahora}`,
+      newsletter_consent: newsletter ? `sí ${ahora}` : 'no',
+      captcha_verification: resumenCaptcha(captcha),
+    },
+    mensaje,
+  );
+
+  return { [CAMPO_LEAD_SOURCE]: leadSource, [CAMPOS.mensaje.name]: description };
 }
 
 export const POST: APIRoute = async (contexto) => {
@@ -80,9 +116,11 @@ export const POST: APIRoute = async (contexto) => {
 
   // 1. Captcha. Sin verificación correcta no se envía nada a Zoho.
   const token = form.get(CAMPO_TURNSTILE);
+  let captcha: RespuestaSiteverify;
   try {
-    const captcha = await verificarTurnstile(typeof token === 'string' ? token : '', ipCliente(contexto));
-    if (!captcha.ok) return json(400, { ok: false, error: 'captcha' });
+    const verificacion = await verificarTurnstile(typeof token === 'string' ? token : '', ipCliente(contexto));
+    if (!verificacion.ok) return json(400, { ok: false, error: 'captcha' });
+    captcha = verificacion.datos;
   } catch (e) {
     console.error('[contact] Error verificando Turnstile:', e instanceof Error ? e.message : e);
     return json(500, { ok: false, error: 'servidor' });
@@ -92,8 +130,9 @@ export const POST: APIRoute = async (contexto) => {
   const validacion = validar(form);
   if (!validacion.ok) return json(400, { ok: false, error: 'validacion', campos: validacion.campos });
 
-  // 3. Consentimiento de newsletter (casilla opcional): se guarda en el lead con fecha y hora.
-  const datos = { ...validacion.datos, ...registroNewsletter(form.get(CAMPO_NEWSLETTER) === 'si', validacion.datos) };
+  // 3. Atribución y consentimientos → Lead Source + Description (se compone aquí, nunca en el cliente).
+  const mensaje = validacion.datos[CAMPOS.mensaje.name] ?? '';
+  const datos = { ...validacion.datos, ...datosDeAtribucion(request, form, captcha, mensaje) };
 
   // 4. Reenvío a Zoho.
   try {

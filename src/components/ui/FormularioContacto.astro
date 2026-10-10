@@ -8,10 +8,14 @@
  *   de la web (src/scripts/formulario/).
  * - El botón está deshabilitado hasta que Turnstile emite un token. Sin JS no hay
  *   captcha, así que el formulario no puede enviarse: se muestra un aviso.
- * - La casilla de privacidad no lleva `name`: es obligatoria, pero no se envía.
+ * - Casillas: privacidad (obligatoria, el servidor la exige) y newsletter (opcional). Su valor
+ *   y la fecha y hora se registran en «Description»; no se envían a Zoho como campos sueltos.
+ * - Atribución: campos ocultos que el controlador rellena justo antes de enviar
+ *   (src/scripts/atribucion.ts). El servidor los valida y compone Description y Lead Source.
  */
 import { SITE } from '../../config/site';
-import { CAMPOS, CAMPO_NEWSLETTER, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
+import { CAMPOS, CAMPO_NEWSLETTER, CAMPO_PRIVACIDAD, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
+import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion';
 ---
 
 <form
@@ -27,6 +31,9 @@ import { CAMPOS, CAMPO_NEWSLETTER, HONEYPOT, TURNSTILE_SITE_KEY } from '../../co
   <noscript>
     <p class="formulario__noscript">Para enviar el formulario necesitas activar JavaScript en tu navegador.</p>
   </noscript>
+
+  <!-- Atribución de marketing: se rellenan al enviar (src/scripts/formulario/index.ts). -->
+  {[CAMPO_SUBMISSION_URL, ...CAMPOS_ATRIBUCION].map((c) => <input type="hidden" name={c} value="" data-atribucion={c} />)}
 
   <p id="formulario-ayuda" class="formulario__ayuda">
     Los campos marcados con <span aria-hidden="true">*</span><span class="sr-only">asterisco</span> son obligatorios.
@@ -120,10 +127,10 @@ import { CAMPOS, CAMPO_NEWSLETTER, HONEYPOT, TURNSTILE_SITE_KEY } from '../../co
     <!-- Honeypot antispam: debe llegar vacío. Oculto para personas y lectores de pantalla. -->
     <input class="campo--trampa" type="text" name={HONEYPOT} value="" tabindex="-1" autocomplete="off" aria-hidden="true" data-honeypot />
 
-    <!-- Casilla 1 · obligatoria, sin premarcar. No lleva `name`: no se envía. -->
+    <!-- Casilla 1 · obligatoria, sin premarcar. El servidor la exige y registra la fecha y hora. -->
     <div class="campo campo--ancho">
       <div class="campo--casilla">
-        <input id="privacidad" data-etiqueta="privacidad" type="checkbox" required aria-describedby="privacidad-error" />
+        <input id="privacidad" name={CAMPO_PRIVACIDAD} value="si" data-etiqueta="privacidad" type="checkbox" required aria-describedby="privacidad-error" />
         <label for="privacidad">
           He leído y acepto la <a href="/privacidad">Política de privacidad</a>. <span aria-hidden="true">*</span>
         </label>

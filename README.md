@@ -77,16 +77,42 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 - **Marcado:** `src/components/ui/FormularioContacto.astro`. **Lógica:** `src/scripts/formulario/` (`validacion.ts`, `turnstile.ts`, `envio.ts` e `index.ts`).
 - **Turnstile:** el script de Cloudflare solo se carga en `/contacto`. El widget se renderiza de forma explícita justo encima del botón, y el botón está deshabilitado hasta tener token. Los tokens son de un solo uso, así que el widget se reinicia tras cada envío. El modo (Managed) se configura en el panel de Cloudflare.
 - **Envío:** valida en cliente con mensajes en castellano, envía por `fetch` y muestra el mensaje de éxito o el error sin salir de la web.
-- **Sin JS:** no hay captcha, así que no se puede enviar el formulario; se muestra el correo como alternativa.
-- **Privacidad:** la casilla es obligatoria, pero no se envía (no lleva `name`).
-- **Newsletter:** es una casilla aparte, opcional y sin premarcar, que no condiciona el envío. El servidor añade al final de «Description» del lead una línea «Newsletter y comunicaciones comerciales: SÍ/NO acepta (fecha y hora de Madrid · UTC)» como prueba del consentimiento. Si creas un campo propio en Zoho, pon su nombre de API en `ZOHO_CAMPO_NEWSLETTER` (`src/config/zoho.ts`) y se enviará también ahí.
+- **Sin JS:** no hay captcha, así que no se puede enviar el formulario; se muestra un aviso.
+- **Casillas:**
+  - **Privacidad:** obligatoria, también en el servidor.
+  - **Newsletter:** opcional, sin premarcar y separada de la de privacidad; no condiciona el envío.
+  - El valor de ambas y su fecha y hora quedan registrados en «Description»: `privacy_consent` y `newsletter_consent`.
 - **Primera capa informativa:** el texto facilitado por Somos Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
+
+**Atribución de marketing** (Zoho Free: sin campos personalizados)
+- **Captura** (`src/scripts/atribucion.ts`, en todas las páginas): en el primer aterrizaje lee de la URL los UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) y los click IDs (`gclid`, `fbclid`, `li_fat_id`, `ttclid`, `msclkid`), y guarda también `landing_page`, `referrer` y `first_seen`.
+- **Persistencia:**
+  - Se guarda en `localStorage` (`sp_atribucion`) durante **90 días**.
+  - Un registro vigente nunca se sobrescribe: la primera atribución manda.
+  - **Requiere consentimiento de Marketing en Cookiebot** (`PERSISTENCIA.requiereConsentimiento` en `src/config/atribucion.ts`). Si se retira el consentimiento, el registro se borra.
+  - Sin consentimiento no se guarda nada, pero el formulario envía la atribución de la visita en curso.
+  - Clasifica la clave `sp_atribucion` como «Marketing» en el panel de Cookiebot.
+- **Envío:** el formulario manda esos datos y `submission_url` en campos ocultos. El servidor los vuelve a validar (`src/utils/atribucion.ts`):
+  - solo se aceptan URLs http(s);
+  - `first_seen` tiene que ser una fecha ISO válida dentro de los 90 días;
+  - se eliminan pipes y saltos de línea;
+  - `submission_url` sale del `Referer` del propio sitio.
+- **Lead Source** (campo estándar de Zoho), calculado en el servidor con este orden:
+  1. Click ID: Google Ads, Facebook Ads, Microsoft Ads, TikTok Ads o LinkedIn Ads.
+  2. `utm_source / utm_medium`.
+  3. Referrer: buscador = Orgánico; otro dominio externo = Referido.
+  4. Sin referrer: Directo.
+  - Los valores tienen que existir en la lista desplegable «Lead Source» de Zoho.
+- **Description**, en dos partes separadas por una línea en blanco:
+  - **Parte 1:** una línea técnica con 18 claves en orden fijo, siempre presentes, separadas por ` | `: `submission_url | landing_page | referrer | first_seen | lead_source | utm_* | click IDs | privacy_consent | newsletter_consent | captcha_verification`.
+  - **Parte 2:** `form_message=` y, en la línea siguiente, el mensaje.
 
 **Servidor (`src/pages/api/contact.ts`)**
 1. Si el honeypot `aG9uZXlwb3Q` llega relleno, responde 200 y no envía nada.
-2. Verifica el token con Cloudflare (`siteverify`, con la IP de `x-forwarded-for`). Si falla, responde 400.
-3. Valida los campos obligatorios, el formato del correo y la longitud de cada campo. Si algo falla, responde 400 con la lista de campos.
-4. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
+2. Verifica el token con Cloudflare (`siteverify`, con la IP de `x-forwarded-for`). Si falla, responde 400. El resultado (`success`, `hostname`, `challenge_ts` y `action`) va a `captcha_verification`.
+3. Valida los campos obligatorios, el formato del correo, la longitud de cada campo y la casilla de privacidad. Si algo falla, responde 400 con la lista de campos.
+4. Calcula el Lead Source y compone el Description.
+5. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
 
 Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captcha`, `validacion`, `zoho` o `servidor`.
 
