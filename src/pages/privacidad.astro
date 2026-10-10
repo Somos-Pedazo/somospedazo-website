@@ -5,7 +5,7 @@ import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
 ---
 
-<LegalLayout pagina={PAGINAS.privacidad} actualizado="9 de octubre de 2026">
+<LegalLayout pagina={PAGINAS.privacidad} actualizado="10 de octubre de 2026">
   <p>
     En {SITE.name} tratamos tus datos con el mismo cuidado con el que trabajamos tu negocio. Aquí te explicamos, de forma clara, qué datos
     tratamos, para qué, durante cuánto tiempo y qué derechos tienes, conforme al Reglamento (UE) 2016/679 General de Protección de Datos
@@ -25,6 +25,12 @@ import { SITE } from '../config/site';
       <strong>Datos técnicos de seguridad:</strong> al enviar el formulario se procesan tu dirección IP y datos técnicos de tu navegador para
       comprobar que el envío lo hace una persona y no un programa automático (servicio Cloudflare Turnstile), y para el registro técnico del
       servidor.
+    </li>
+    <li>
+      <strong>Datos de navegación para estadísticas:</strong> al visitar la web, Vercel Web Analytics y Vercel Speed Insights registran la
+      página visitada, la página de procedencia, el tipo de dispositivo, el navegador, el sistema operativo, el país y datos de rendimiento
+      de carga. No usan cookies: distinguen las visitas con un identificador temporal, generado a partir de datos técnicos de la conexión,
+      que no permite identificarte y se renueva cada día. Solo vemos los resultados de forma agregada.
     </li>
     <li>
       <strong>Datos de la relación comercial:</strong> si llegas a ser cliente, los datos necesarios para gestionar la propuesta, el
@@ -58,6 +64,12 @@ import { SITE } from '../config/site';
           <td>Proteger el sitio web y el formulario frente a spam, abuso y ataques.</td>
           <td>Interés legítimo en garantizar la seguridad de nuestros sistemas (art. 6.1.f).</td>
         </tr>
+        <tr>
+          <td>Conocer de forma agregada cómo se usa la web y su rendimiento, para mejorarla.</td>
+          <td>
+            Interés legítimo en analizar y mejorar nuestro sitio web con datos estadísticos que no permiten identificarte (art. 6.1.f).
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -81,6 +93,10 @@ import { SITE } from '../config/site';
       documentación mercantil y 4 años para la tributaria).
     </li>
     <li><strong>Datos técnicos de seguridad:</strong> durante los periodos breves que fijan nuestros proveedores para esa finalidad.</li>
+    <li>
+      <strong>Estadísticas de navegación:</strong> el identificador temporal se renueva cada día. Los datos agregados se conservan durante el
+      periodo de retención que fija Vercel para su servicio.
+    </li>
   </ul>
   <p>
     Cuando ya no sean necesarios, los datos se bloquean durante el tiempo en que puedan exigirse responsabilidades derivadas del
@@ -97,7 +113,10 @@ import { SITE } from '../config/site';
       <strong>Zoho Corporation B.V.</strong> (Países Bajos): CRM en el que guardamos y gestionamos las consultas. Los datos se alojan en su
       centro de datos de la Unión Europea.
     </li>
-    <li><strong>Vercel Inc.</strong> (Estados Unidos): alojamiento del sitio web y del servidor que procesa el formulario.</li>
+    <li>
+      <strong>Vercel Inc.</strong> (Estados Unidos): alojamiento del sitio web y del servidor que procesa el formulario, y estadísticas de
+      visitas y rendimiento (Vercel Web Analytics y Speed Insights).
+    </li>
     <li><strong>Cloudflare, Inc.</strong> (Estados Unidos): verificación antispam del formulario (Cloudflare Turnstile).</li>
   </ul>
   <p>

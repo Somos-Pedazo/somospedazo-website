@@ -4,7 +4,7 @@ import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
 ---
 
-<LegalLayout pagina={PAGINAS.cookies} actualizado="9 de octubre de 2026">
+<LegalLayout pagina={PAGINAS.cookies} actualizado="10 de octubre de 2026">
   <p>
     Esta política explica cómo usa {new URL(SITE.url).host} las cookies y tecnologías similares, conforme al artículo 22.2 de la Ley 34/2002,
     de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), y a la Guía sobre el uso de las cookies de la Agencia
@@ -20,8 +20,8 @@ import { SITE } from '../config/site';
 
   <h2>2. Qué cookies usamos</h2>
   <p>
-    <strong>No usamos cookies de análisis, publicidad, personalización ni redes sociales</strong>, ni propias ni de terceros. No medimos
-    tu navegación ni creamos perfiles.
+    <strong>No usamos cookies de análisis, publicidad, personalización ni redes sociales</strong>, ni propias ni de terceros. No creamos
+    perfiles ni te seguimos entre sitios web.
   </p>
   <p>Solo se usan tecnologías técnicas, estrictamente necesarias para un servicio que tú pides:</p>
   <div class="legal__tabla">
@@ -52,11 +52,20 @@ import { SITE } from '../config/site';
     <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">política de privacidad</a>.
   </p>
 
+  <h3>Estadísticas de uso sin cookies</h3>
+  <p>
+    Para saber de forma agregada cuántas visitas recibe la web, qué páginas se consultan y lo rápido que cargan, usamos
+    <strong>Vercel Web Analytics</strong> y <strong>Vercel Speed Insights</strong> (Vercel Inc.). Según Vercel, estas herramientas no
+    instalan cookies ni guardan identificadores en tu navegador: distinguen las visitas mediante un identificador temporal que no permite
+    identificarte y que se renueva cada día. En la <a href="/privacidad">política de privacidad</a> te explicamos qué datos tratan.
+  </p>
+
   <h2>3. Por qué no te pedimos consentimiento</h2>
   <p>
     Las cookies técnicas estrictamente necesarias para prestar un servicio que el usuario solicita expresamente, como enviar un formulario
-    de forma segura, están exentas del deber de consentimiento según el artículo 22.2 de la LSSI-CE. Como no usamos ninguna otra, no
-    mostramos un aviso de cookies.
+    de forma segura, están exentas del deber de consentimiento según el artículo 22.2 de la LSSI-CE. Las estadísticas de Vercel no
+    almacenan ni leen información en tu navegador, por lo que no les aplica ese deber. Como no usamos nada más, no mostramos un aviso de
+    cookies.
   </p>
   <p>
     Si en el futuro incorporamos cookies que requieran tu consentimiento, como las de análisis, actualizaremos esta política y te lo

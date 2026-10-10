@@ -8,6 +8,7 @@ import SpeedInsights from '@vercel/speed-insights/astro';
 import { SITE } from '../config/site';
 import type { Pagina } from '../data/paginas';
 import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
+// Vercel Web Analytics lo inyecta el adaptador (astro.config.mjs → webAnalytics), no un componente.
 
 interface Props {
   pagina: Pagina;

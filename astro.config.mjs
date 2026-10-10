@@ -15,7 +15,11 @@ export default defineConfig({
   // Todo el sitio se genera estático. Solo las rutas con `export const prerender = false`
   // (src/pages/api/contact.ts) se ejecutan como función de servidor en Vercel.
   output: 'static',
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+  }),
   build: {
     inlineStylesheets: 'always',
   },

@@ -13,6 +13,12 @@ npm run build          # astro check + build en .vercel/output
 
 **Despliegue en Vercel:** importa el repositorio. El adaptador genera la salida para Vercel: quita la barra final de las URL (`/servicios/` → `/servicios`, 308) y cachea `/_astro/*` durante un año. No hace falta `vercel.json`.
 
+**Estadísticas (sin cookies):**
+- **Vercel Web Analytics** lo inyecta el adaptador (`webAnalytics: { enabled: true }` en `astro.config.mjs`). No añadas además el componente `<Analytics />`: contaría las visitas dos veces.
+- **Vercel Speed Insights** es el componente `<SpeedInsights />` de `src/layouts/BaseLayout.astro`.
+- Ambos deben estar activados en el panel de Vercel. Fuera de Vercel (en local), sus scripts devuelven 404, y es normal.
+- Están recogidos en la política de cookies y en la de privacidad. Si cambias de herramienta, actualiza ambas.
+
 **Variables de entorno en Vercel:**
 
 | Variable | Tipo | Uso |
