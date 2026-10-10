@@ -39,8 +39,29 @@ export const PERSISTENCIA = {
   categoriaCookiebot: 'marketing' as 'marketing' | 'statistics' | 'preferences',
 };
 
+/**
+ * Valores de la lista desplegable «Lead Source» de Zoho, calcados (mayúsculas, espacios y
+ * paréntesis). Zoho descarta cualquier valor que no coincida exactamente. «Manual creation»
+ * existe en Zoho pero queda reservado a los leads creados a mano: la web nunca lo envía.
+ */
+export const LEAD_SOURCE_ZOHO = [
+  'Campaign (UTM)',
+  'Direct',
+  'Facebook Ads',
+  'Google Ads',
+  'LinkedIn Ads',
+  'Manual creation',
+  'Microsoft Ads',
+  'Organic',
+  'Referral',
+  'TikTok Ads',
+] as const;
+
+/** Valores que la web puede enviar: todos los de la lista salvo «Manual creation». */
+export type LeadSource = Exclude<(typeof LEAD_SOURCE_ZOHO)[number], 'Manual creation'>;
+
 /** Click ID → valor de Lead Source, en orden de prioridad. */
-export const ORIGEN_POR_CLICK_ID: [(typeof CLICK_IDS)[number], string][] = [
+export const ORIGEN_POR_CLICK_ID: [(typeof CLICK_IDS)[number], LeadSource][] = [
   ['gclid', 'Google Ads'],
   ['fbclid', 'Facebook Ads'],
   ['msclkid', 'Microsoft Ads'],
@@ -48,7 +69,7 @@ export const ORIGEN_POR_CLICK_ID: [(typeof CLICK_IDS)[number], string][] = [
   ['li_fat_id', 'LinkedIn Ads'],
 ];
 
-/** Dominios de buscadores: un referrer de estos cuenta como «Orgánico». */
+/** Dominios de buscadores: un referrer de estos cuenta como «Organic». */
 export const BUSCADORES = [
   'google.',
   'bing.com',

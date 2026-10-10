@@ -9,7 +9,9 @@ import {
   CLAVES_LINEA,
   ORIGEN_POR_CLICK_ID,
   PERSISTENCIA,
+  UTM,
   type Atribucion,
+  type LeadSource,
 } from '../config/atribucion';
 
 const MAX_URL = 2000;
@@ -72,21 +74,24 @@ const host = (url: string) => {
 };
 
 /**
- * Lead Source, por orden de prioridad:
- * click ID → utm_source / utm_medium → referrer (buscador = Orgánico, externo = Referido) → Directo.
+ * Lead Source: siempre uno de los valores de la lista de Zoho (tipo LeadSource), nunca
+ * «Manual creation». Primera regla que se cumpla:
+ *   gclid → Google Ads · fbclid → Facebook Ads · msclkid → Microsoft Ads · ttclid → TikTok Ads ·
+ *   li_fat_id → LinkedIn Ads · cualquier UTM → Campaign (UTM) · referrer de buscador → Organic ·
+ *   otro referrer externo → Referral · sin referrer externo (o del propio dominio) → Direct.
+ * El detalle de la campaña (utm_source, utm_medium…) queda en la línea técnica de Description.
  */
-export function calcularLeadSource(a: Atribucion, hostPropio: string): string {
+export function calcularLeadSource(a: Atribucion, hostPropio: string): LeadSource {
   for (const [id, origen] of ORIGEN_POR_CLICK_ID) if (a[id]) return origen;
 
-  const utm = [a.utm_source, a.utm_medium].filter(Boolean).join(' / ');
-  if (utm) return utm;
+  if (UTM.some((p) => a[p])) return 'Campaign (UTM)';
 
   const ref = host(a.referrer);
   const propio = hostPropio.toLowerCase().replace(/^www\./, '');
-  if (!ref || ref === propio || ref.endsWith(`.${propio}`)) return 'Directo';
+  if (!ref || ref === propio || ref.endsWith(`.${propio}`)) return 'Direct';
   if (BUSCADORES.some((b) => (b.endsWith('.') ? ref.startsWith(b) || ref.includes(`.${b}`) : ref === b || ref.endsWith(`.${b}`))))
-    return 'Orgánico';
-  return 'Referido';
+    return 'Organic';
+  return 'Referral';
 }
 
 /** Resume la respuesta de siteverify de Cloudflare en una cadena corta sin pipes. */

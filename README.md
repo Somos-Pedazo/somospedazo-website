@@ -100,12 +100,14 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
   - `touch_ts` tiene que ser una fecha ISO válida dentro de los 90 días;
   - se eliminan pipes y saltos de línea;
   - `submission_url` sale del `Referer` del propio sitio.
-- **Lead Source** (campo estándar de Zoho), calculado en el servidor con este orden:
-  1. Click ID: Google Ads, Facebook Ads, Microsoft Ads, TikTok Ads o LinkedIn Ads.
-  2. `utm_source / utm_medium`.
-  3. Referrer: buscador = Orgánico; otro dominio externo = Referido.
-  4. Sin referrer: Directo.
-  - Los valores tienen que existir en la lista desplegable «Lead Source» de Zoho.
+- **Lead Source** (campo estándar de Zoho, lista desplegable cerrada). Se calcula en el servidor a partir de la atribución persistida y siempre vale **exactamente** uno de estos valores de la lista (`LEAD_SOURCE_ZOHO` en `src/config/atribucion.ts`). Se aplica la primera regla que se cumpla:
+  1. `gclid` → `Google Ads`; `fbclid` → `Facebook Ads`; `msclkid` → `Microsoft Ads`; `ttclid` → `TikTok Ads`; `li_fat_id` → `LinkedIn Ads`.
+  2. Cualquier UTM → `Campaign (UTM)`. El detalle queda en `utm_source`, `utm_medium`, etc. del Description.
+  3. Referrer de un buscador → `Organic`.
+  4. Otro referrer externo → `Referral`.
+  5. Sin referrer externo, o referrer del propio dominio → `Direct`.
+  - `Manual creation` nunca se envía: está reservado a los leads creados a mano en Zoho.
+  - Si cambia la lista en Zoho, actualiza `LEAD_SOURCE_ZOHO`. TypeScript impide devolver un valor que no esté en ella.
 - **Description**, en dos partes separadas por una línea en blanco:
   - **Parte 1:** una línea técnica con 18 claves en orden fijo, siempre presentes, separadas por ` | `: `submission_url | landing_page | referrer | touch_ts | lead_source | utm_* | click IDs | privacy_consent | newsletter_consent | captcha_verification`.
   - **Parte 2:** `form_message=` y, en la línea siguiente, el mensaje.
