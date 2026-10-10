@@ -1,0 +1,223 @@
+---
+/**
+ * Teléfono con selector de país (bandera + prefijo) para el formulario de contacto.
+ *
+ * - El <select> nativo es la fuente de verdad: lleva el país elegido en el envío y, en cada <option>,
+ *   las reglas de validación (prefijo, patrón nacional, prefijo nacional) y un número de ejemplo.
+ * - En el HTML solo va el país por defecto (España). Los 245 países (/telefono/paises.json) los carga
+ *   el script en segundo plano tras cargar la página o al tocar el campo: así no pesan en la carga inicial.
+ * - Con JS (src/scripts/formulario/telefono.ts) el <select> se oculta y se muestra un desplegable
+ *   accesible con banderas y buscador (patrón combobox + listbox de WAI-ARIA).
+ * - El número se valida con expresiones regulares en el navegador (src/utils/telefono.ts) y otra vez
+ *   en el servidor, que es quien lo compone en E.164 y lo manda a Zoho como «Phone».
+ */
+import { CAMPOS } from '../../config/zoho';
+import { CAMPO_TELEFONO_NUMERO, CAMPO_TELEFONO_PAIS } from '../../config/telefono';
+import { PAIS_FORMULARIO_DEFECTO as defecto, atributosOpcion } from '../../data/paises-telefono';
+---
+
+<div class="campo campo--ancho telefono" data-telefono>
+  <label for="telefono">Teléfono <span class="campo__opcional">(opcional)</span></label>
+
+  <div class="telefono__fila">
+    <div class="telefono__pais" data-telefono-pais>
+      <label for="telefono-pais" class="sr-only">País del teléfono</label>
+      <select
+        id="telefono-pais"
+        class="telefono__select"
+        name={CAMPO_TELEFONO_PAIS}
+        data-telefono-select
+        data-paises="/telefono/paises.json"
+      >
+        <option value={defecto.iso} selected {...atributosOpcion(defecto)}>{defecto.nombre} (+{defecto.prefijo})</option>
+      </select>
+
+      <!-- Desplegable con banderas: lo activa el script; sin JS queda el <select> nativo. -->
+      <button
+        type="button"
+        id="telefono-boton"
+        class="telefono__boton"
+        hidden
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-controls="telefono-panel"
+        aria-label={`+${defecto.prefijo} ${defecto.nombre}: cambiar el país del teléfono`}
+        data-telefono-boton
+      >
+        <img src={`/banderas/${defecto.iso}.svg`} alt="" width="24" height="16" decoding="async" data-telefono-bandera />
+        <span data-telefono-prefijo>+{defecto.prefijo}</span>
+        <svg class="telefono__flecha" viewBox="0 0 12 8" width="12" height="8" aria-hidden="true">
+          <path d="M1 1.5 6 6.5 11 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+
+      <div id="telefono-panel" class="telefono__panel" hidden data-telefono-panel>
+        <input
+          type="text"
+          class="telefono__buscar"
+          role="combobox"
+          aria-expanded="true"
+          aria-autocomplete="list"
+          aria-controls="telefono-lista"
+          aria-label="Busca tu país o prefijo"
+          placeholder="Busca país o prefijo"
+          autocomplete="off"
+          spellcheck="false"
+          data-telefono-buscar
+        />
+        <ul id="telefono-lista" class="telefono__lista" role="listbox" aria-label="Países" data-telefono-lista></ul>
+        <p class="telefono__vacio" role="status" data-telefono-vacio></p>
+      </div>
+    </div>
+
+    <input
+      id="telefono"
+      name={CAMPO_TELEFONO_NUMERO}
+      data-etiqueta="telefono"
+      data-pais="telefono-pais"
+      type="tel"
+      autocomplete="tel"
+      inputmode="tel"
+      maxlength={CAMPOS.telefono.max}
+      placeholder={defecto.ejemplo}
+      aria-describedby="telefono-ayuda telefono-error"
+      data-telefono-numero
+    />
+  </div>
+
+  <p id="telefono-ayuda" class="campo__ayuda">Solo si prefieres que te llamemos.</p>
+  <p id="telefono-error" class="campo__error" hidden></p>
+</div>
+
+<style>
+  /* El panel se ancla a la fila completa (país + número): así nunca sale de la pantalla en móvil. */
+  .telefono__fila {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--s-1);
+  }
+
+  .telefono__select,
+  .telefono__boton {
+    height: 100%;
+    min-height: 3rem;
+    border: 2px solid var(--c-navy);
+    border-radius: 0.875rem;
+    background: var(--c-blanco);
+    color: var(--c-navy);
+  }
+
+  /* Sin JS: <select> nativo, estrecho para dejar sitio al número. */
+  .telefono__select {
+    max-width: 9.5rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .telefono__boton {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.7rem 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .telefono__boton[hidden],
+  .telefono__select[hidden] {
+    display: none;
+  }
+
+  .telefono__boton img,
+  .telefono__lista img {
+    flex: none;
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgb(15 27 59 / 0.15);
+  }
+
+  .telefono__flecha {
+    transition: rotate var(--transicion);
+  }
+
+  .telefono__boton[aria-expanded='true'] .telefono__flecha {
+    rotate: 180deg;
+  }
+
+  .telefono__select:focus-visible,
+  .telefono__boton:focus-visible,
+  .telefono__buscar:focus-visible {
+    outline: 3px solid var(--c-mandarina);
+    outline-offset: 2px;
+  }
+
+  .telefono__panel {
+    position: absolute;
+    z-index: 10;
+    inset-block-start: calc(100% + 0.4rem);
+    inset-inline-start: 0;
+    display: grid;
+    gap: 0.5rem;
+    width: min(22rem, 100%);
+    padding: 0.6rem;
+    border: 2px solid var(--c-navy);
+    border-radius: 0.875rem;
+    background: var(--c-blanco);
+    box-shadow: 0 0.75rem 2rem rgb(15 27 59 / 0.18);
+  }
+
+  .telefono__panel[hidden] {
+    display: none;
+  }
+
+  .telefono__lista {
+    max-height: 17rem;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+  }
+
+  .telefono__lista :global([role='option']) {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+  }
+
+  .telefono__lista :global([role='option'][hidden]) {
+    display: none;
+  }
+
+  .telefono__lista :global([role='option']:hover),
+  .telefono__lista :global([role='option'][data-activo]) {
+    background: var(--c-crema);
+    outline: 2px solid var(--c-navy);
+    outline-offset: -2px;
+  }
+
+  .telefono__lista :global([role='option'][aria-selected='true']) {
+    font-weight: 700;
+  }
+
+  .telefono__lista :global(.telefono__codigo) {
+    margin-inline-start: auto;
+    color: var(--fg-suave);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .telefono__vacio:empty {
+    display: none;
+  }
+
+  .telefono__vacio {
+    padding: 0.4rem 0.6rem;
+    font-size: var(--t-xs);
+    color: var(--fg-suave);
+  }
+</style>

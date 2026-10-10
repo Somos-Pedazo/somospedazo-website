@@ -21,6 +21,7 @@ if (process.env.VERCEL_ENV === 'production' && esClaveTestTurnstile(TURNSTILE_SI
   throw new Error('La site key de Turnstile es de test: no se admite en producción.');
 }
 import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion';
+import CampoTelefono from './CampoTelefono.astro';
 ---
 
 <form
@@ -97,22 +98,8 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
       <input id="empresa" name={CAMPOS.empresa.name} type="text" autocomplete="organization" maxlength={CAMPOS.empresa.max} />
     </div>
 
-    <div class="campo campo--ancho">
-      <label for="telefono">Teléfono <span class="campo__opcional">(opcional)</span></label>
-      <input
-        id="telefono"
-        name={CAMPOS.telefono.name}
-        data-etiqueta="telefono"
-        type="tel"
-        autocomplete="tel"
-        inputmode="tel"
-        maxlength={CAMPOS.telefono.max}
-        pattern="[\d\s\(\)\+\-]{9,30}"
-        aria-describedby="telefono-ayuda telefono-error"
-      />
-      <p id="telefono-ayuda" class="campo__ayuda">Solo si prefieres que te llamemos.</p>
-      <p id="telefono-error" class="campo__error" hidden></p>
-    </div>
+    <!-- Teléfono: selector de país con banderas + número. El servidor lo manda a Zoho («Phone») en E.164. -->
+    <CampoTelefono />
 
     <div class="campo campo--ancho">
       <label for="mensaje">Cuéntanos tu proyecto <span aria-hidden="true">*</span></label>
@@ -226,8 +213,8 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
   }
 
   .formulario__ayuda,
-  .campo__ayuda,
-  .campo__opcional,
+  .formulario :global(.campo__ayuda),
+  .formulario :global(.campo__opcional),
   .formulario__rgpd {
     font-size: var(--t-xs);
     color: var(--fg-suave);
@@ -238,19 +225,20 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
     gap: var(--s-3);
   }
 
-  .campo {
+  /* :global(): las reglas de campo valen también para los componentes hijos (CampoTelefono). */
+  .formulario :global(.campo) {
     display: grid;
     gap: 0.35rem;
     align-content: start;
   }
 
-  .campo label {
+  .formulario :global(.campo label) {
     font-family: var(--font-titular);
     font-weight: var(--peso-demi);
   }
 
-  .campo input:not([type='checkbox']),
-  .campo textarea {
+  .formulario :global(.campo input:not([type='checkbox'])),
+  .formulario :global(.campo textarea) {
     width: 100%;
     min-height: 3rem;
     padding: 0.7rem 1rem;
@@ -265,21 +253,21 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
     min-height: 9rem;
   }
 
-  .campo input:focus-visible,
-  .campo textarea:focus-visible {
+  .formulario :global(.campo input:focus-visible),
+  .formulario :global(.campo textarea:focus-visible) {
     outline: 3px solid var(--c-mandarina);
     outline-offset: 2px;
   }
 
   /* Sin JS: estilo nativo tras interactuar. Con JS: aria-invalid. */
-  .campo input:user-invalid,
-  .campo textarea:user-invalid,
-  .campo [aria-invalid='true'] {
+  .formulario :global(.campo input:user-invalid),
+  .formulario :global(.campo textarea:user-invalid),
+  .formulario :global(.campo [aria-invalid='true']) {
     border-color: var(--c-error);
     border-width: 3px;
   }
 
-  .campo__error {
+  .formulario :global(.campo__error) {
     display: flex;
     gap: 0.4rem;
     align-items: baseline;
@@ -288,7 +276,7 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
     font-weight: 700;
   }
 
-  .campo__error::before {
+  .formulario :global(.campo__error::before) {
     content: '!' / '';
     flex: none;
     display: inline-grid;
@@ -424,7 +412,7 @@ import { CAMPOS_ATRIBUCION, CAMPO_SUBMISSION_URL } from '../../config/atribucion
       grid-template-columns: 1fr 1fr;
     }
 
-    .campo--ancho {
+    .formulario :global(.campo--ancho) {
       grid-column: 1 / -1;
     }
   }
