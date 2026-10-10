@@ -47,7 +47,7 @@ const schema = [
 ];
 ---
 
-<BaseLayout pagina={pagina} schema={schema}>
+<BaseLayout pagina={pagina} schema={schema} motion>
   <CabeceraPagina pagina={pagina} antetitulo="Servicios" titulo="Elige tu escalón.">
     <p>
       Unos necesitan un mapa. Otros, alguien que empuje. Otros, manos que lo hagan. Por eso trabajamos en tres escalones. Cada uno incluye todo lo
@@ -84,6 +84,10 @@ const schema = [
 
   <CtaBanda titulo="Sube el primer escalón." texto="Cuéntanos tu situación y te decimos, sin rodeos, por dónde empezar." />
 </BaseLayout>
+
+<script>
+  import '../scripts/motion/escalera';
+</script>
 
 <style>
   .seccion--pegada {

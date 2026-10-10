@@ -22,10 +22,22 @@ const Sub = completa ? 'h3' : 'h4';
 <ol class:list={['escalera', `escalera--${variante}`]} role="list">
   {
     NIVELES.map((n) => (
-      <li class="escalon" id={completa ? n.id : undefined} style={`--color: var(--c-${n.color}); --nivel: ${n.numero}`}>
+      <li
+        class="escalon"
+        id={completa ? n.id : undefined}
+        style={`--color: var(--c-${n.color}); --nivel: ${n.numero}`}
+        data-motion={completa ? '' : undefined}
+        data-escalon={completa ? '' : undefined}
+      >
         <article class="escalon__tarjeta interactiva" aria-labelledby={`${n.id}-${variante}-titulo`}>
           <div class="escalon__peldano" aria-hidden="true">
             <span class="escalon__numero">{n.numero}</span>
+            {/* Cada escalón suma los pedazos de los anteriores: 1 → sol; 2 → sol + chicle; 3 → + mandarina. */}
+            <span class="escalon__suma">
+              {NIVELES.slice(0, n.numero).map((m) => (
+                <span class="escalon__mini" style={`--mini: var(--c-${m.color})`} data-mini />
+              ))}
+            </span>
           </div>
           <div class="escalon__cuerpo flujo">
             <p class="escalon__nivel">Escalón {n.numero}</p>
@@ -89,6 +101,8 @@ const Sub = completa ? 'h3' : 'h4';
   .escalon__peldano {
     display: flex;
     align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-2);
     padding: var(--s-2) var(--s-3);
     background: var(--color);
     border-radius: calc(var(--radio) * 1.4) calc(var(--radio) * 1.4) 0 0;
@@ -172,6 +186,28 @@ const Sub = completa ? 'h3' : 'h4';
     .escalon {
       align-self: stretch;
       padding-block-start: calc((3 - var(--nivel)) * var(--s-6));
+    }
+  }
+
+  /* Pedazos acumulados en el peldaño: separados por el hueco crema del brand book. */
+  .escalon__suma {
+    display: flex;
+    gap: 0.4rem;
+    padding-block-end: 0.3rem;
+  }
+
+  .escalon__mini {
+    width: 2.6rem;
+    height: 1.3rem;
+    border-radius: var(--radio-pildora);
+    background: var(--mini);
+    box-shadow: 0 0 0 3px var(--c-crema);
+  }
+
+  /* Estado inicial de la escalera animada de Servicios (src/scripts/motion/escalera.ts). */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) [data-escalon] {
+      opacity: 0;
     }
   }
 </style>
