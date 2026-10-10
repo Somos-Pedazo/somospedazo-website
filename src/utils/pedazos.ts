@@ -12,6 +12,7 @@ export type Rect = {
   rx: number;
   fill: string;
   hueco: boolean;
+  cliente: boolean;
 };
 
 /**
@@ -31,17 +32,21 @@ export function piezasARects(piezas: Pieza[]): Rect[] {
       rx: Math.min(width, height) / 2,
       fill: p.color === 'hueco' ? 'none' : BRAND_COLORS[p.color],
       hueco: p.color === 'hueco',
+      cliente: Boolean(p.cliente),
     };
   });
 }
 
-/** Marcado SVG (solo los <rect>) para usos fuera de Astro, como las imágenes OG. */
+/**
+ * Marcado SVG (solo los <rect>). Cada pieza lleva `data-pieza` (su índice) para poder
+ * animarla; el hueco lleva `data-hueco` y la pieza del cliente, `data-cliente`.
+ */
 export function rectsASvg(rects: Rect[]): string {
   return rects
-    .map((r) =>
+    .map((r, i) =>
       r.hueco
-        ? `<rect x="${r.x + HUECO / 2}" y="${r.y + HUECO / 2}" width="${r.width - HUECO}" height="${r.height - HUECO}" rx="${r.rx - HUECO / 2}" fill="none" stroke="${BRAND_COLORS.navy}" stroke-width="4" stroke-dasharray="14 12" stroke-linecap="round"/>`
-        : `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="${r.rx}" fill="${r.fill}" stroke="${BRAND_COLORS.crema}" stroke-width="${HUECO / 2}"/>`,
+        ? `<rect data-hueco="" x="${r.x + HUECO / 2}" y="${r.y + HUECO / 2}" width="${r.width - HUECO}" height="${r.height - HUECO}" rx="${r.rx - HUECO / 2}" fill="none" stroke="${BRAND_COLORS.navy}" stroke-width="4" stroke-dasharray="14 12" stroke-linecap="round"/>`
+        : `<rect data-pieza="${i}"${r.cliente ? ' data-cliente=""' : ''} x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="${r.rx}" fill="${r.fill}" stroke="${BRAND_COLORS.crema}" stroke-width="${HUECO / 2}"/>`,
     )
     .join('');
 }

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CabeceraPagina from '../components/ui/CabeceraPagina.astro';
+import Manifiesto from '../components/ui/Manifiesto.astro';
 import CtaBanda from '../components/ui/CtaBanda.astro';
 import { PAGINAS } from '../data/paginas';
 import type { BrandColor } from '../data/brand';
@@ -43,7 +44,7 @@ const pasos = [
 ];
 ---
 
-<BaseLayout pagina={pagina} tipoPagina="AboutPage">
+<BaseLayout pagina={pagina} tipoPagina="AboutPage" motion>
   <CabeceraPagina pagina={pagina} antetitulo="Enfoque" titulo="Así trabajamos.">
     <p>
       Nos gusta pensar que somos ese amigo que entiende de negocio. El que te dice las cosas claras, te ayuda a decidir y se remanga cuando hace
@@ -51,13 +52,18 @@ const pasos = [
     </p>
   </CabeceraPagina>
 
+  <Manifiesto
+    texto="Tú conoces tu negocio mejor que nadie. Nosotros sabemos cómo hacerlo crecer. Juntamos los dos pedazos y salimos a por ello."
+    destacado="dos pedazos"
+  />
+
   <section class="seccion" aria-labelledby="principios-titulo">
     <div class="contenedor">
       <h2 id="principios-titulo" class="titulo-seccion">Lo que nos mueve</h2>
       <ul class="principios" role="list">
         {
           principios.map((p, i) => (
-            <li class="principio" style={`--color: var(--c-${p.color})`}>
+            <li class="principio interactiva" style={`--color: var(--c-${p.color})`}>
               <span class="principio__num" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
@@ -96,6 +102,10 @@ const pasos = [
 
   <CtaBanda titulo="¿Aportamos nuestro pedazo?" texto="Cuéntanos qué quieres conseguir. Te respondemos con ideas, no con un catálogo." />
 </BaseLayout>
+
+<script>
+  import '../scripts/motion/manifiesto';
+</script>
 
 <style>
   .titulo-seccion {

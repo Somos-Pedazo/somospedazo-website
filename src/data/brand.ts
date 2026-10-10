@@ -19,6 +19,8 @@ export type Pieza = {
   h: number;
   /** 'hueco' dibuja una pieza vacía con borde discontinuo: el pedazo que falta. */
   color: BrandColor | 'hueco';
+  /** Pieza que aporta el cliente: encaja en el hueco al final de la animación del hero. */
+  cliente?: boolean;
 };
 
 export type Composicion = { columnas: number; filas: number; piezas: Pieza[] };

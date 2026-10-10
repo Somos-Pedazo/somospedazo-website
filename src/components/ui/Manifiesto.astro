@@ -1,0 +1,110 @@
+---
+/**
+ * Texto clave que se revela palabra a palabra con el scroll (src/scripts/motion/manifiesto.ts),
+ * acompañado de dos pedazos que se acercan y encajan.
+ * El texto es HTML real desde el inicio (cada palabra en un <span>). Sin animación, se ve completo
+ * y con los dos pedazos ya encajados.
+ */
+interface Props {
+  texto: string;
+  /** Fragmento del texto que se resalta (debe aparecer literalmente en `texto`). */
+  destacado?: string;
+}
+
+const { texto, destacado = '' } = Astro.props;
+
+const palabras = texto.split(/\s+/);
+const destacadas = new Set<number>();
+if (destacado) {
+  const objetivo = destacado.split(/\s+/);
+  const inicio = palabras.findIndex((_, i) => objetivo.every((p, j) => palabras[i + j] === p));
+  if (inicio >= 0) objetivo.forEach((_, j) => destacadas.add(inicio + j));
+}
+---
+
+<div class="manifiesto-escena" data-manifiesto>
+  <div class="contenedor manifiesto">
+    <p class="manifiesto__texto">
+      {
+        palabras.map((p, i) => (
+          <>
+            <span class:list={['manifiesto__palabra', { 'manifiesto__palabra--destacada': destacadas.has(i) }]} data-palabra>
+              {p}
+            </span>
+            {i < palabras.length - 1 ? ' ' : ''}
+          </>
+        ))
+      }
+    </p>
+    <svg class="manifiesto__pedazos" viewBox="0 0 1000 120" width="1000" height="120" aria-hidden="true" focusable="false">
+      <!-- Tu pedazo (chicle) y el nuestro (sol), separados por el hueco crema. -->
+      <rect data-pedazo="izq" x="263" y="10" width="230" height="100" rx="50" fill="#FFBFBF" stroke="#F5F1E6" stroke-width="7"></rect>
+      <rect data-pedazo="der" x="507" y="10" width="230" height="100" rx="50" fill="#FFD500" stroke="#F5F1E6" stroke-width="7"></rect>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .manifiesto-escena {
+    padding-block: var(--seccion);
+  }
+
+  .manifiesto {
+    display: grid;
+    gap: var(--s-6);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .manifiesto__texto {
+    max-width: 22ch;
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: var(--t-3xl);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .manifiesto__palabra {
+    display: inline-block;
+  }
+
+  .manifiesto__palabra--destacada {
+    padding-inline: 0.18em;
+    border-radius: var(--radio-pildora);
+    background: var(--c-sol);
+  }
+
+  .manifiesto__pedazos {
+    width: min(100%, 34rem);
+    height: auto;
+    overflow: visible;
+  }
+
+  /* ---- Versión animada (html.motion) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .manifiesto-escena {
+      overflow-x: clip;
+    }
+
+    :global(html.motion) [data-palabra] {
+      opacity: 0;
+    }
+  }
+
+  @media (min-width: 60rem) and (prefers-reduced-motion: no-preference) {
+    /* Escena fijada con sticky: la frase se lee entera antes de soltarla. */
+    :global(html.motion) .manifiesto-escena {
+      height: 230vh;
+      padding-block: 0;
+    }
+
+    :global(html.motion) .manifiesto {
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+      align-content: center;
+    }
+  }
+</style>

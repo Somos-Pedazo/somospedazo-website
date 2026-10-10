@@ -25,6 +25,9 @@ export const HERO: Composicion = {
     { x: 3, y: 4, w: 3, h: 1, color: 'mandarina' },
     { x: 3, y: 5, w: 1, h: 1, color: 'amarillo' },
     { x: 4, y: 5, w: 2, h: 1, color: 'navy' },
+    // El pedazo del cliente: ocupa el hueco. En el estado final (sin animación) está encajado;
+    // en el hero animado es el último en llegar.
+    { x: 3, y: 2, w: 1, h: 1, color: 'mandarina', cliente: true },
   ],
 };
 
