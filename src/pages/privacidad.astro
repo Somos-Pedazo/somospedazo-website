@@ -1,166 +1,188 @@
 ---
+/** Política de privacidad. Texto facilitado por Somos Pedazo; los datos del responsable salen de src/config/site.ts. */
 import LegalLayout from '../layouts/LegalLayout.astro';
 import DatosTitular from '../components/legal/DatosTitular.astro';
 import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
+
+const dpo = SITE.emailPrivacidad;
 ---
 
-<LegalLayout pagina={PAGINAS.privacidad} actualizado="10 de octubre de 2026">
+<LegalLayout pagina={PAGINAS.privacidad}>
   <p>
-    En {SITE.name} tratamos tus datos con el mismo cuidado con el que trabajamos tu negocio. Aquí te explicamos, de forma clara, qué datos
-    tratamos, para qué, durante cuánto tiempo y qué derechos tienes, conforme al Reglamento (UE) 2016/679 General de Protección de Datos
-    (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
+    En Somos Pedazo tratamos tus datos con el mismo cuidado con el que trabajamos: con transparencia y solo para lo necesario. Esta política
+    explica qué datos tratamos, para qué, durante cuánto tiempo y qué derechos tienes, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley
+    Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
   </p>
 
   <h2>1. Responsable del tratamiento</h2>
-  <DatosTitular />
+  <DatosTitular modo="privacidad" />
 
   <h2>2. Qué datos tratamos</h2>
+  <p>Solo los que nos facilitas o los que se generan al usar la web:</p>
   <ul>
     <li>
-      <strong>Datos que nos facilitas en el formulario de contacto:</strong> nombre, apellidos, correo electrónico, empresa y teléfono (estos
-      dos últimos, opcionales) y el contenido de tu mensaje.
+      <strong>Datos del formulario de contacto:</strong> nombre, apellidos, correo electrónico, empresa (opcional), teléfono (opcional) y el
+      contenido de tu mensaje.
     </li>
     <li>
-      <strong>Datos técnicos de seguridad:</strong> al enviar el formulario se procesan tu dirección IP y datos técnicos de tu navegador para
-      comprobar que el envío lo hace una persona y no un programa automático (servicio Cloudflare Turnstile), y para el registro técnico del
-      servidor.
+      <strong>Datos de navegación:</strong> dirección IP, tipo de navegador y dispositivo, páginas visitadas e información técnica similar,
+      necesarios para servir la web, protegerla frente a abusos y, si lo aceptas, medir su uso.
     </li>
     <li>
-      <strong>Datos de navegación para estadísticas:</strong> al visitar la web, Vercel Web Analytics y Vercel Speed Insights registran la
-      página visitada, la página de procedencia, el tipo de dispositivo, el navegador, el sistema operativo, el país y datos de rendimiento
-      de carga. No usan cookies: distinguen las visitas con un identificador temporal, generado a partir de datos técnicos de la conexión,
-      que no permite identificarte y se renueva cada día. Solo vemos los resultados de forma agregada.
-    </li>
-    <li>
-      <strong>Datos de la relación comercial:</strong> si llegas a ser cliente, los datos necesarios para gestionar la propuesta, el
-      contrato, la facturación y la comunicación del proyecto.
+      <strong>Datos de clientes:</strong> si llegamos a trabajar juntos, los datos de contacto y facturación necesarios para gestionar la
+      relación.
     </li>
   </ul>
-  <p>
-    No te pedimos datos especialmente protegidos. Te rogamos que no los incluyas en tu mensaje. Si nos facilitas datos de otras personas,
-    garantizas que las has informado y que cuentas con su autorización.
-  </p>
+  <p>No necesitamos datos especialmente protegidos. Te pedimos que no los incluyas en tu mensaje.</p>
 
-  <h2>3. Para qué usamos tus datos y con qué base legal</h2>
+  <h2>3. Para qué los usamos y con qué base legal</h2>
   <div class="legal__tabla">
     <table>
       <thead>
         <tr>
           <th scope="col">Finalidad</th>
-          <th scope="col">Base legal (RGPD)</th>
+          <th scope="col">Base jurídica</th>
+          <th scope="col">Plazo de conservación</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Responder a tu consulta y, si lo pides, preparar una propuesta.</td>
-          <td>Tu consentimiento al enviar el formulario (art. 6.1.a) y la aplicación de medidas precontractuales a petición tuya (art. 6.1.b).</td>
+          <td>Responder a tu consulta y, si procede, preparar una propuesta.</td>
+          <td>Aplicación de medidas precontractuales a petición tuya (art. 6.1.b RGPD).</td>
+          <td>Mientras gestionamos tu consulta y, si no hay contratación, hasta 2 años desde el último contacto.</td>
         </tr>
         <tr>
-          <td>Gestionar la relación con clientes: ejecución del proyecto, comunicación y facturación.</td>
-          <td>Ejecución del contrato (art. 6.1.b) y cumplimiento de obligaciones legales, como las fiscales y contables (art. 6.1.c).</td>
+          <td>Enviarte nuestra newsletter y comunicaciones comerciales sobre nuestros servicios.</td>
+          <td>Tu consentimiento, dado marcando la casilla correspondiente (art. 6.1.a RGPD y art. 21 LSSI-CE).</td>
+          <td>Hasta que retires el consentimiento o te des de baja.</td>
         </tr>
         <tr>
-          <td>Proteger el sitio web y el formulario frente a spam, abuso y ataques.</td>
-          <td>Interés legítimo en garantizar la seguridad de nuestros sistemas (art. 6.1.f).</td>
-        </tr>
-        <tr>
-          <td>Conocer de forma agregada cómo se usa la web y su rendimiento, para mejorarla.</td>
+          <td>Gestionar la relación con clientes: ejecución del servicio, facturación y obligaciones contables y fiscales.</td>
+          <td>Ejecución de un contrato (art. 6.1.b RGPD) y cumplimiento de obligaciones legales (art. 6.1.c RGPD).</td>
           <td>
-            Interés legítimo en analizar y mejorar nuestro sitio web con datos estadísticos que no permiten identificarte (art. 6.1.f).
+            Durante la relación y, después, los plazos legales (6 años según el Código de Comercio y 4 años según la normativa tributaria).
           </td>
+        </tr>
+        <tr>
+          <td>Proteger la web y el formulario frente a spam, bots y usos fraudulentos.</td>
+          <td>Interés legítimo en garantizar la seguridad de la web (art. 6.1.f RGPD).</td>
+          <td>Durante el tiempo estrictamente necesario para la verificación.</td>
+        </tr>
+        <tr>
+          <td>Medir el uso de la web con fines estadísticos (Google Analytics).</td>
+          <td>Tu consentimiento a través del banner de cookies (art. 6.1.a RGPD y art. 22.2 LSSI-CE).</td>
+          <td>Según lo indicado en la <a href="/cookies">Política de cookies</a>.</td>
         </tr>
       </tbody>
     </table>
   </div>
   <p>
-    No te enviaremos comunicaciones comerciales sin tu consentimiento expreso. No tomamos decisiones automatizadas ni elaboramos perfiles
-    que produzcan efectos jurídicos sobre ti.
+    Al terminar los plazos indicados, los datos se bloquean durante los plazos de prescripción de posibles responsabilidades y, después, se
+    eliminan.
   </p>
+  <p>No tomamos decisiones automatizadas ni elaboramos perfiles con efectos jurídicos sobre ti.</p>
+
+  <h2>4. Comunicaciones comerciales</h2>
   <p>
-    Los campos marcados como obligatorios en el formulario son necesarios para poder responderte. Si no los facilitas, no podremos
-    atender tu solicitud.
+    Solo te enviaremos newsletter o comunicaciones comerciales si lo has aceptado expresamente. Puedes darte de baja en cualquier momento,
+    gratis y de forma sencilla, mediante el enlace incluido en cada envío o escribiendo a <a href={`mailto:${dpo}`}>{dpo}</a>.
   </p>
 
-  <h2>4. Cuánto tiempo conservamos tus datos</h2>
-  <ul>
-    <li>
-      <strong>Consultas:</strong> el tiempo necesario para responderte. Si no iniciamos una relación comercial, los suprimimos como máximo
-      12 meses después del último contacto.
-    </li>
-    <li>
-      <strong>Clientes:</strong> mientras dure la relación y, después, durante los plazos de prescripción legal (por ejemplo, 6 años para la
-      documentación mercantil y 4 años para la tributaria).
-    </li>
-    <li><strong>Datos técnicos de seguridad:</strong> durante los periodos breves que fijan nuestros proveedores para esa finalidad.</li>
-    <li>
-      <strong>Estadísticas de navegación:</strong> el identificador temporal se renueva cada día. Los datos agregados se conservan durante el
-      periodo de retención que fija Vercel para su servicio.
-    </li>
-  </ul>
+  <h2>5. Con quién compartimos tus datos</h2>
   <p>
-    Cuando ya no sean necesarios, los datos se bloquean durante el tiempo en que puedan exigirse responsabilidades derivadas del
-    tratamiento y, después, se suprimen (art. 32 LOPDGDD).
+    No vendemos ni cedemos tus datos a terceros, salvo por obligación legal (por ejemplo, a la Administración tributaria o a juzgados y
+    tribunales).
   </p>
-
-  <h2>5. Quién accede a tus datos</h2>
   <p>
-    No cedemos tus datos a terceros salvo obligación legal. Para prestar nuestros servicios contamos con proveedores que tratan datos por
-    cuenta nuestra (encargados del tratamiento), con los que hemos firmado las garantías que exige el artículo 28 del RGPD:
+    Para prestar nuestros servicios contamos con proveedores que tratan datos por cuenta nuestra (encargados del tratamiento), con los que
+    hemos firmado los contratos exigidos por el artículo 28 del RGPD:
   </p>
-  <ul>
-    <li>
-      <strong>Zoho Corporation B.V.</strong> (Países Bajos): CRM en el que guardamos y gestionamos las consultas. Los datos se alojan en su
-      centro de datos de la Unión Europea.
-    </li>
-    <li>
-      <strong>Vercel Inc.</strong> (Estados Unidos): alojamiento del sitio web y del servidor que procesa el formulario, y estadísticas de
-      visitas y rendimiento (Vercel Web Analytics y Speed Insights).
-    </li>
-    <li><strong>Cloudflare, Inc.</strong> (Estados Unidos): verificación antispam del formulario (Cloudflare Turnstile).</li>
-  </ul>
-  <p>
-    Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Europeo. En esos casos, las transferencias se amparan en
-    el Marco de Privacidad de Datos UE-EE. UU. o, en su defecto, en las cláusulas contractuales tipo aprobadas por la Comisión Europea
-    (art. 46 RGPD).
-  </p>
+  <div class="legal__tabla">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Proveedor</th>
+          <th scope="col">Servicio</th>
+          <th scope="col">Ubicación y garantías</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Zoho Corporation B.V.</td>
+          <td>CRM: gestión de contactos y consultas.</td>
+          <td>Centros de datos en la Unión Europea.</td>
+        </tr>
+        <tr>
+          <td>Microsoft Ireland Operations Ltd.</td>
+          <td>Correo electrónico y herramientas de trabajo (Microsoft 365).</td>
+          <td>Unión Europea. Posibles transferencias a EE. UU. amparadas por el Marco de Privacidad de Datos UE-EE. UU.</td>
+        </tr>
+        <tr>
+          <td>Vercel Inc.</td>
+          <td>Alojamiento de la web y estadísticas básicas sin cookies.</td>
+          <td>
+            EE. UU. Transferencia amparada por el Marco de Privacidad de Datos UE-EE. UU. y/o cláusulas contractuales tipo de la Comisión
+            Europea.
+          </td>
+        </tr>
+        <tr>
+          <td>Cloudflare, Inc.</td>
+          <td>Gestión del dominio, seguridad y verificación antispam (Turnstile).</td>
+          <td>EE. UU. Transferencia amparada por el Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo.</td>
+        </tr>
+        <tr>
+          <td>Usercentrics A/S (Cookiebot)</td>
+          <td>Gestión del consentimiento de cookies.</td>
+          <td>Unión Europea.</td>
+        </tr>
+        <tr>
+          <td>Google Ireland Ltd.</td>
+          <td>Estadísticas web (Google Analytics), solo si las aceptas.</td>
+          <td>
+            Unión Europea, con posibles transferencias a Google LLC (EE. UU.) amparadas por el Marco de Privacidad de Datos UE-EE. UU.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2>6. Tus derechos</h2>
-  <p>Puedes ejercer en cualquier momento, y de forma gratuita, tus derechos de:</p>
+  <p>Puedes ejercer en cualquier momento tus derechos de:</p>
   <ul>
-    <li><strong>Acceso:</strong> saber qué datos tuyos tratamos.</li>
+    <li><strong>Acceso:</strong> saber si tratamos tus datos y cuáles.</li>
     <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
     <li><strong>Supresión:</strong> pedir que borremos tus datos.</li>
-    <li><strong>Oposición:</strong> oponerte a un tratamiento basado en nuestro interés legítimo.</li>
-    <li><strong>Limitación:</strong> pedir que conservemos tus datos solo para determinados fines.</li>
-    <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado o que los enviemos a otro responsable.</li>
-    <li><strong>Retirar tu consentimiento</strong> en cualquier momento, sin que afecte a la licitud del tratamiento anterior.</li>
+    <li><strong>Oposición:</strong> oponerte a determinados tratamientos.</li>
+    <li><strong>Limitación:</strong> pedir que restrinjamos el tratamiento en ciertos casos.</li>
+    <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado.</li>
+    <li><strong>Retirada del consentimiento:</strong> en cualquier momento, sin que afecte a la licitud del tratamiento anterior.</li>
   </ul>
   <p>
-    Para ejercerlos, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a> indicando qué derecho quieres ejercer. Si es necesario
-    para comprobar tu identidad, te pediremos información adicional. Te responderemos en el plazo de un mes, ampliable en dos meses más en
-    casos complejos, de lo que te informaríamos.
+    Para ejercerlos, escríbenos a <a href={`mailto:${dpo}`}>{dpo}</a> indicando qué derecho quieres ejercer. Si tenemos dudas razonables sobre
+    tu identidad, podremos pedirte información adicional para verificarla. Te responderemos en el plazo de un mes, prorrogable en los casos
+    previstos por el RGPD.
   </p>
   <p>
-    Si consideras que no hemos atendido correctamente tus derechos, puedes presentar una reclamación ante la Agencia Española de
-    Protección de Datos (<a href="https://www.aepd.es" rel="noopener">www.aepd.es</a>).
+    Si consideras que no hemos atendido correctamente tus derechos, puedes presentar una reclamación ante la Agencia Española de Protección de
+    Datos (<a href="https://www.aepd.es" rel="noopener">www.aepd.es</a>).
   </p>
 
   <h2>7. Menores de edad</h2>
   <p>
-    Nuestros servicios se dirigen a empresas y profesionales. No tratamos de forma consciente datos de menores de 14 años. Si detectamos que
-    los hemos recibido, los suprimiremos.
+    La web y nuestros servicios se dirigen a profesionales y empresas. No recogemos conscientemente datos de menores de 14 años. Si eres menor
+    de esa edad, no nos envíes tus datos.
   </p>
 
   <h2>8. Seguridad</h2>
   <p>
-    Aplicamos medidas técnicas y organizativas adecuadas al riesgo para proteger tus datos frente a pérdidas, accesos no autorizados o usos
-    indebidos. Entre ellas, la comunicación cifrada (HTTPS) del sitio web y del formulario, y el control de acceso a nuestro CRM.
+    Aplicamos medidas técnicas y organizativas adecuadas al riesgo para proteger tus datos frente a pérdidas, accesos no autorizados o
+    alteraciones. Entre ellas, el cifrado de las comunicaciones (HTTPS), el control de accesos y la verificación antispam de los formularios.
   </p>
 
   <h2>9. Cambios en esta política</h2>
   <p>
-    Podemos actualizar esta política para adaptarla a cambios legales o en nuestros servicios. La fecha de la última actualización figura
-    al principio de esta página.
+    Podemos actualizar esta política para adaptarla a cambios legales o de nuestros servicios. Publicaremos siempre la versión vigente en esta
+    página con su fecha de actualización y, si el cambio es relevante, te lo comunicaremos.
   </p>
 </LegalLayout>

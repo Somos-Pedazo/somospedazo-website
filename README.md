@@ -19,6 +19,16 @@ npm run build          # astro check + build en .vercel/output
 - Ambos deben estar activados en el panel de Vercel. Fuera de Vercel (en local), sus scripts devuelven 404, y es normal.
 - Están recogidos en la política de cookies y en la de privacidad. Si cambias de herramienta, actualiza ambas.
 
+**Consentimiento de cookies (Cookiebot):**
+- `uc.js` es el **primer elemento del `<head>`** (`src/layouts/BaseLayout.astro`), en modo de bloqueo automático: bloquea los scripts que instalan cookies hasta que hay consentimiento. No pongas nada delante.
+- La configuración está en `src/config/cookiebot.ts`. `data-culture="ES"` fuerza el castellano, pero el idioma tiene que estar activado en el panel de Cookiebot.
+- **Google Analytics** (cuando se añada) no se exceptúa del bloqueo: debe gestionarlo Cookiebot.
+- Solo Turnstile lleva `data-cookieconsent="ignore"`, porque es estrictamente necesario para enviar el formulario.
+- La declaración de cookies (`cd.js`) está en `/cookies`, apartado 4, y se actualiza sola con los escaneos de Cookiebot.
+- El enlace «Configuración de cookies» del pie reabre el banner con `Cookiebot.renew()`. Si Cookiebot no carga, lleva a `/cookies`.
+- Cookiebot solo funciona en los dominios autorizados en su panel. En `localhost` no muestra el banner ni la declaración, y es normal.
+- Rendimiento: como Cookiebot carga el primero y de forma síncrona, Lighthouse baja de 100 a unos 96 en rendimiento.
+
 **Variables de entorno en Vercel:**
 
 | Variable | Tipo | Uso |
@@ -56,7 +66,7 @@ Para localizar todos los huecos, busca `PLACEHOLDER` y `TODO` en el proyecto.
    - De momento, el domicilio **no se publica**: ni en los textos legales ni en los datos estructurados. La LSSI lo exige en el aviso legal; para añadirlo, rellena `SITE.address` (se incluye en el JSON-LD) y muéstralo en `src/components/legal/DatosTitular.astro`.
    - El build avisa (`[legal]`) mientras falten el NIF o los datos registrales. **No publiques con esos avisos.**
    - El teléfono es opcional: si lo rellenas, solo se añade a los datos estructurados.
-4. **Textos legales** (aviso legal, privacidad y cookies): son textos completos, basados en la LSSI-CE, el RGPD, la LOPDGDD y la guía de cookies de la AEPD, y redactados según cómo funciona el sitio: formulario → Zoho CRM, alojamiento en Vercel y antispam con Cloudflare Turnstile. Si añades herramientas (por ejemplo, analítica), actualiza la política de cookies y la de privacidad.
+4. **Textos legales** (`/aviso-legal`, `/privacidad` y `/cookies`): el texto lo facilita Somos Pedazo y está copiado literalmente en `src/pages/`. Los datos del titular, la fecha de actualización (`SITE.legal.actualizado`), el fuero (`SITE.legal.jurisdiccion`) y los correos (`email` y `emailPrivacidad`) salen de `src/config/site.ts`. Si cambia un texto, edita la página correspondiente. La plantilla común es `src/layouts/LegalLayout.astro` (fondo navy y texto crema).
 5. **Tipografías.** Avenir y Calibri se usan si están instaladas en el dispositivo. Si no lo están, entran Figtree (titulares) y Carlito (texto, con las mismas métricas que Calibri), ambas alojadas en el propio sitio. Si compráis una licencia web de Avenir, cambia los archivos en `src/components/brand/Fonts.astro`.
 
 ## Formulario de contacto
@@ -69,6 +79,8 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 - **Envío:** valida en cliente con mensajes en castellano, envía por `fetch` y muestra el mensaje de éxito o el error sin salir de la web.
 - **Sin JS:** no hay captcha, así que no se puede enviar el formulario; se muestra el correo como alternativa.
 - **Privacidad:** la casilla es obligatoria, pero no se envía (no lleva `name`).
+- **Newsletter:** es una casilla aparte, opcional y sin premarcar, que no condiciona el envío. El servidor añade al final de «Description» del lead una línea «Newsletter y comunicaciones comerciales: SÍ/NO acepta (fecha y hora de Madrid · UTC)» como prueba del consentimiento. Si creas un campo propio en Zoho, pon su nombre de API en `ZOHO_CAMPO_NEWSLETTER` (`src/config/zoho.ts`) y se enviará también ahí.
+- **Primera capa informativa:** el texto facilitado por Somos Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
 
 **Servidor (`src/pages/api/contact.ts`)**
 1. Si el honeypot `aG9uZXlwb3Q` llega relleno, responde 200 y no envía nada.

@@ -16,6 +16,15 @@ export const CAMPOS = {
 /** Honeypot de Zoho: debe llegar vacío. */
 export const HONEYPOT = 'aG9uZXlwb3Q';
 
+/**
+ * Casilla de newsletter (opcional). No es un campo de Zoho: el servidor registra su valor,
+ * con fecha y hora, al final de «Description» del lead como prueba del consentimiento.
+ * Si se crea un campo propio en Zoho, pon aquí su nombre de API en ZOHO_CAMPO_NEWSLETTER
+ * y el servidor lo enviará también en ese campo.
+ */
+export const CAMPO_NEWSLETTER = 'newsletter';
+export const ZOHO_CAMPO_NEWSLETTER: string | null = null;
+
 /** Campo en el que Turnstile deja su token. */
 export const CAMPO_TURNSTILE = 'cf-turnstile-response';
 

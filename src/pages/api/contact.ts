@@ -7,7 +7,7 @@
  *   error: 'captcha' | 'validacion' | 'zoho' | 'servidor'
  */
 import type { APIContext, APIRoute } from 'astro';
-import { CAMPOS, CAMPO_TURNSTILE, EMAIL_RE, HONEYPOT } from '../../config/zoho';
+import { CAMPOS, CAMPO_NEWSLETTER, CAMPO_TURNSTILE, EMAIL_RE, HONEYPOT, ZOHO_CAMPO_NEWSLETTER } from '../../config/zoho';
 import { verificarTurnstile } from '../../server/turnstile';
 import { enviarAZoho } from '../../server/zoho';
 
@@ -50,6 +50,21 @@ function validar(form: FormData): { ok: true; datos: Record<string, string> } | 
   return invalidos.length ? { ok: false, campos: invalidos } : { ok: true, datos };
 }
 
+/**
+ * Prueba del consentimiento de newsletter: valor de la casilla + fecha y hora (UTC y hora de Madrid),
+ * añadido al final de «Description». Si hay campo propio en Zoho (ZOHO_CAMPO_NEWSLETTER), también se envía ahí.
+ */
+function registroNewsletter(acepta: boolean, datos: Record<string, string>): Record<string, string> {
+  const ahora = new Date();
+  const madrid = ahora.toLocaleString('es-ES', { timeZone: 'Europe/Madrid', dateStyle: 'short', timeStyle: 'medium' });
+  const linea = `Newsletter y comunicaciones comerciales: ${acepta ? 'SÍ acepta' : 'NO acepta'} (${madrid} hora de Madrid · ${ahora.toISOString()})`;
+  const descripcion = CAMPOS.mensaje.name;
+  return {
+    [descripcion]: `${datos[descripcion] ?? ''}\n\n---\n${linea}`,
+    ...(ZOHO_CAMPO_NEWSLETTER ? { [ZOHO_CAMPO_NEWSLETTER]: acepta ? 'true' : 'false' } : {}),
+  };
+}
+
 export const POST: APIRoute = async (contexto) => {
   const { request } = contexto;
   let form: FormData;
@@ -77,9 +92,12 @@ export const POST: APIRoute = async (contexto) => {
   const validacion = validar(form);
   if (!validacion.ok) return json(400, { ok: false, error: 'validacion', campos: validacion.campos });
 
-  // 3. Reenvío a Zoho.
+  // 3. Consentimiento de newsletter (casilla opcional): se guarda en el lead con fecha y hora.
+  const datos = { ...validacion.datos, ...registroNewsletter(form.get(CAMPO_NEWSLETTER) === 'si', validacion.datos) };
+
+  // 4. Reenvío a Zoho.
   try {
-    const zoho = await enviarAZoho(validacion.datos);
+    const zoho = await enviarAZoho(datos);
     if (!zoho.ok) {
       console.error(`[contact] Zoho respondió ${zoho.estado}`);
       return json(502, { ok: false, error: 'zoho' });

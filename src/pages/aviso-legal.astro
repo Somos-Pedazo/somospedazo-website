@@ -1,98 +1,99 @@
 ---
+/** Aviso legal. Texto facilitado por Somos Pedazo; los datos del titular salen de src/config/site.ts. */
 import LegalLayout from '../layouts/LegalLayout.astro';
 import DatosTitular from '../components/legal/DatosTitular.astro';
 import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
-
-const dominio = new URL(SITE.url).host;
 ---
 
-<LegalLayout pagina={PAGINAS.avisoLegal} actualizado="9 de octubre de 2026">
-  <h2>1. Datos identificativos</h2>
+<LegalLayout pagina={PAGINAS.avisoLegal}>
+  <h2>1. Titular del sitio web</h2>
   <p>
     En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio
     Electrónico (LSSI-CE), te informamos de los datos del titular de este sitio web:
   </p>
-  <DatosTitular />
+  <DatosTitular modo="aviso" />
+  <p>En adelante, "Somos Pedazo" o "nosotros".</p>
 
   <h2>2. Objeto</h2>
   <p>
-    Este aviso legal regula el acceso y el uso del sitio web {dominio} (en adelante, «el sitio web»), a través del cual {SITE.name} presenta
-    sus servicios de agencia de estrategia y growth: consultoría estratégica, auditoría y planificación de marketing y tecnología,
-    seguimiento de proyectos (PMO) y ejecución de acciones de marketing, comunicación, desarrollo web, automatización y analítica.
+    Este aviso legal regula el acceso y el uso del sitio web somospedazo.com (en adelante, "la web"), a través del cual Somos Pedazo presenta
+    sus servicios de estrategia digital, marketing y tecnología.
   </p>
   <p>
-    Se considera usuario a cualquier persona que acceda al sitio web. El acceso y la navegación implican la aceptación de este aviso legal.
-    Si no estás de acuerdo con su contenido, te pedimos que no utilices el sitio web.
+    Acceder a la web te atribuye la condición de usuario e implica que aceptas este aviso legal. Si no estás de acuerdo con él, te pedimos
+    que no utilices la web.
   </p>
 
   <h2>3. Condiciones de uso</h2>
-  <p>El acceso al sitio web es libre y gratuito. Como usuario, te comprometes a:</p>
+  <p>
+    Te comprometes a usar la web de forma lícita, diligente y conforme a este aviso legal, a la ley, a la moral y al orden público. En
+    particular, no podrás:
+  </p>
   <ul>
-    <li>Hacer un uso adecuado y lícito del sitio web y de sus contenidos, conforme a la ley, la buena fe y el orden público.</li>
-    <li>No realizar actividades que puedan dañar, inutilizar, sobrecargar o impedir el normal funcionamiento del sitio web.</li>
-    <li>No introducir ni difundir virus, código malicioso o cualquier otro sistema que pueda causar daños.</li>
-    <li>No intentar acceder a áreas restringidas de los sistemas del titular o de terceros.</li>
-    <li>Facilitar datos veraces cuando uses el formulario de contacto.</li>
+    <li>Usar la web con fines ilícitos o que perjudiquen derechos de terceros.</li>
+    <li>Introducir virus, código malicioso o cualquier sistema que pueda dañar la web o los equipos de otros usuarios.</li>
+    <li>Intentar acceder sin autorización a áreas restringidas, sistemas o datos.</li>
+    <li>Usar el formulario de contacto para enviar spam o comunicaciones no solicitadas.</li>
   </ul>
-
-  <h2>4. Información sobre los servicios</h2>
   <p>
-    Los contenidos del sitio web son informativos y no constituyen una oferta vinculante. Cada colaboración se concreta en una propuesta y,
-    en su caso, en un contrato específico, que prevalecen sobre la información publicada aquí.
-  </p>
-  <p>
-    Los servicios de estrategia, marketing y growth implican trabajo con variables que no dependen solo de {SITE.name}: el mercado, la
-    competencia, las plataformas de terceros o la ejecución interna del cliente. Por eso, salvo que se pacte expresamente por escrito, no
-    garantizamos resultados concretos de negocio, tráfico, posicionamiento o ventas.
+    Si facilitas datos a través de la web, garantizas que son verdaderos, exactos y actualizados, y que, en caso de ser de terceros, cuentas
+    con su autorización.
   </p>
 
-  <h2>5. Propiedad intelectual e industrial</h2>
+  <h2>4. Propiedad intelectual e industrial</h2>
   <p>
-    Todos los contenidos del sitio web (textos, diseño, logotipos, marcas, gráficos, imágenes, código fuente y su selección y disposición)
-    son titularidad de {SITE.legalName} o de terceros que han autorizado su uso, y están protegidos por la normativa de propiedad
-    intelectual e industrial.
+    Todos los contenidos de la web (textos, diseños, logotipos, marcas, imágenes, ilustraciones, código fuente y elementos gráficos, incluida
+    la identidad visual de "Somos Pedazo") son titularidad de Somos Pedazo o de terceros que han autorizado su uso, y están protegidos por la
+    normativa de propiedad intelectual e industrial.
   </p>
   <p>
-    Queda prohibida su reproducción, distribución, comunicación pública o transformación, total o parcial, con fines comerciales sin la
-    autorización previa y por escrito del titular. Puedes visualizar los contenidos y guardar copias para uso personal y privado, siempre
-    que cites la fuente.
+    No se permite reproducir, distribuir, comunicar públicamente ni transformar estos contenidos sin autorización expresa y por escrito, salvo
+    para uso personal y privado.
+  </p>
+
+  <h2>5. Responsabilidad</h2>
+  <p>
+    Trabajamos para que la información de la web sea correcta y esté actualizada, pero no garantizamos la ausencia de errores ni la
+    disponibilidad ininterrumpida de la web.
+  </p>
+  <p>Somos Pedazo no se hace responsable de:</p>
+  <ul>
+    <li>Los daños derivados de interrupciones, fallos técnicos o virus que no le sean imputables.</li>
+    <li>El uso que hagas de la información publicada.</li>
+    <li>Los contenidos de sitios de terceros a los que se acceda mediante enlaces desde la web.</li>
+  </ul>
+  <p>
+    El contenido de la web tiene carácter informativo y no constituye una oferta contractual. Las condiciones de cada servicio se fijan en la
+    propuesta o el contrato correspondiente.
   </p>
 
   <h2>6. Enlaces</h2>
   <p>
-    El sitio web puede incluir enlaces a sitios de terceros. {SITE.name} no controla ni se responsabiliza de su contenido, disponibilidad,
-    políticas de privacidad o prácticas. Si quieres enlazar a este sitio web, el enlace debe dirigir a su página principal o a páginas
-    concretas, sin reproducir sus contenidos ni dar a entender una relación o aval que no exista.
+    La web puede incluir enlaces a sitios de terceros. Somos Pedazo no controla esos sitios ni se responsabiliza de sus contenidos, políticas
+    de privacidad o funcionamiento. Si tuviéramos conocimiento efectivo de que un enlace remite a contenidos ilícitos, lo retiraremos.
+  </p>
+  <p>
+    Si quieres enlazar a la web desde otro sitio, el enlace debe dirigir a la página principal o a una página concreta, sin reproducir sus
+    contenidos ni dar a entender que Somos Pedazo respalda ese sitio.
   </p>
 
-  <h2>7. Responsabilidad</h2>
+  <h2>7. Protección de datos y cookies</h2>
   <p>
-    Trabajamos para que la información del sitio web sea correcta y esté actualizada, pero puede contener errores u omisiones que
-    corregiremos en cuanto los detectemos. {SITE.name} no se responsabiliza de:
-  </p>
-  <ul>
-    <li>Las decisiones que tomes basándote solo en la información general del sitio web, sin un análisis específico de tu caso.</li>
-    <li>Las interrupciones, errores o fallos técnicos ajenos a nuestro control, ni de los daños causados por virus o ataques de terceros.</li>
-    <li>El uso indebido del sitio web por parte de los usuarios.</li>
-  </ul>
-
-  <h2>8. Protección de datos y cookies</h2>
-  <p>
-    El tratamiento de los datos personales que nos facilites se rige por nuestra <a href="/privacidad">política de privacidad</a>. El uso
-    de cookies y tecnologías similares se explica en la <a href="/cookies">política de cookies</a>.
+    El tratamiento de tus datos personales se rige por nuestra <a href="/privacidad">Política de privacidad</a>, y el uso de cookies, por
+    nuestra <a href="/cookies">Política de cookies</a>.
   </p>
 
-  <h2>9. Modificaciones</h2>
+  <h2>8. Modificaciones</h2>
   <p>
-    {SITE.name} puede modificar este aviso legal y los contenidos del sitio web en cualquier momento. Los cambios se aplican desde su
-    publicación, por lo que te recomendamos revisarlo periódicamente.
+    Podemos modificar este aviso legal para adaptarlo a cambios legislativos o del servicio. La versión vigente es la publicada en la web en
+    cada momento, con su fecha de última actualización.
   </p>
 
-  <h2>10. Legislación aplicable y jurisdicción</h2>
+  <h2>9. Legislación aplicable y jurisdicción</h2>
   <p>
-    Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales
-    del domicilio del titular, salvo que la normativa aplicable, en particular la de defensa de consumidores y usuarios, establezca otro
-    fuero.
+    Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y
+    tribunales de {SITE.legal.jurisdiccion}, salvo que la ley establezca otro fuero imperativo. Si eres consumidor, serán competentes los
+    juzgados de tu domicilio.
   </p>
 </LegalLayout>

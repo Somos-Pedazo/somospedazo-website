@@ -38,10 +38,23 @@ const year = new Date().getFullYear();
             </li>
           ))
         }
+        <li>
+          <!-- Reabre el banner de Cookiebot. Si Cookiebot no está disponible, lleva a la política de cookies. -->
+          <a href="/cookies" data-cookiebot-renew>Configuración de cookies</a>
+        </li>
       </ul>
     </nav>
   </div>
 </footer>
+
+<script is:inline data-cookieconsent="ignore">
+  document.addEventListener('click', function (e) {
+    var enlace = e.target instanceof Element ? e.target.closest('[data-cookiebot-renew]') : null;
+    if (!enlace || !window.Cookiebot || typeof window.Cookiebot.renew !== 'function') return;
+    e.preventDefault();
+    window.Cookiebot.renew();
+  });
+</script>
 
 <style>
   .pie {

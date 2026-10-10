@@ -1,87 +1,132 @@
 ---
+/** Política de cookies. Texto facilitado por Somos Pedazo + declaración automática de Cookiebot. */
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
+import { COOKIEBOT_DECLARACION } from '../config/cookiebot';
+
+const dpo = SITE.emailPrivacidad;
 ---
 
-<LegalLayout pagina={PAGINAS.cookies} actualizado="10 de octubre de 2026">
+<LegalLayout pagina={PAGINAS.cookies}>
   <p>
-    Esta política explica cómo usa {new URL(SITE.url).host} las cookies y tecnologías similares, conforme al artículo 22.2 de la Ley 34/2002,
-    de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), y a la Guía sobre el uso de las cookies de la Agencia
-    Española de Protección de Datos.
+    Esta política explica qué son las cookies, cuáles usa somospedazo.com y cómo puedes gestionarlas, conforme al artículo 22.2 de la Ley
+    34/2002 (LSSI-CE), al RGPD y a la Guía sobre el uso de las cookies de la Agencia Española de Protección de Datos.
   </p>
 
   <h2>1. Qué son las cookies</h2>
   <p>
-    Las cookies son pequeños archivos que un sitio web guarda en tu navegador para recordar información sobre tu visita. Hay tecnologías
-    similares, como el almacenamiento local del navegador, que funcionan de forma parecida. En esta política llamamos «cookies» a todas
-    ellas.
+    Las cookies son pequeños archivos que una web guarda en tu navegador o dispositivo al visitarla. Sirven, por ejemplo, para que la web
+    funcione correctamente, recordar tus preferencias o saber cómo se usa. En esta política llamamos "cookies" también a tecnologías
+    similares, como el almacenamiento local del navegador.
   </p>
 
-  <h2>2. Qué cookies usamos</h2>
+  <h2>2. Quién las utiliza</h2>
+  <ul>
+    <li><strong>Cookies propias:</strong> las gestiona Somos Pedazo, titular de la web.</li>
+    <li>
+      <strong>Cookies de terceros:</strong> las gestionan otras empresas que nos prestan servicios, como la herramienta de consentimiento o el
+      servicio de estadísticas.
+    </li>
+  </ul>
+
+  <h2>3. Qué tipos de cookies usamos</h2>
   <p>
-    <strong>No usamos cookies de análisis, publicidad, personalización ni redes sociales</strong>, ni propias ni de terceros. No creamos
-    perfiles ni te seguimos entre sitios web.
+    <strong>Técnicas o necesarias.</strong> Imprescindibles para que la web funcione y para recordar tu elección sobre cookies. Incluyen la cookie
+    de consentimiento de Cookiebot y las de seguridad de Cloudflare, que protegen la web y el formulario frente a bots y spam (Cloudflare
+    Turnstile). No requieren tu consentimiento y no se pueden desactivar desde el panel.
   </p>
-  <p>Solo se usan tecnologías técnicas, estrictamente necesarias para un servicio que tú pides:</p>
-  <div class="legal__tabla">
-    <table>
-      <thead>
-        <tr>
-          <th scope="col">Servicio</th>
-          <th scope="col">Titular</th>
-          <th scope="col">Finalidad</th>
-          <th scope="col">Dónde y cuándo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Cloudflare Turnstile</td>
-          <td>Cloudflare, Inc.</td>
-          <td>
-            Comprobar que quien envía el formulario de contacto es una persona y no un programa automático, para protegerlo frente al spam.
-          </td>
-          <td>Solo en la página de contacto, mientras dura la comprobación de seguridad.</td>
-        </tr>
-      </tbody>
-    </table>
+  <p>
+    <strong>Analíticas o estadísticas.</strong> Nos permiten saber cuántas personas visitan la web y cómo la usan, para mejorarla. Usamos Google
+    Analytics, de Google Ireland Ltd. <strong>Solo se activan si las aceptas.</strong> Google puede transferir datos a EE. UU. con las garantías
+    del Marco de Privacidad de Datos UE-EE. UU. Más información en la <a href="https://policies.google.com/privacy" rel="noopener"
+      >política de privacidad de Google</a
+    >.
+  </p>
+  <p>
+    <strong>Preferencias y marketing.</strong> Hoy no usamos cookies de este tipo. Si lo hacemos en el futuro, actualizaremos esta política y te
+    pediremos tu consentimiento antes de activarlas.
+  </p>
+  <p>
+    También usamos Vercel Web Analytics, un servicio de estadísticas que <strong>no instala cookies</strong> ni identifica a los visitantes de
+    forma individual.
+  </p>
+
+  <h2>4. Listado detallado de cookies</h2>
+  <p>
+    La tabla siguiente se genera y actualiza automáticamente con los escaneos periódicos de la web. Indica el nombre de cada cookie, su
+    proveedor, su finalidad, su tipo y su duración.
+  </p>
+  <!-- Declaración de cookies de Cookiebot: se rellena sola con los escaneos de Cookiebot. -->
+  <div class="declaracion-cookies">
+    <script is:inline id="CookieDeclaration" src={COOKIEBOT_DECLARACION} data-culture="ES" type="text/javascript" async></script>
+    <noscript>Para ver el listado de cookies necesitas activar JavaScript en tu navegador.</noscript>
   </div>
+
+  <h2>5. Cómo gestionar o retirar tu consentimiento</h2>
+  <ul>
+    <li>
+      <strong>Desde la web:</strong> en cualquier momento puedes cambiar o retirar tu consentimiento desde el enlace "Configuración de cookies"
+      del pie de página. Retirarlo es tan fácil como darlo.
+    </li>
+    <li>
+      <strong>Desde tu navegador:</strong> también puedes bloquear o eliminar cookies desde la configuración de tu navegador. Ten en cuenta que,
+      si bloqueas las técnicas, algunas partes de la web podrían no funcionar bien.
+      <ul>
+        <li><a href="https://support.google.com/chrome/answer/95647" rel="noopener">Google Chrome</a></li>
+        <li><a href="https://support.mozilla.org/es/kb/Borrar%20cookies" rel="noopener">Mozilla Firefox</a></li>
+        <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" rel="noopener">Safari</a></li>
+        <li><a href="https://support.microsoft.com/es-es/microsoft-edge" rel="noopener">Microsoft Edge</a></li>
+      </ul>
+    </li>
+  </ul>
   <p>
-    Cloudflare Turnstile puede leer o almacenar información técnica en tu navegador únicamente para esa comprobación. No se usa con fines
-    publicitarios ni para seguirte entre sitios web. Puedes consultar cómo trata Cloudflare los datos en su
-    <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">política de privacidad</a>.
+    Guardamos tu elección durante un máximo de 12 meses. Pasado ese plazo, o si cambiamos las cookies que usamos, te volveremos a preguntar.
   </p>
 
-  <h3>Estadísticas de uso sin cookies</h3>
+  <h2>6. Más información</h2>
   <p>
-    Para saber de forma agregada cuántas visitas recibe la web, qué páginas se consultan y lo rápido que cargan, usamos
-    <strong>Vercel Web Analytics</strong> y <strong>Vercel Speed Insights</strong> (Vercel Inc.). Según Vercel, estas herramientas no
-    instalan cookies ni guardan identificadores en tu navegador: distinguen las visitas mediante un identificador temporal que no permite
-    identificarte y que se renueva cada día. En la <a href="/privacidad">política de privacidad</a> te explicamos qué datos tratan.
-  </p>
-
-  <h2>3. Por qué no te pedimos consentimiento</h2>
-  <p>
-    Las cookies técnicas estrictamente necesarias para prestar un servicio que el usuario solicita expresamente, como enviar un formulario
-    de forma segura, están exentas del deber de consentimiento según el artículo 22.2 de la LSSI-CE. Las estadísticas de Vercel no
-    almacenan ni leen información en tu navegador, por lo que no les aplica ese deber. Como no usamos nada más, no mostramos un aviso de
-    cookies.
-  </p>
-  <p>
-    Si en el futuro incorporamos cookies que requieran tu consentimiento, como las de análisis, actualizaremos esta política y te lo
-    pediremos antes de instalarlas.
-  </p>
-
-  <h2>4. Cómo gestionar o eliminar las cookies</h2>
-  <p>
-    Puedes permitir, bloquear o eliminar las cookies desde la configuración de privacidad de tu navegador (Chrome, Firefox, Safari, Edge u
-    otros), normalmente en el apartado «Privacidad y seguridad». Si bloqueas las tecnologías de Cloudflare Turnstile, no podrás enviar el
-    formulario de contacto, pero el resto del sitio funcionará con normalidad.
-  </p>
-
-  <h2>5. Más información</h2>
-  <p>
-    Para saber cómo tratamos tus datos personales, consulta nuestra <a href="/privacidad">política de privacidad</a>. Si tienes cualquier
-    duda, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    Para saber cómo tratamos tus datos personales, consulta nuestra <a href="/privacidad">Política de privacidad</a>. Si tienes cualquier duda
+    sobre esta política, escríbenos a <a href={`mailto:${dpo}`}>{dpo}</a>.
   </p>
 </LegalLayout>
+
+<style>
+  /* La declaración de Cookiebot trae su propio HTML: se presenta en una tarjeta clara y legible. */
+  .declaracion-cookies {
+    padding: var(--s-3);
+    border-radius: var(--radio);
+    background: var(--c-crema);
+    color: var(--c-navy);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(a) {
+    color: var(--c-navy);
+    text-decoration-color: var(--c-mandarina);
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(a:hover) {
+    color: var(--c-navy);
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(strong) {
+    color: var(--c-navy);
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(table) {
+    min-width: 0;
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(th) {
+    color: var(--c-navy);
+    background: color-mix(in srgb, var(--c-navy) 6%, transparent);
+  }
+
+  :global(.legal__cuerpo) .declaracion-cookies :global(th),
+  :global(.legal__cuerpo) .declaracion-cookies :global(td) {
+    border-bottom-color: color-mix(in srgb, var(--c-navy) 15%, transparent);
+  }
+</style>

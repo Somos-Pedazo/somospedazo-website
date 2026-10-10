@@ -11,7 +11,7 @@
  * - La casilla de privacidad no lleva `name`: es obligatoria, pero no se envía.
  */
 import { SITE } from '../../config/site';
-import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
+import { CAMPOS, CAMPO_NEWSLETTER, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
 ---
 
 <form
@@ -120,20 +120,40 @@ import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
     <!-- Honeypot antispam: debe llegar vacío. Oculto para personas y lectores de pantalla. -->
     <input class="campo--trampa" type="text" name={HONEYPOT} value="" tabindex="-1" autocomplete="off" aria-hidden="true" data-honeypot />
 
+    <!-- Casilla 1 · obligatoria, sin premarcar. No lleva `name`: no se envía. -->
     <div class="campo campo--ancho">
       <div class="campo--casilla">
         <input id="privacidad" data-etiqueta="privacidad" type="checkbox" required aria-describedby="privacidad-error" />
         <label for="privacidad">
-          He leído y acepto la <a href="/privacidad">política de privacidad</a>. <span aria-hidden="true">*</span>
+          He leído y acepto la <a href="/privacidad">Política de privacidad</a>. <span aria-hidden="true">*</span>
         </label>
       </div>
       <p id="privacidad-error" class="campo__error" hidden></p>
     </div>
+
+    <!--
+      Casilla 2 · newsletter: opcional, sin premarcar e independiente de la anterior (no condiciona el envío).
+      El servidor guarda su valor en el lead de Zoho con fecha y hora (src/pages/api/contact.ts).
+    -->
+    <div class="campo campo--ancho">
+      <div class="campo--casilla">
+        <input id="newsletter" name={CAMPO_NEWSLETTER} value="si" type="checkbox" />
+        <label for="newsletter">
+          Quiero recibir la newsletter y comunicaciones comerciales de Somos Pedazo. Puedes darte de baja cuando quieras. <span
+            class="campo__opcional">(opcional)</span
+          >
+        </label>
+      </div>
+    </div>
   </div>
 
+  <!-- Primera capa de información sobre protección de datos (texto facilitado por Somos Pedazo). -->
   <p class="formulario__rgpd">
-    <strong>Responsable:</strong> {SITE.legalName}. <strong>Finalidad:</strong> responder a tu consulta. <strong>Derechos:</strong> acceso, rectificación, supresión
-    y otros, como explicamos en la <a href="/privacidad">política de privacidad</a>.
+    <strong>Responsable:</strong> Somos Pedazo. <strong>Finalidad:</strong> responder a tu consulta y, si lo aceptas, enviarte nuestra
+    newsletter. <strong>Legitimación:</strong> tu solicitud y tu consentimiento. <strong>Destinatarios:</strong> proveedores tecnológicos que
+    actúan por cuenta nuestra, algunos con transferencias internacionales con garantías adecuadas. <strong>Derechos:</strong> acceso,
+    rectificación, supresión y otros, escribiendo a <a href={`mailto:${SITE.emailPrivacidad}`}>{SITE.emailPrivacidad}</a>. Más información
+    en nuestra <a href="/privacidad">Política de privacidad</a>.
   </p>
 
   <!-- Cloudflare Turnstile (Managed). Renderizado explícito: src/scripts/formulario/turnstile.ts -->
@@ -151,7 +171,11 @@ import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
   <p class="formulario__estado" data-estado role="status" aria-live="polite"></p>
 </form>
 
-<script is:inline>
+<!--
+  Turnstile es estrictamente necesario para enviar el formulario (política de cookies, apartado 3):
+  se excluye del bloqueo automático de Cookiebot con data-cookieconsent="ignore".
+-->
+<script is:inline data-cookieconsent="ignore">
   // Callback de Cloudflare: avisa al controlador (src/scripts/formulario/turnstile.ts).
   window.onTurnstileListo = function () {
     window.__turnstileListo = true;
@@ -165,6 +189,7 @@ import { CAMPOS, HONEYPOT, TURNSTILE_SITE_KEY } from '../../config/zoho';
       s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileListo';
       s.async = true;
       s.defer = true;
+      s.setAttribute('data-cookieconsent', 'ignore');
       document.head.appendChild(s);
     }
     if (document.readyState === 'complete') cargar();

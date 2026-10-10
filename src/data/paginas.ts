@@ -58,7 +58,7 @@ export const PAGINAS = definir({
     path: '/aviso-legal',
     nombre: 'Aviso legal',
     title: 'Aviso legal · Somos Pedazo',
-    description: 'Aviso legal de Somos Pedazo: datos identificativos del titular del sitio web, condiciones de uso y propiedad intelectual.',
+    description: 'Aviso legal de Somos Pedazo: datos del titular del sitio web, condiciones de uso, propiedad intelectual, responsabilidad y legislación aplicable.',
     ogTitulo: 'Aviso legal',
   },
   privacidad: {
@@ -74,7 +74,7 @@ export const PAGINAS = definir({
     path: '/cookies',
     nombre: 'Política de cookies',
     title: 'Política de cookies · Somos Pedazo',
-    description: 'Política de cookies de Somos Pedazo: este sitio no usa cookies de análisis ni de publicidad. Te explicamos qué almacenamos y por qué.',
+    description: 'Política de cookies de Somos Pedazo: qué cookies usamos, para qué sirven, cuánto duran y cómo cambiar o retirar tu consentimiento.',
     ogTitulo: 'Política de cookies',
   },
   noEncontrada: {

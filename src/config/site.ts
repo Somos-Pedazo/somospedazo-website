@@ -16,15 +16,21 @@ export const SITE = {
     'Agencia de estrategia y growth. Unimos estrategia, marketing y tecnología para que tu negocio crezca con un plan claro.',
   /** No se muestra en Contacto ni en el pie; solo en textos legales y datos estructurados. */
   email: 'hola@somospedazo.com', // TODO: confirmar
+  /** Contacto para privacidad y ejercicio de derechos (política de privacidad y de cookies). */
+  emailPrivacidad: 'dpo@somospedazo.com',
   /** Opcional. Si se rellena, se añade a los datos estructurados (formato +34 600 000 000). */
   telephone: undefined as string | undefined,
   /**
-   * Datos registrales exigidos por la LSSI (art. 10) en el aviso legal.
-   * Si quedan vacíos, la línea correspondiente no se muestra y el build avisa.
+   * Datos del titular para los textos legales (LSSI art. 10 y RGPD art. 13).
+   * Si NIF o registro quedan vacíos, su línea no se muestra y el build avisa.
    */
   legal: {
     nif: '', // TODO: NIF/CIF
-    registro: '', // TODO: p. ej. «Registro Mercantil de Madrid, tomo X, folio Y, hoja M-Z»
+    registro: '', // TODO: p. ej. «Inscrita en el Registro Mercantil de Madrid, Tomo X, Folio X, Hoja M-XXXXXX» (vacío si es persona física)
+    /** Juzgados y tribunales competentes (aviso legal, apartado 9). */
+    jurisdiccion: 'Madrid', // TODO: confirmar
+    /** Fecha de «Última actualización» de los textos legales. */
+    actualizado: '10/10/2026',
   },
   /**
    * Domicilio. Opcional: de momento no se publica. Si se rellena, se añade a los datos

@@ -6,6 +6,7 @@ import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import { SITE } from '../config/site';
+import { COOKIEBOT_ID, COOKIEBOT_UC } from '../config/cookiebot';
 import type { Pagina } from '../data/paginas';
 import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
 // Vercel Web Analytics lo inyecta el adaptador (astro.config.mjs → webAnalytics), no un componente.
@@ -18,6 +19,9 @@ interface Props {
   tipoPagina?: string;
 }
 
+// Cookiebot (uc.js) va SIEMPRE como primer elemento del <head>, sin nada delante: tiene que cargar
+// el primero para poder bloquear al resto de scripts hasta el consentimiento (src/config/cookiebot.ts).
+
 const { pagina, schema = [], tipoPagina } = Astro.props;
 const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina, tipoPagina), breadcrumb(pagina), ...schema]);
 ---
@@ -25,6 +29,7 @@ const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina
 <!doctype html>
 <html lang={SITE.locale} dir="ltr">
   <head>
+    <script is:inline id="Cookiebot" src={COOKIEBOT_UC} data-cbid={COOKIEBOT_ID} data-blockingmode="auto" data-culture="ES" type="text/javascript"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <Fonts />

@@ -1,7 +1,9 @@
 ---
 /**
  * Plantilla de los textos legales (aviso legal, privacidad y cookies).
- * Los datos de la empresa salen de src/config/site.ts.
+ * Fondo navy y texto crema, con ancho de lectura cómodo (~70 caracteres por línea).
+ * El cuerpo de cada texto va en el <slot /> de la página correspondiente.
+ * Los datos del titular salen de src/config/site.ts.
  */
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
@@ -10,53 +12,91 @@ import type { Pagina } from '../data/paginas';
 
 interface Props {
   pagina: Pagina;
-  actualizado: string;
 }
 
-const { pagina, actualizado } = Astro.props;
+const { pagina } = Astro.props;
 
 // La LSSI exige NIF y datos registrales: avisa en el build si faltan.
-for (const [campo, valor] of Object.entries(SITE.legal)) {
-  if (!valor) console.warn(`[legal] Falta SITE.legal.${campo} en src/config/site.ts (${pagina.path})`);
+for (const campo of ['nif', 'registro'] as const) {
+  if (!SITE.legal[campo]) console.warn(`[legal] Falta SITE.legal.${campo} en src/config/site.ts (${pagina.path})`);
 }
 ---
 
 <BaseLayout pagina={pagina}>
-  <article class="contenedor legal">
-    <Breadcrumbs pagina={pagina} />
-    <h1>{pagina.nombre}</h1>
-    <p class="legal__fecha">Última actualización: {actualizado}</p>
-    <div class="legal__cuerpo flujo">
-      <slot />
-    </div>
-  </article>
+  <div class="legal oscuro">
+    <article class="contenedor legal__articulo">
+      <Breadcrumbs pagina={pagina} />
+      <header class="legal__cabecera">
+        <h1>{pagina.nombre}</h1>
+        <p class="legal__fecha">Última actualización: {SITE.legal.actualizado}</p>
+      </header>
+      <!-- CUERPO DEL TEXTO LEGAL: se edita en la página correspondiente de src/pages/ -->
+      <div class="legal__cuerpo flujo">
+        <slot />
+      </div>
+    </article>
+  </div>
 </BaseLayout>
 
 <style>
   .legal {
-    max-width: calc(48rem + var(--gutter) * 2);
     padding-block: var(--s-4) var(--seccion);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-crema) 20%, transparent);
+  }
+
+  .legal__articulo {
+    max-width: calc(46rem + var(--gutter) * 2);
+  }
+
+  /* Migas de pan sobre fondo oscuro */
+  .legal :global(.migas li + li::before) {
+    color: color-mix(in srgb, var(--c-crema) 70%, transparent);
+  }
+
+  .legal__cabecera {
+    margin-block: var(--s-4) var(--s-6);
+    padding-block-end: var(--s-4);
+    border-bottom: 3px solid var(--c-sol);
   }
 
   .legal h1 {
-    margin-block-start: var(--s-4);
     font-size: var(--t-2xl);
+    color: var(--c-crema);
   }
 
   .legal__fecha {
-    margin-block: var(--s-1) var(--s-6);
-    color: var(--fg-suave);
+    margin-block-start: var(--s-1);
     font-size: var(--t-xs);
+    color: color-mix(in srgb, var(--c-crema) 85%, transparent);
+  }
+
+  .legal__cuerpo {
+    font-size: var(--t-base);
+    line-height: 1.7;
   }
 
   .legal__cuerpo :global(h2) {
+    margin-block-start: var(--s-8);
     font-size: var(--t-xl);
-    margin-block-start: var(--s-6);
+    color: var(--c-sol);
   }
 
   .legal__cuerpo :global(h3) {
-    font-size: var(--t-lg);
     margin-block-start: var(--s-4);
+    font-size: var(--t-lg);
+  }
+
+  .legal__cuerpo :global(a) {
+    color: var(--c-crema);
+    text-decoration-color: var(--c-sol);
+  }
+
+  .legal__cuerpo :global(a:hover) {
+    color: var(--c-sol);
+  }
+
+  .legal__cuerpo :global(strong) {
+    color: var(--c-blanco);
   }
 
   .legal__cuerpo :global(ul) {
@@ -67,39 +107,41 @@ for (const [campo, valor] of Object.entries(SITE.legal)) {
     margin-block-start: var(--s-1);
   }
 
+  .legal__cuerpo :global(li::marker) {
+    color: var(--c-sol);
+  }
+
+  /* Tablas: con desplazamiento horizontal en móvil, sin romper el ancho de la página */
   .legal__cuerpo :global(.legal__tabla) {
     overflow-x: auto;
+    border-radius: var(--radio);
+    border: 1px solid color-mix(in srgb, var(--c-crema) 25%, transparent);
   }
 
   .legal__cuerpo :global(table) {
     width: 100%;
+    min-width: 34rem;
     border-collapse: collapse;
     font-size: var(--t-sm);
+    line-height: 1.5;
   }
 
   .legal__cuerpo :global(th),
   .legal__cuerpo :global(td) {
-    padding: var(--s-1) var(--s-2);
-    border-bottom: 1px solid color-mix(in srgb, var(--c-navy) 20%, transparent);
+    padding: var(--s-2);
     text-align: start;
     vertical-align: top;
+    border-bottom: 1px solid color-mix(in srgb, var(--c-crema) 18%, transparent);
+  }
+
+  .legal__cuerpo :global(tr:last-child td) {
+    border-bottom: 0;
   }
 
   .legal__cuerpo :global(th) {
     font-family: var(--font-titular);
     font-weight: var(--peso-demi);
-  }
-
-  .legal__cuerpo :global(dl) {
-    display: grid;
-    gap: var(--s-1);
-  }
-
-  .legal__cuerpo :global(dt) {
-    font-weight: 700;
-  }
-
-  .legal__cuerpo :global(dd) {
-    margin: 0 0 var(--s-1);
+    color: var(--c-sol);
+    background: color-mix(in srgb, var(--c-crema) 8%, transparent);
   }
 </style>

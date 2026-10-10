@@ -1,35 +1,67 @@
 ---
 /**
- * Datos identificativos del titular (LSSI art. 10 y RGPD art. 13). Salen de src/config/site.ts.
- * El domicilio no se muestra por decisión del titular. La LSSI lo exige en el aviso legal:
- * cuando se quiera añadir, va aquí (datos en SITE.address).
+ * Datos del titular / responsable en los textos legales. Salen de src/config/site.ts.
+ * Cada línea solo se muestra si el dato existe (sin marcadores [ ] publicados).
+ * El domicilio no se muestra mientras SITE.address esté vacío (la LSSI lo exige en el aviso legal).
  */
 import { SITE } from '../../config/site';
 
-const { legal } = SITE;
+interface Props {
+  modo: 'aviso' | 'privacidad';
+}
+
+const { modo } = Astro.props;
+const { legal, address: a } = SITE;
+const domicilio = a ? `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} (${a.addressRegion})` : '';
 ---
 
-<dl>
-  <dt>Titular</dt>
-  <dd>{SITE.legalName}</dd>
+<ul>
+  {
+    modo === 'aviso' ? (
+      <>
+        <li>
+          <strong>Titular:</strong> {SITE.legalName}
+        </li>
+        <li>
+          <strong>Nombre comercial:</strong> {SITE.name}
+        </li>
+      </>
+    ) : (
+      <li>
+        <strong>Responsable:</strong> {SITE.legalName}
+      </li>
+    )
+  }
   {
     legal.nif && (
-      <>
-        <dt>NIF</dt>
-        <dd>{legal.nif}</dd>
-      </>
+      <li>
+        <strong>NIF:</strong> {legal.nif}
+      </li>
     )
   }
-  <dt>Correo electrónico</dt>
-  <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
   {
-    legal.registro && (
-      <>
-        <dt>Datos registrales</dt>
-        <dd>{legal.registro}</dd>
-      </>
+    domicilio && (
+      <li>
+        <strong>Domicilio:</strong> {domicilio}
+      </li>
     )
   }
-  <dt>Sitio web</dt>
-  <dd>{new URL(SITE.url).host}</dd>
-</dl>
+  {
+    modo === 'aviso' ? (
+      <li>
+        <strong>Correo electrónico:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </li>
+    ) : (
+      <li>
+        <strong>Contacto para privacidad:</strong> <a href={`mailto:${SITE.emailPrivacidad}`}>{SITE.emailPrivacidad}</a>
+      </li>
+    )
+  }
+  {
+    modo === 'aviso' && legal.registro && (
+      <li>
+        <strong>Datos registrales:</strong> {legal.registro}
+      </li>
+    )
+  }
+</ul>
