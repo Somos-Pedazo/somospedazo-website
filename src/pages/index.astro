@@ -30,28 +30,35 @@ const piezas = [
 ];
 ---
 
-<BaseLayout pagina={pagina}>
-  <section class="hero" aria-labelledby="hero-titulo">
-    <div class="contenedor hero__rejilla">
-      <div class="hero__texto flujo">
-        <p class="antetitulo">{SITE.categoria}</p>
-        <h1 id="hero-titulo">Tu negocio tiene piezas sueltas. Nosotros las encajamos.</h1>
-        <p class="lead">
-          Unimos estrategia, marketing y tecnología en un plan claro. Te decimos qué hacer, te acompañamos y, si quieres, lo hacemos contigo.
-        </p>
-        <div class="hero__acciones">
-          <Boton href="/contacto">Cuéntanos tu proyecto</Boton>
-          <Boton href="/servicios" variante="secundario">Ver cómo trabajamos</Boton>
+<BaseLayout pagina={pagina} motion>
+  {/* Escena del hero (src/scripts/motion/hero.ts). Sin animación, se ve el estado final. */}
+  <div class="hero-escena" data-hero-escena>
+    <section class="hero" aria-labelledby="hero-titulo">
+      <div class="contenedor hero__rejilla">
+        <div class="hero__texto flujo">
+          <p class="antetitulo">{SITE.categoria}</p>
+          <p class="hero__pista" aria-hidden="true" data-hero-pista>
+            Cada uno aporta su pedazo.
+            <span class="hero__pista-accion">Desliza para encajarlos</span>
+          </p>
+          <h1 id="hero-titulo" data-motion data-hero-revela>Tu negocio tiene piezas sueltas. Nosotros las encajamos.</h1>
+          <p class="lead" data-motion data-hero-revela>
+            Unimos estrategia, marketing y tecnología en un plan claro. Te decimos qué hacer, te acompañamos y, si quieres, lo hacemos contigo.
+          </p>
+          <div class="hero__acciones" data-motion data-hero-revela>
+            <Boton href="/contacto">Cuéntanos tu proyecto</Boton>
+            <Boton href="/servicios" variante="secundario">Ver cómo trabajamos</Boton>
+          </div>
         </div>
+        <Placeholder nombre="mascota-hero" class="hero__arte">
+          <Pedazos
+            {...HERO}
+            label="Ilustración de piezas redondeadas de colores que encajan en una retícula; la última pieza, la que aporta el cliente, completa la composición."
+          />
+        </Placeholder>
       </div>
-      <Placeholder nombre="mascota-hero" class="hero__arte">
-        <Pedazos
-          {...HERO}
-          label="Ilustración de piezas redondeadas de colores que encajan en una retícula, con un hueco libre para la pieza que aporta cada cliente."
-        />
-      </Placeholder>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <section class="seccion" aria-labelledby="que-hacemos">
     <div class="contenedor">
@@ -108,9 +115,85 @@ const piezas = [
   <CtaBanda />
 </BaseLayout>
 
+<script>
+  import '../scripts/motion/hero';
+</script>
+
 <style>
   .hero {
     padding-block: var(--s-4) var(--seccion);
+  }
+
+  /* La pista solo existe en el hero animado de escritorio. */
+  .hero__pista {
+    display: none;
+  }
+
+  .hero__texto {
+    position: relative;
+  }
+
+  /* ---- Hero animado (solo con html.motion: JS activo y sin reduced motion) ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Las piezas vuelan desde fuera de pantalla: el SVG no las recorta (overflow visible)
+       y el hero, a todo el ancho, evita el desbordamiento horizontal. */
+    :global(html.motion) .hero {
+      overflow: clip;
+    }
+
+    :global(html.motion) .hero :global(svg.pedazos) {
+      overflow: visible;
+    }
+
+    /* Estado inicial antes de que GSAP tome el control (evita un destello del estado final). */
+    :global(html.motion) .hero :global([data-pieza]) {
+      opacity: 0;
+    }
+  }
+
+  @media (min-width: 60rem) and (prefers-reduced-motion: no-preference) {
+    /* Escena fijada con sticky (sin pin-spacer de JS: CLS 0). La altura extra es el recorrido. */
+    :global(html.motion) .hero-escena {
+      height: 220vh;
+    }
+
+    :global(html.motion) .hero {
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding-block: var(--s-6);
+    }
+
+    :global(html.motion) [data-hero-revela] {
+      opacity: 0;
+    }
+
+    :global(html.motion) .hero__pista {
+      display: block;
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 2.75rem;
+      font-family: var(--font-titular);
+      font-weight: var(--peso-impacto);
+      font-size: var(--t-2xl);
+      line-height: 1.1;
+    }
+
+    .hero__pista-accion {
+      display: block;
+      margin-block-start: var(--s-3);
+      font-family: var(--font-texto);
+      font-weight: 400;
+      font-size: var(--t-sm);
+      color: var(--fg-suave);
+    }
+
+    .hero__pista-accion::after {
+      content: '↓' / '';
+      margin-inline-start: 0.4em;
+    }
   }
 
   .hero__rejilla {
