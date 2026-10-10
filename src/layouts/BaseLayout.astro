@@ -7,6 +7,7 @@ import Footer from '../components/layout/Footer.astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import { SITE } from '../config/site';
 import { COOKIEBOT_ID, COOKIEBOT_UC } from '../config/cookiebot';
+import { MOTION_INIT } from '../scripts/motion/base';
 import type { Pagina } from '../data/paginas';
 import { breadcrumb, grafo, localBusiness, organization, webPage, website } from '../utils/schema';
 // Vercel Web Analytics lo inyecta el adaptador (astro.config.mjs → webAnalytics), no un componente.
@@ -17,12 +18,14 @@ interface Props {
   schema?: Record<string, unknown>[];
   /** Tipo de WebPage (ContactPage, AboutPage…). */
   tipoPagina?: string;
+  /** Activa las animaciones ligadas al scroll (solo Inicio, Servicios y Enfoque). */
+  motion?: boolean;
 }
 
 // Cookiebot (uc.js) va SIEMPRE como primer elemento del <head>, sin nada delante: tiene que cargar
 // el primero para poder bloquear al resto de scripts hasta el consentimiento (src/config/cookiebot.ts).
 
-const { pagina, schema = [], tipoPagina } = Astro.props;
+const { pagina, schema = [], tipoPagina, motion = false } = Astro.props;
 const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina, tipoPagina), breadcrumb(pagina), ...schema]);
 ---
 
@@ -42,6 +45,10 @@ const jsonLd = grafo([organization(), localBusiness(), website(), webPage(pagina
     <script is:inline type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
+    {
+      /* Antes de pintar nada: activa el modo animado si procede (src/scripts/motion/base.ts). */
+      motion && <script is:inline data-cookieconsent="ignore" set:html={MOTION_INIT} />
+    }
     <a class="salto" href="#contenido">Saltar al contenido</a>
     <Header />
     <main id="contenido" tabindex="-1">

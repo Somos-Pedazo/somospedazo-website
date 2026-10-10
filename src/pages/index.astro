@@ -65,7 +65,7 @@ const piezas = [
       <ul class="piezas" role="list">
         {
           piezas.map((p) => (
-            <li class="pieza" style={`--color: var(--c-${p.color})`}>
+            <li class="pieza interactiva" style={`--color: var(--c-${p.color})`}>
               <span class="pieza__forma" aria-hidden="true" />
               <h3>{p.titulo}</h3>
               <p>{p.texto}</p>

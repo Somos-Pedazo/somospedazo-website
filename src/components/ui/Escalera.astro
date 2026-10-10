@@ -23,7 +23,7 @@ const Sub = completa ? 'h3' : 'h4';
   {
     NIVELES.map((n) => (
       <li class="escalon" id={completa ? n.id : undefined} style={`--color: var(--c-${n.color}); --nivel: ${n.numero}`}>
-        <article class="escalon__tarjeta" aria-labelledby={`${n.id}-${variante}-titulo`}>
+        <article class="escalon__tarjeta interactiva" aria-labelledby={`${n.id}-${variante}-titulo`}>
           <div class="escalon__peldano" aria-hidden="true">
             <span class="escalon__numero">{n.numero}</span>
           </div>
