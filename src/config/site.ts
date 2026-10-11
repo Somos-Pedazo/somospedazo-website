@@ -4,8 +4,8 @@
  * Los campos marcados con TODO están sin confirmar: complétalos antes de publicar.
  */
 export const SITE = {
-  name: 'Somos Pedazo',
-  legalName: 'Somos Pedazo', // TODO: razón social completa (p. ej. «Somos Pedazo, S.L.»)
+  name: 'Pedazo',
+  legalName: 'Pedazo', // TODO: razón social completa (p. ej. «Pedazo, S.L.»)
   url: 'https://somospedazo.com', // TODO: confirmar dominio (sincronizar con astro.config.mjs)
   locale: 'es-ES',
   ogLocale: 'es_ES',

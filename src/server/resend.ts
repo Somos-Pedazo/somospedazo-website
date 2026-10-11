@@ -7,7 +7,7 @@
 import { Resend } from 'resend';
 import { ASUNTO_CONFIRMACION, correoConfirmacion } from './email/confirmacion';
 
-const REMITENTE = 'Somos Pedazo <hola@somospedazo.com>';
+const REMITENTE = 'Pedazo <hola@somospedazo.com>';
 const RESPONDER_A = 'hola@somospedazo.com';
 const TIMEOUT_MS = 8000;
 
