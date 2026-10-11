@@ -1,4 +1,4 @@
-# Somos Pedazo · Web corporativa
+# Pedazo · Web corporativa
 
 Astro 7 + TypeScript (estricto), CSS nativo. Sin JavaScript de framework. Todas las páginas se generan estáticas; solo `/api/contact` se ejecuta en servidor (función de Vercel, adaptador `@astrojs/vercel`).
 
@@ -67,7 +67,7 @@ Para localizar todos los huecos, busca `PLACEHOLDER` y `TODO` en el proyecto.
    - De momento, el domicilio **no se publica**: ni en los textos legales ni en los datos estructurados. La LSSI lo exige en el aviso legal; para añadirlo, rellena `SITE.address` (se incluye en el JSON-LD) y muéstralo en `src/components/legal/DatosTitular.astro`.
    - El build avisa (`[legal]`) mientras falten el NIF o los datos registrales. **No publiques con esos avisos.**
    - El teléfono es opcional: si lo rellenas, solo se añade a los datos estructurados.
-4. **Textos legales** (`/aviso-legal`, `/privacidad` y `/cookies`): el texto lo facilita Somos Pedazo y está copiado literalmente en `src/pages/`. Los datos del titular, la fecha de actualización (`SITE.legal.actualizado`), el fuero (`SITE.legal.jurisdiccion`) y los correos (`email` y `emailPrivacidad`) salen de `src/config/site.ts`. Si cambia un texto, edita la página correspondiente. La plantilla común es `src/layouts/LegalLayout.astro` (fondo navy y texto crema).
+4. **Textos legales** (`/aviso-legal`, `/privacidad` y `/cookies`): el texto lo facilita Pedazo y está copiado literalmente en `src/pages/`. Los datos del titular, la fecha de actualización (`SITE.legal.actualizado`), el fuero (`SITE.legal.jurisdiccion`) y los correos (`email` y `emailPrivacidad`) salen de `src/config/site.ts`. Si cambia un texto, edita la página correspondiente. La plantilla común es `src/layouts/LegalLayout.astro` (fondo navy y texto crema).
 5. **Tipografías.** Avenir y Calibri se usan si están instaladas en el dispositivo. Si no lo están, entran Figtree (titulares) y Carlito (texto, con las mismas métricas que Calibri), ambas alojadas en el propio sitio. Si compráis una licencia web de Avenir, cambia los archivos en `src/components/brand/Fonts.astro`.
 
 ## Formulario de contacto
@@ -83,7 +83,7 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
   - **Privacidad:** obligatoria, también en el servidor.
   - **Newsletter:** opcional, sin premarcar y separada de la de privacidad; no condiciona el envío.
   - El valor de ambas y su fecha y hora quedan registrados en «Description»: `privacy_consent` y `newsletter_consent`.
-- **Primera capa informativa:** el texto facilitado por Somos Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
+- **Primera capa informativa:** el texto facilitado por Pedazo va encima de la verificación de Turnstile, que está justo encima del botón.
 
 **Teléfono internacional** (`src/components/ui/CampoTelefono.astro`, `src/scripts/formulario/telefono.ts`)
 - **Desplegable de país** con bandera y prefijo, buscador (por nombre sin tildes, código ISO o prefijo: «japon», «JP», «+81») y teclado completo (↑/↓, RePág/AvPág, Intro, Esc). Es un combobox + listbox de WAI-ARIA; sin JS queda un `<select>` nativo. España por defecto.
@@ -146,7 +146,7 @@ Navegador → `/api/contact` (función de Vercel) → Zoho CRM (Web-to-Lead). Co
 6. Reenvía a Zoho como `application/x-www-form-urlencoded`, añadiendo los campos ocultos (`src/server/zoho.ts`). Cualquier respuesta 2xx o 3xx cuenta como éxito; si no, responde 502.
 7. **Correo de confirmación con Resend** (`src/server/resend.ts`), solo si Zoho ha aceptado el lead:
    - Se envía **siempre**, marque o no la newsletter: es transaccional, no comercial. No depende de `newsletter_consent` ni de Email Opt Out.
-   - Remitente `Somos Pedazo <hola@somospedazo.com>`, Reply-To `hola@somospedazo.com` y asunto «Hemos recibido tu mensaje - Somos Pedazo».
+   - Remitente `Pedazo <hola@somospedazo.com>`, Reply-To `hola@somospedazo.com` y asunto «Hemos recibido tu mensaje - Pedazo».
    - HTML a partir de la plantilla `src/server/email/confirmacion.html`, más una versión en texto plano. Lo único variable es el nombre, escapado como HTML. El mensaje y el resto de lo que escribe el usuario **no** se incluyen, para que el formulario no sirva para mandar contenido a terceros.
    - Si Resend falla o falta `RESEND_API_KEY`, se registra en los logs y se responde éxito igualmente, porque el lead ya está guardado. Un único intento, sin reintentos.
    - Sustituye al autoresponder de Zoho, que no se envía con Email Opt Out marcado. **Desactiva el autoresponder en Zoho** para no mandar dos correos.

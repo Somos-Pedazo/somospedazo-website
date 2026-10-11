@@ -8,7 +8,7 @@
  */
 import plantilla from './confirmacion.html?raw';
 
-export const ASUNTO_CONFIRMACION = 'Hemos recibido tu mensaje - Somos Pedazo';
+export const ASUNTO_CONFIRMACION = 'Hemos recibido tu mensaje - Pedazo';
 
 /** Marcador del nombre en la plantilla (heredado del autoresponder de Zoho). */
 const MARCADOR_NOMBRE = '${Leads.First Name}';
@@ -44,12 +44,12 @@ export function correoConfirmacion(nombre: string): { html: string; text: string
     'Ver cómo trabajamos: https://somospedazo.com/servicios',
     '',
     'Cada uno aporta su pedazo. Juntos, encajamos.',
-    'El equipo de Somos Pedazo',
+    'El equipo de Pedazo',
     '',
     '--',
     'Recibes este correo porque has enviado el formulario de contacto de somospedazo.com.',
     'Es un mensaje automático de confirmación; no te suscribe a ninguna comunicación comercial.',
-    'Somos Pedazo · Política de privacidad: https://somospedazo.com/privacidad · dpo@somospedazo.com',
+    'Pedazo · Política de privacidad: https://somospedazo.com/privacidad · dpo@somospedazo.com',
   ].join('\n');
 
   return { html, text };

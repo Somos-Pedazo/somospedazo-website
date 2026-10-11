@@ -120,14 +120,12 @@ ${arte}
 /** Logo cuadrado (512×512) para schema.org. PLACEHOLDER LOGO. */
 export async function imagenLogo(): Promise<Uint8Array<ArrayBuffer>> {
   const S = 512;
-  const size = 104;
-  const l1 = 'Somos';
-  const l2 = 'Pedazo';
+  const size = 116;
+  const marca = SITE.name;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">
 <rect width="${S}" height="${S}" fill="${C.crema}"/>
-${simbolo((S - 38 * 4) / 2, 88, 88)}
-${texto(l1, (S - ancho(l1, size, 900)) / 2, 318, size, 900, C.navy)}
-${texto(l2, (S - ancho(l2, size, 900)) / 2, 428, size, 900, C.navy)}
+${simbolo((S - 38 * 4) / 2, 132, 88)}
+${texto(marca, (S - ancho(marca, size, 900)) / 2, 380, size, 900, C.navy)}
 </svg>`;
   return png(svg);
 }
