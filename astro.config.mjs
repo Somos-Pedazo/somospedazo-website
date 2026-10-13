@@ -18,8 +18,12 @@ if (process.env.VERCEL_ENV === 'production') {
   }
 }
 
-// Páginas que no deben indexarse (también llevan <meta name="robots" content="noindex">).
-const NOINDEX = ['/404'];
+// Páginas fuera del sitemap. Llevan <meta name="robots" content="noindex, follow"> (noindex: true en
+// src/data/paginas.ts): las legales siguen enlazadas desde el pie, pero no compiten en buscadores.
+const NOINDEX = ['/404', '/aviso-legal', '/privacidad', '/cookies'];
+
+// Fecha de compilación: lastmod de todas las URL del sitemap.
+const COMPILACION = new Date();
 
 export default defineConfig({
   site: SITE_URL,
@@ -56,7 +60,8 @@ export default defineConfig({
         const path = new URL(page).pathname.replace(/\/$/, '') || '/';
         return !NOINDEX.includes(path);
       },
-      changefreq: 'monthly',
+      // Sin changefreq ni priority: Google los ignora.
+      lastmod: COMPILACION,
     }),
   ],
 });

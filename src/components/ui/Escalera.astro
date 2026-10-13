@@ -36,7 +36,8 @@ const Sub = completa ? 'h3' : 'h4';
       >
         <article class="escalon__tarjeta interactiva" aria-labelledby={`${n.id}-${variante}-titulo`}>
           <div class="escalon__peldano" aria-hidden="true">
-            <span class="escalon__numero">{n.numero}</span>
+            {/* El número va por CSS (::before): «Escalón N» ya lo dice en texto, sin duplicarlo. */}
+            <span class="escalon__numero" data-num={n.numero} />
             {/* Cada escalón suma los pedazos de los anteriores: 1 → sol; 2 → sol + chicle; 3 → + mandarina. */}
             <span class="escalon__suma">
               {NIVELES.slice(0, n.numero).map((m) => (
@@ -112,6 +113,10 @@ const Sub = completa ? 'h3' : 'h4';
     background: var(--color);
     border-radius: calc(var(--radio) * 1.4) calc(var(--radio) * 1.4) 0 0;
     min-height: calc(var(--s-6) + var(--nivel) * var(--s-4));
+  }
+
+  .escalon__numero::before {
+    content: attr(data-num);
   }
 
   .escalon__numero {

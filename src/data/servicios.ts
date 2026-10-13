@@ -41,7 +41,7 @@ export const NIVELES: Nivel[] = [
       'Todo lo del Diagnóstico y, además, seguimos la implementación como tu oficina de proyectos. Tu equipo ejecuta; nosotros marcamos el ritmo.',
     incluye: [
       'Todo lo del escalón Diagnóstico',
-      'Seguimiento del plan tipo PMO sobre tu equipo',
+      'Seguimiento del plan con tu equipo, como una oficina de proyecto (PMO)',
       'Reuniones periódicas de avance y desbloqueo',
       'Cuadro de mando con las métricas que importan',
       'Ajustes del plan según resultados',

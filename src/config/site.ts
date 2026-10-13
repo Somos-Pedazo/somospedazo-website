@@ -5,8 +5,12 @@
  */
 export const SITE = {
   name: 'Pedazo',
-  legalName: 'Pedazo', // TODO: razón social completa (p. ej. «Pedazo, S.L.»)
+  /** Razón social. Vacía hasta la constitución: los textos legales muestran «[Razón social pendiente de constitución]». */
+  legalName: '', // TODO: razón social completa (p. ej. «Pedazo, S.L.»)
   url: 'https://somospedazo.com', // TODO: confirmar dominio (sincronizar con astro.config.mjs)
+  /** Idioma del documento (<html lang>). */
+  idioma: 'es',
+  /** Idioma con región: hreflang, inLanguage de schema.org y manifest. */
   locale: 'es-ES',
   ogLocale: 'es_ES',
   slogan: 'Cada uno aporta su pedazo. Juntos, encajamos.',
@@ -45,6 +49,12 @@ export const SITE = {
   priceRange: '€€',
   areaServed: 'España',
   foundingDate: undefined as string | undefined, // TODO: p. ej. '2024'
+  /**
+   * Página de empresa en LinkedIn. Vacía de momento: el enlace del pie no se pinta.
+   * Al rellenarla (p. ej. 'https://www.linkedin.com/company/somospedazo'), aparece en el pie
+   * y conviene añadirla también a sameAs.
+   */
+  linkedin: '' as string,
   sameAs: [
     // TODO: perfiles reales, p. ej. 'https://www.linkedin.com/company/somospedazo'
   ] as string[],

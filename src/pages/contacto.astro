@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CabeceraPagina from '../components/ui/CabeceraPagina.astro';
 import FormularioContacto from '../components/ui/FormularioContacto.astro';
 import { PAGINAS } from '../data/paginas';
+import { SITE } from '../config/site';
 
 const pagina = PAGINAS.contacto;
 ---
@@ -16,6 +17,9 @@ const pagina = PAGINAS.contacto;
     <div class="contenedor">
       <section class="contacto__formulario" aria-labelledby="formulario-titulo">
         <h2 id="formulario-titulo">Escríbenos</h2>
+        <p class="contacto__directo">
+          ¿Prefieres escribirnos directamente? <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
         <FormularioContacto />
       </section>
     </div>
@@ -36,6 +40,14 @@ const pagina = PAGINAS.contacto;
 
   .contacto__formulario h2 {
     font-size: var(--t-xl);
+    margin-block-end: var(--s-1);
+  }
+
+  .contacto__directo {
     margin-block-end: var(--s-3);
+  }
+
+  .contacto__directo a {
+    font-weight: 700;
   }
 </style>

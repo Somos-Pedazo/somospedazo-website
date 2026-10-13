@@ -12,6 +12,22 @@ const year = new Date().getFullYear();
         <Logo tono="oscuro" />
       </a>
       <p class="pie__lema">{SITE.slogan}</p>
+      <ul class="pie__contacto" role="list">
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        {
+          /*
+           * Hueco para LinkedIn: oculto hasta tener la URL. Rellena SITE.linkedin en src/config/site.ts
+           * y el enlace aparece solo.
+           */
+          SITE.linkedin && (
+            <li>
+              <a href={SITE.linkedin} rel="me noopener" target="_blank">
+                LinkedIn<span class="sr-only"> (se abre en una pestaña nueva)</span>
+              </a>
+            </li>
+          )
+        }
+      </ul>
     </div>
 
     <nav aria-label="Pie de página">
@@ -28,7 +44,7 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="contenedor pie__legal">
-    <p>© {year} {SITE.legalName}</p>
+    <p>© {year} {SITE.legalName || SITE.name}</p>
     <nav aria-label="Legal">
       <ul class="pie__lista" role="list">
         {
@@ -87,6 +103,21 @@ const year = new Date().getFullYear();
     font-family: var(--font-titular);
     font-weight: var(--peso-demi);
     max-width: 22rem;
+  }
+
+  .pie__contacto {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-3);
+    margin-block-start: var(--s-1);
+    padding: 0;
+    list-style: none;
+  }
+
+  .pie__contacto a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .pie__lista {
