@@ -6,6 +6,13 @@ import { PAGINAS } from '../data/paginas';
 import { SITE } from '../config/site';
 
 const pagina = PAGINAS.contacto;
+
+/** Lo que pasa al enviar el formulario: empuja a usarlo en lugar del correo. */
+const pasos = [
+  { titulo: 'Nos llega al momento', texto: 'Recibes un correo de confirmación nada más enviarlo.' },
+  { titulo: 'Lo lee una persona', texto: 'No un robot. Te respondemos en menos de 24 horas laborables.' },
+  { titulo: 'Te proponemos el primer paso', texto: 'Una conversación sin compromiso para ver qué escalón te encaja.' },
+];
 ---
 
 <BaseLayout pagina={pagina} tipoPagina="ContactPage">
@@ -14,14 +21,35 @@ const pagina = PAGINAS.contacto;
   </CabeceraPagina>
 
   <div class="seccion seccion--pegada">
-    <div class="contenedor">
+    <div class="contenedor contacto__rejilla">
+      <!-- El formulario es el protagonista: primero en el orden de lectura y en móvil. -->
       <section class="contacto__formulario" aria-labelledby="formulario-titulo">
         <h2 id="formulario-titulo">Escríbenos</h2>
-        <p class="contacto__directo">
-          ¿Prefieres escribirnos directamente? <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-        </p>
         <FormularioContacto />
       </section>
+
+      <!-- Columna lateral: qué pasa al enviar y, como alternativa discreta, el correo. -->
+      <aside class="contacto__lateral" aria-labelledby="despues-titulo">
+        <h2 id="despues-titulo" class="contacto__lateral-titulo">Qué pasa después</h2>
+        <ol class="contacto__pasos" role="list">
+          {
+            pasos.map((p, i) => (
+              <li class="contacto__paso">
+                <span class="contacto__paso-num" aria-hidden="true" data-num={i + 1} />
+                <div>
+                  <p class="contacto__paso-titulo">{p.titulo}</p>
+                  <p class="contacto__paso-texto">{p.texto}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+
+        <p class="contacto__directo">
+          ¿Prefieres escribirnos directamente?
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
+      </aside>
     </div>
   </div>
 </BaseLayout>
@@ -31,8 +59,13 @@ const pagina = PAGINAS.contacto;
     padding-block-start: var(--s-2);
   }
 
+  .contacto__rejilla {
+    display: grid;
+    gap: var(--s-6);
+    align-items: start;
+  }
+
   .contacto__formulario {
-    max-width: 48rem;
     padding: var(--s-4);
     border-radius: calc(var(--radio) * 1.4);
     background: color-mix(in srgb, var(--c-blanco) 60%, var(--c-crema));
@@ -40,14 +73,82 @@ const pagina = PAGINAS.contacto;
 
   .contacto__formulario h2 {
     font-size: var(--t-xl);
-    margin-block-end: var(--s-1);
-  }
-
-  .contacto__directo {
     margin-block-end: var(--s-3);
   }
 
+  .contacto__lateral {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .contacto__lateral-titulo {
+    font-size: var(--t-lg);
+  }
+
+  .contacto__pasos {
+    display: grid;
+    gap: var(--s-3);
+    padding: 0;
+  }
+
+  .contacto__paso {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--s-2);
+    align-items: start;
+  }
+
+  /* Número decorativo por CSS (no es texto del documento: no se pega al contenido). */
+  .contacto__paso-num {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radio-pildora);
+    background: var(--c-sol);
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+  }
+
+  .contacto__paso-num::before {
+    content: attr(data-num);
+  }
+
+  .contacto__paso-titulo {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-fuerte);
+    line-height: 1.3;
+  }
+
+  .contacto__paso-texto {
+    color: var(--fg-suave);
+    font-size: var(--t-sm);
+  }
+
+  /* El correo, presente pero en segundo plano: texto pequeño, sin aspecto de botón. */
+  .contacto__directo {
+    padding-block-start: var(--s-3);
+    border-block-start: 1px solid color-mix(in srgb, var(--c-navy) 15%, transparent);
+    color: var(--fg-suave);
+    font-size: var(--t-sm);
+  }
+
   .contacto__directo a {
-    font-weight: 700;
+    display: inline-block;
+    color: var(--c-navy);
+  }
+
+  @media (min-width: 60rem) {
+    .contacto__rejilla {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+      gap: var(--s-8);
+    }
+
+    /* En escritorio la columna lateral acompaña mientras se rellena el formulario. */
+    .contacto__lateral {
+      position: sticky;
+      top: var(--s-4);
+      padding-block-start: var(--s-4);
+    }
   }
 </style>
