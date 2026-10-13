@@ -33,6 +33,9 @@ declare global {
 
 export type Captcha = { reset: () => void };
 
+/** Ancho mínimo del widget en tamaño «flexible», según Cloudflare. */
+const ANCHO_MINIMO = 300;
+
 export function iniciarTurnstile(
   contenedor: HTMLElement,
   campo: string,
@@ -40,14 +43,29 @@ export function iniciarTurnstile(
 ): Captcha {
   let widgetId: string | undefined;
 
+  /**
+   * El tamaño «flexible» ocupa todo el ancho, pero Cloudflare no lo baja de 300 px. Si el hueco es
+   * más estrecho (móviles pequeños), se escala con transform para que encaje justo en el ancho, en
+   * lugar de pasar al modo compacto (cuadrado). Se recalcula si cambia el ancho.
+   */
+  const ajustarAncho = () => {
+    const widget = contenedor.firstElementChild as HTMLElement | null;
+    if (!widget) return;
+    const escala = Math.min(1, contenedor.clientWidth / ANCHO_MINIMO);
+    widget.style.transformOrigin = '0 0';
+    widget.style.transform = escala < 1 ? `scale(${escala.toFixed(4)})` : '';
+  };
+  new ResizeObserver(ajustarAncho).observe(contenedor);
+  new MutationObserver(ajustarAncho).observe(contenedor, { childList: true });
+
   const render = () => {
     if (!window.turnstile || widgetId !== undefined) return;
     widgetId = window.turnstile.render(contenedor, {
       sitekey: contenedor.dataset.sitekey ?? '',
       theme: 'light',
       language: 'es',
-      // «flexible» ocupa el ancho del formulario (mín. 300 px); en pantallas muy estrechas, compacto.
-      size: contenedor.clientWidth < 300 ? 'compact' : 'flexible',
+      // Siempre a todo el ancho del formulario (nunca el modo compacto, que es cuadrado).
+      size: 'flexible',
       appearance: 'always',
       'response-field-name': campo,
       callback: eventos.onToken,
