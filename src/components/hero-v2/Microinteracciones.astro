@@ -1,0 +1,47 @@
+---
+/**
+ * Microinteracciones de marca (todas las páginas, solo escritorio con puntero fino):
+ * cursor-pedazo que sigue al cursor nativo (que nunca se oculta) y botones magnéticos.
+ * Lógica: src/scripts/hero-v2/micro.ts. Con pointer: coarse o reduced motion no se activa nada.
+ */
+---
+
+<div class="cursor-pedazo" aria-hidden="true" data-cursor-pedazo></div>
+
+<script>
+  import '../../scripts/hero-v2/micro';
+</script>
+
+<style>
+  .cursor-pedazo {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    width: 1.25rem;
+    height: 0.75rem;
+    margin: -0.375rem 0 0 -0.625rem;
+    border-radius: 999px;
+    background: var(--c-sol);
+    box-shadow: 0 0 0 2px var(--c-navy);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+    will-change: transform;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .cursor-pedazo {
+      display: block;
+    }
+
+    .cursor-pedazo[data-visible] {
+      opacity: 1;
+    }
+
+    .cursor-pedazo[data-visible][data-sobre] {
+      opacity: 0.55;
+    }
+  }
+</style>

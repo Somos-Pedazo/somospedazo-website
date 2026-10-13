@@ -1,0 +1,320 @@
+---
+/**
+ * Hero v2 · «Tu negocio tiene piezas sueltas. Nosotros las encajamos.»
+ *
+ * - Fondo navy con una aurora de gradientes radiales (Sol, Chicle, Mandarina) que se desplaza
+ *   despacio. Solo CSS: sin canvas ni filtros.
+ * - Piezas sueltas que flotan con física de muelle, se apartan del cursor (escritorio) o
+ *   reaccionan al scroll y a la inclinación (móvil). Al hacer scroll encajan junto al titular
+ *   y la última hace «clic» (src/scripts/hero-v2/hero.ts).
+ * - Titular: se revela palabra a palabra con máscara (clip-path + translateY), solo con CSS
+ *   y sin ocultarlo nunca: es el elemento LCP y es visible desde el primer pintado.
+ * - El HTML es el estado final: sin JS o con prefers-reduced-motion se ve la composición encajada.
+ */
+import Boton from '../ui/Boton.astro';
+import { SITE } from '../../config/site';
+import { PIEZAS_HERO, RETICULA_HERO } from '../../data/hero-v2';
+
+const titular = 'Tu negocio tiene piezas sueltas. Nosotros las encajamos.';
+const palabras = titular.split(' ');
+const coords = (s: { x: number; y: number; r: number }) => `${s.x},${s.y},${s.r}`;
+---
+
+<div class="hero2-escena" data-hero2>
+  <section class="hero2 oscuro" aria-labelledby="hero-titulo" data-hero2-seccion>
+    <div class="hero2__aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+    <div class="contenedor hero2__rejilla">
+      <div class="hero2__texto flujo">
+        <p class="antetitulo">{SITE.categoria}</p>
+        <h1 id="hero-titulo" class="hero2__titulo">
+          {
+            palabras.map((palabra, i) => (
+              <>
+                <span class="palabra">
+                  <span class="palabra__in" style={`--i: ${i}`}>
+                    {palabra}
+                  </span>
+                </span>{' '}
+              </>
+            ))
+          }
+        </h1>
+        <p class="lead hero2__lead">
+          Unimos estrategia, marketing y tecnología en un plan claro. Te decimos qué hacer, te acompañamos y, si quieres, lo hacemos contigo.
+        </p>
+        <div class="hero2__acciones">
+          <Boton href="/contacto" variante="sol" magnetico>Cuéntanos tu proyecto</Boton>
+          <Boton href="/servicios" variante="claro" magnetico>Ver cómo trabajamos</Boton>
+        </div>
+      </div>
+
+      <div class="hero2__arte">
+        <div
+          class="hero2__composicion"
+          role="img"
+          aria-label="Piezas redondeadas de colores que encajan en una retícula; la última pieza, la que aporta el cliente, completa la composición."
+          style={`--columnas: ${RETICULA_HERO.columnas}; --filas: ${RETICULA_HERO.filas}`}
+          data-hero2-composicion
+        >
+          {
+            PIEZAS_HERO.map((p) => (
+              <span
+                class="h2pieza"
+                aria-hidden="true"
+                style={`grid-column: ${p.x + 1} / span ${p.w}; grid-row: ${p.y + 1} / span ${p.h}; --color: var(--c-${p.color})`}
+                data-pieza
+                data-orden={p.orden}
+                data-suelta={coords(p.suelta)}
+                data-suelta-movil={coords(p.sueltaMovil)}
+                data-ultima={p.ultima ? '' : undefined}
+              >
+                <span class="h2pieza__in" />
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+    <p class="hero2__pista" aria-hidden="true" data-hero2-pista>Desliza y encájalas</p>
+  </section>
+</div>
+
+<script>
+  import '../../scripts/hero-v2/hero';
+</script>
+
+<style>
+  .hero2 {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    padding-block: var(--s-6) var(--seccion);
+  }
+
+  /* ---------- Aurora: gradientes radiales a baja opacidad que derivan despacio ---------- */
+  .hero2__aurora {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero2__aurora span {
+    position: absolute;
+    width: 70vmax;
+    height: 70vmax;
+    border-radius: 50%;
+    opacity: 0.2;
+    will-change: transform;
+  }
+
+  .hero2__aurora span:nth-child(1) {
+    left: -25vmax;
+    top: -30vmax;
+    background: radial-gradient(closest-side, var(--c-sol), transparent);
+  }
+
+  .hero2__aurora span:nth-child(2) {
+    right: -30vmax;
+    top: -10vmax;
+    background: radial-gradient(closest-side, var(--c-chicle), transparent);
+    opacity: 0.16;
+  }
+
+  .hero2__aurora span:nth-child(3) {
+    left: 10vmax;
+    bottom: -45vmax;
+    background: radial-gradient(closest-side, var(--c-mandarina), transparent);
+    opacity: 0.18;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero2__aurora span:nth-child(1) {
+      animation: aurora-a 26s ease-in-out infinite alternate;
+    }
+
+    .hero2__aurora span:nth-child(2) {
+      animation: aurora-b 32s ease-in-out infinite alternate;
+    }
+
+    .hero2__aurora span:nth-child(3) {
+      animation: aurora-c 29s ease-in-out infinite alternate;
+    }
+
+    /* Fuera de pantalla o con la pestaña oculta, el script pausa la aurora. */
+    .hero2[data-pausa] .hero2__aurora span {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes aurora-a {
+    to {
+      transform: translate3d(22vmax, 14vmax, 0) scale(1.15);
+    }
+  }
+
+  @keyframes aurora-b {
+    to {
+      transform: translate3d(-18vmax, 20vmax, 0) scale(0.9);
+    }
+  }
+
+  @keyframes aurora-c {
+    to {
+      transform: translate3d(16vmax, -18vmax, 0) scale(1.1);
+    }
+  }
+
+  /* ---------- Texto ---------- */
+  .hero2__rejilla {
+    position: relative;
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+
+  .hero2__texto {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero2 .antetitulo {
+    margin-block-end: 0;
+    color: var(--c-sol);
+  }
+
+  /* Máscara por palabra: recorta solo por abajo (con margen para los trazos descendentes). */
+  .palabra {
+    display: inline-block;
+    clip-path: inset(-0.25em -0.3em -0.18em -0.3em);
+  }
+
+  .palabra__in {
+    display: inline-block;
+  }
+
+  .hero2__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding-block-start: var(--s-2);
+  }
+
+  .hero2__pista {
+    display: none;
+  }
+
+  /*
+   * Entrada con CSS (sin esperar a JS). El titular nunca se oculta: cada palabra empieza
+   * desplazada dentro de su máscara, con la mitad superior ya visible, y sube a su sitio.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .palabra__in {
+      animation: palabra-sube 0.9s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+      animation-delay: calc(var(--i) * 70ms + 60ms);
+    }
+
+    :global(html.motion) .hero2__lead {
+      animation: sube 0.9s cubic-bezier(0.2, 0.85, 0.25, 1) 0.45s both;
+    }
+
+    :global(html.motion) .hero2__acciones {
+      animation: aparece 0.8s cubic-bezier(0.2, 0.85, 0.25, 1) 0.7s both;
+    }
+  }
+
+  @keyframes palabra-sube {
+    from {
+      transform: translateY(0.55em);
+    }
+  }
+
+  @keyframes sube {
+    from {
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes aparece {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  /* ---------- Composición de piezas ---------- */
+  .hero2__arte {
+    width: 100%;
+    max-width: 24rem;
+    margin-inline: auto;
+  }
+
+  .hero2__composicion {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--columnas), 1fr);
+    grid-template-rows: repeat(var(--filas), 1fr);
+    gap: 7px;
+    aspect-ratio: var(--columnas) / var(--filas);
+  }
+
+  .h2pieza {
+    position: relative;
+    display: block;
+  }
+
+  .h2pieza__in {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radio-pildora);
+    background: var(--color);
+  }
+
+  /* Con el modo animado, las piezas esperan al script (aparecen sueltas, sin destello del estado final). */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .h2pieza {
+      opacity: 0;
+      will-change: transform;
+    }
+  }
+
+  /* ---------- Escritorio: escena fijada con sticky (CLS 0; la altura extra es el recorrido) ---------- */
+  @media (min-width: 60rem) {
+    .hero2__rejilla {
+      grid-template-columns: 1.35fr 1fr;
+    }
+  }
+
+  @media (min-width: 60rem) and (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .hero2-escena {
+      height: 220svh;
+    }
+
+    :global(html.motion) .hero2 {
+      position: sticky;
+      top: 0;
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      padding-block: var(--s-6);
+    }
+
+    :global(html.motion) .hero2__pista {
+      display: block;
+      position: absolute;
+      inset-block-end: var(--s-4);
+      inset-inline-start: 50%;
+      translate: -50% 0;
+      margin: 0;
+      font-size: var(--t-sm);
+      color: var(--c-crema);
+      opacity: 0.85;
+    }
+
+    .hero2__pista::after {
+      content: '↓' / '';
+      margin-inline-start: 0.4em;
+    }
+  }
+</style>

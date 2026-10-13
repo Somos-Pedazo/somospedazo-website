@@ -11,9 +11,14 @@ import Boton from './Boton.astro';
 
 interface Props {
   variante?: 'resumen' | 'completa';
+  /**
+   * Escalones que se construyen con el scroll (src/scripts/motion/escalera.ts). Por defecto, solo
+   * en la variante completa; en Inicio la activa el sistema de movimiento v2 (al llegar el hilo).
+   */
+  animada?: boolean;
 }
 
-const { variante = 'resumen' } = Astro.props;
+const { variante = 'resumen', animada = variante === 'completa' } = Astro.props;
 const completa = variante === 'completa';
 const Titulo = completa ? 'h2' : 'h3';
 const Sub = completa ? 'h3' : 'h4';
@@ -26,8 +31,8 @@ const Sub = completa ? 'h3' : 'h4';
         class="escalon"
         id={completa ? n.id : undefined}
         style={`--color: var(--c-${n.color}); --nivel: ${n.numero}`}
-        data-motion={completa ? '' : undefined}
-        data-escalon={completa ? '' : undefined}
+        data-motion={animada ? '' : undefined}
+        data-escalon={animada ? '' : undefined}
       >
         <article class="escalon__tarjeta interactiva" aria-labelledby={`${n.id}-${variante}-titulo`}>
           <div class="escalon__peldano" aria-hidden="true">
