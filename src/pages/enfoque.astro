@@ -160,6 +160,9 @@ const pasos = [
     grid-template-columns: auto 1fr;
     gap: var(--s-3);
     align-items: start;
+    /* Sin esto, en la rejilla de 4 columnas el hueco sobrante de los pasos con menos texto se
+       reparte entre filas y sus títulos bajan: así todos quedan a la misma altura. */
+    align-content: start;
   }
 
   .paso__num {
