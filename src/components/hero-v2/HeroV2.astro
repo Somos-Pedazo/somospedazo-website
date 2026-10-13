@@ -69,7 +69,9 @@ const coords = (s: { x: number; y: number; r: number }) => `${s.x},${s.y},${s.r}
                 data-suelta-movil={coords(p.sueltaMovil)}
                 data-ultima={p.ultima ? '' : undefined}
               >
-                <span class="h2pieza__in" />
+                <span class="h2pieza__deriva">
+                  <span class="h2pieza__in" />
+                </span>
               </span>
             ))
           }
@@ -264,9 +266,19 @@ const coords = (s: { x: number; y: number; r: number }) => `${s.x},${s.y},${s.r}
     display: block;
   }
 
+  /*
+   * Tres capas por pieza, cada una con su transform:
+   *   .h2pieza          → posición (muelle en JS: encaje, cursor, scroll, inclinación)
+   *   .h2pieza__deriva  → deriva orgánica (Web Animations: la mueve el compositor, sin JS por fotograma)
+   *   .h2pieza__in      → entrada y «clic»
+   */
+  .h2pieza__deriva,
   .h2pieza__in {
     position: absolute;
     inset: 0;
+  }
+
+  .h2pieza__in {
     border-radius: var(--radio-pildora);
     background: var(--color);
   }

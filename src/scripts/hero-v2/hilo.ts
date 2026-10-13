@@ -39,6 +39,8 @@ escena('hilo', (gsap, ScrollTrigger) => {
     Object.assign(puntos[4]!, { x: contenedor.right - 140, y: (escalera.top + escalera.bottom) / 2 });
   };
 
+  // El hilo solo existe en escritorio: en móvil ni se descarga MotionPath.
+  if (!matchMedia(MQ.escritorio).matches) return;
   void import('gsap/MotionPathPlugin').then(({ MotionPathPlugin }) => {
     gsap.registerPlugin(MotionPathPlugin);
     const mm = gsap.matchMedia();

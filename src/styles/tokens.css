@@ -19,8 +19,8 @@
 
   /* Tipografía. Avenir y Calibri primero (si están instaladas o licenciadas),
      después alternativas libres autoalojadas (ver src/components/brand/Fonts.astro). */
-  --font-titular: 'Avenir Next', Avenir, 'Figtree Variable', 'Segoe UI', system-ui, sans-serif;
-  --font-texto: Calibri, Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-titular: 'Avenir Next', Avenir, 'Figtree Variable', 'Figtree Fallback', 'Figtree Fallback Roboto', 'Segoe UI', system-ui, sans-serif;
+  --font-texto: Calibri, Carlito, 'Carlito Fallback', 'Carlito Fallback Roboto', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --peso-impacto: 900; /* Avenir Black */
   --peso-fuerte: 800; /* Avenir Heavy */
