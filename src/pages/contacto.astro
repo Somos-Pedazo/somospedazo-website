@@ -61,12 +61,14 @@ const pasos = [
 
   .contacto__rejilla {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s-6);
     align-items: start;
   }
 
+  /* En móvil, menos relleno lateral: más ancho para los campos y para el captcha (mín. 300 px). */
   .contacto__formulario {
-    padding: var(--s-4);
+    padding: var(--s-4) var(--s-3);
     border-radius: calc(var(--radio) * 1.4);
     background: color-mix(in srgb, var(--c-blanco) 60%, var(--c-crema));
   }
@@ -136,6 +138,12 @@ const pasos = [
   .contacto__directo a {
     display: inline-block;
     color: var(--c-navy);
+  }
+
+  @media (min-width: 40rem) {
+    .contacto__formulario {
+      padding: var(--s-4);
+    }
   }
 
   @media (min-width: 60rem) {

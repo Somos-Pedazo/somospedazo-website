@@ -207,8 +207,10 @@ import CampoTelefono from './CampoTelefono.astro';
 </script>
 
 <style>
+  /* minmax(0, 1fr): ningún hijo (el widget de Turnstile mide 300 px como mínimo) puede ensanchar el formulario. */
   .formulario {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s-3);
   }
 
@@ -356,10 +358,13 @@ import CampoTelefono from './CampoTelefono.astro';
   /* Hueco reservado para Turnstile (65 px en tamaño normal/flexible): evita saltos de maquetación. */
   .formulario__captcha {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s-1);
   }
 
+  /* El widget ocupa todo el ancho; si es menor de 300 px, el script lo escala (src/scripts/formulario/turnstile.ts). */
   .formulario__captcha [data-turnstile] {
+    min-width: 0;
     min-height: 65px;
   }
 
