@@ -18,7 +18,7 @@ export function organization(): Nodo {
     '@type': 'Organization',
     '@id': IDS.organization,
     name: SITE.name,
-    legalName: SITE.legalName,
+    ...(SITE.legalName ? { legalName: SITE.legalName } : {}),
     url: absoluteUrl('/'),
     description: SITE.description,
     slogan: SITE.slogan,
@@ -43,7 +43,7 @@ export function organization(): Nodo {
       areaServed: 'ES',
       availableLanguage: ['es'],
     },
-    knowsAbout: ['Estrategia de negocio', 'Growth marketing', 'Marketing digital', 'Transformación digital', 'Gestión de proyectos (PMO)'],
+    knowsAbout: ['Estrategia de negocio', 'Growth marketing', 'Marketing digital', 'Transformación digital', 'Gestión de proyectos'],
     ...(SITE.foundingDate ? { foundingDate: SITE.foundingDate } : {}),
     ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
   };

@@ -55,7 +55,12 @@ En el build, Astro inserta `TURNSTILE_SECRET_KEY` en el código de la función d
 | `src/utils/imagenes.ts` | Imágenes OG, logo e iconos PNG generados en el build |
 | `src/pages/` | Páginas, `robots.txt`, `site.webmanifest` e imágenes |
 
-El sitemap (`/sitemap-index.xml`) lo genera `@astrojs/sitemap` y excluye las páginas `noindex` (solo la 404). Si añades otra página `noindex`, inclúyela también en `NOINDEX` dentro de `astro.config.mjs`.
+El sitemap (`/sitemap-index.xml`) lo genera `@astrojs/sitemap`:
+- Cada URL lleva `lastmod` con la fecha de compilación. No lleva `changefreq` ni `priority`, porque Google los ignora.
+- Excluye las páginas `noindex`: la 404 y las legales (`/aviso-legal`, `/privacidad` y `/cookies`). Las legales llevan `noindex, follow` y siguen enlazadas desde el pie.
+- Si añades otra página `noindex` (`noindex: true` en `src/data/paginas.ts`), inclúyela también en `NOINDEX` dentro de `astro.config.mjs`.
+
+Los números decorativos (escalones y pasos de `/enfoque`) se pintan con CSS (`::before` + `data-num`), no como texto. Así no se pegan a los encabezados en lo que leen buscadores y lectores de pantalla («01 ### Título»).
 
 ## Activos y datos pendientes
 
@@ -64,8 +69,9 @@ Para localizar todos los huecos, busca `PLACEHOLDER` y `TODO` en el proyecto.
 1. **Logo.** Sustituye el marcado de `src/components/brand/Logo.astro` por el SVG final. Después borra `src/pages/logo.png.ts`, `apple-touch-icon.png.ts` e `icono-[tamano].png.ts` y deja en `public/` los archivos `logo.png` (512×512), `apple-touch-icon.png` (180×180), `icono-192.png` e `icono-512.png`. Sustituye también `public/favicon.svg`.
 2. **Mascota o ilustraciones.** Están en `<Placeholder nombre="…">` (atributo `data-placeholder`). Las instrucciones para cambiarlas por `<Image>` de `astro:assets` están en el propio componente. En `npm run dev` cada hueco muestra una etiqueta.
 3. **Datos de empresa** (`src/config/site.ts`): dominio, razón social, **NIF**, **datos registrales**, **domicilio social**, correo, redes y Twitter/X. Si cambia el dominio, actualízalo también en `astro.config.mjs`.
-   - Contacto y el pie no muestran correo, teléfono ni dirección. Los textos legales muestran el correo (LSSI y RGPD).
-   - De momento, el domicilio **no se publica**: ni en los textos legales ni en los datos estructurados. La LSSI lo exige en el aviso legal; para añadirlo, rellena `SITE.address` (se incluye en el JSON-LD) y muéstralo en `src/components/legal/DatosTitular.astro`.
+   - El correo `hola@somospedazo.com` aparece en `/contacto` (junto al formulario) y en el pie de todas las páginas.
+   - **LinkedIn:** el hueco del pie está preparado y oculto. Rellena `SITE.linkedin` y el enlace aparece solo; añádelo también a `sameAs`.
+   - **Sociedad pendiente de constitución:** mientras `SITE.legalName`, `SITE.legal.nif` y `SITE.address` estén vacíos, el aviso legal muestra «[Razón social pendiente de constitución]», «NIF: [pendiente]» y «Domicilio: [pendiente]». Al rellenarlos, los marcadores desaparecen solos. Sin razón social, el JSON-LD omite `legalName` y el © del pie usa el nombre comercial.
    - El build avisa (`[legal]`) mientras falten el NIF o los datos registrales. **No publiques con esos avisos.**
    - El teléfono es opcional: si lo rellenas, solo se añade a los datos estructurados.
 4. **Textos legales** (`/aviso-legal`, `/privacidad` y `/cookies`): el texto lo facilita Pedazo y está copiado literalmente en `src/pages/`. Los datos del titular, la fecha de actualización (`SITE.legal.actualizado`), el fuero (`SITE.legal.jurisdiccion`) y los correos (`email` y `emailPrivacidad`) salen de `src/config/site.ts`. Si cambia un texto, edita la página correspondiente. La plantilla común es `src/layouts/LegalLayout.astro` (fondo navy y texto crema).

@@ -64,9 +64,8 @@ const pasos = [
         {
           principios.map((p, i) => (
             <li class="principio interactiva" style={`--color: var(--c-${p.color})`}>
-              <span class="principio__num" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
+              {/* Número decorativo con CSS (::before): no es texto del documento, así no se pega al h3. */}
+              <span class="principio__num" aria-hidden="true" data-num={String(i + 1).padStart(2, '0')} />
               <h3>{p.titulo}</h3>
               <p>{p.texto}</p>
             </li>
@@ -86,9 +85,7 @@ const pasos = [
         {
           pasos.map((p, i) => (
             <li class="paso">
-              <span class="paso__num" aria-hidden="true">
-                {i + 1}
-              </span>
+              <span class="paso__num" aria-hidden="true" data-num={i + 1} />
               <div class="flujo">
                 <h3>{p.titulo}</h3>
                 <p>{p.texto}</p>
@@ -128,6 +125,12 @@ const pasos = [
     padding-block-start: var(--s-3);
     border-radius: calc(var(--radio) * 1.4);
     background: var(--c-blanco);
+  }
+
+  /* Números decorativos: generados con CSS para que no formen parte del texto indexable. */
+  .principio__num::before,
+  .paso__num::before {
+    content: attr(data-num);
   }
 
   .principio__num {

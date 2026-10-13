@@ -30,9 +30,9 @@ export const PAGINAS = definir({
     slug: 'servicios',
     path: '/servicios',
     nombre: 'Servicios',
-    title: 'Servicios: auditoría, PMO y ejecución · Pedazo',
+    title: 'Servicios: diagnóstico, acompañamiento y ejecución · Pedazo',
     description:
-      'Elige tu escalón: auditoría y plan estratégico, seguimiento tipo PMO con tu equipo o ejecución completa del plan. Tú decides hasta dónde subimos.',
+      'Elige tu escalón: diagnóstico y plan estratégico, acompañamiento de tu equipo durante la implantación o ejecución completa del plan. Tú decides hasta dónde subimos.',
     ogTitulo: 'Elige tu escalón: diagnóstico, acompañamiento o ejecución.',
   },
   enfoque: {
@@ -41,7 +41,7 @@ export const PAGINAS = definir({
     nombre: 'Enfoque',
     title: 'Nuestro enfoque: estrategia clara y cercana · Pedazo',
     description:
-      'Así trabajamos: hablamos claro, priorizamos lo que mueve tu negocio y medimos resultados. Cada uno aporta su pedazo. Juntos, encajamos.',
+      'Así trabajamos: hablamos claro, priorizamos lo que de verdad mejora tus resultados y medimos cada paso. Cada uno aporta su pedazo. Juntos, encajamos.',
     ogTitulo: 'Cada uno aporta su pedazo. Juntos, encajamos.',
   },
   contacto: {
@@ -60,6 +60,7 @@ export const PAGINAS = definir({
     title: 'Aviso legal · Pedazo',
     description: 'Aviso legal de Pedazo: datos del titular del sitio web, condiciones de uso, propiedad intelectual, responsabilidad y legislación aplicable.',
     ogTitulo: 'Aviso legal',
+    noindex: true,
   },
   privacidad: {
     slug: 'privacidad',
@@ -68,6 +69,7 @@ export const PAGINAS = definir({
     title: 'Política de privacidad · Pedazo',
     description: 'Política de privacidad de Pedazo: qué datos tratamos, con qué finalidad, durante cuánto tiempo y cómo ejercer tus derechos.',
     ogTitulo: 'Política de privacidad',
+    noindex: true,
   },
   cookies: {
     slug: 'cookies',
@@ -76,6 +78,7 @@ export const PAGINAS = definir({
     title: 'Política de cookies · Pedazo',
     description: 'Política de cookies de Pedazo: qué cookies usamos, para qué sirven, cuánto duran y cómo cambiar o retirar tu consentimiento.',
     ogTitulo: 'Política de cookies',
+    noindex: true,
   },
   noEncontrada: {
     slug: '404',

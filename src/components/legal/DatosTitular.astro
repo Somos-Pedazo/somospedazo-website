@@ -1,8 +1,9 @@
 ---
 /**
  * Datos del titular / responsable en los textos legales. Salen de src/config/site.ts.
- * Cada línea solo se muestra si el dato existe (sin marcadores [ ] publicados).
- * El domicilio no se muestra mientras SITE.address esté vacío (la LSSI lo exige en el aviso legal).
+ * Mientras la sociedad no esté constituida, los datos que faltan se publican con un marcador
+ * entre corchetes ([Razón social pendiente de constitución], [pendiente]). Al rellenarlos en
+ * site.ts, los marcadores desaparecen solos.
  */
 import { SITE } from '../../config/site';
 
@@ -12,7 +13,9 @@ interface Props {
 
 const { modo } = Astro.props;
 const { legal, address: a } = SITE;
-const domicilio = a ? `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} (${a.addressRegion})` : '';
+const PENDIENTE = '[pendiente]';
+const titular = SITE.legalName || '[Razón social pendiente de constitución]';
+const domicilio = a ? `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} (${a.addressRegion})` : PENDIENTE;
 ---
 
 <ul>
@@ -20,48 +23,45 @@ const domicilio = a ? `${a.streetAddress}, ${a.postalCode} ${a.addressLocality} 
     modo === 'aviso' ? (
       <>
         <li>
-          <strong>Titular:</strong> {SITE.legalName}
+          <strong>Titular:</strong> {titular}
         </li>
         <li>
           <strong>Nombre comercial:</strong> {SITE.name}
         </li>
+        <li>
+          <strong>NIF:</strong> {legal.nif || PENDIENTE}
+        </li>
+        <li>
+          <strong>Domicilio:</strong> {domicilio}
+        </li>
+        <li>
+          <strong>Correo electrónico:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </li>
+        {legal.registro && (
+          <li>
+            <strong>Datos registrales:</strong> {legal.registro}
+          </li>
+        )}
       </>
     ) : (
-      <li>
-        <strong>Responsable:</strong> {SITE.legalName}
-      </li>
-    )
-  }
-  {
-    legal.nif && (
-      <li>
-        <strong>NIF:</strong> {legal.nif}
-      </li>
-    )
-  }
-  {
-    domicilio && (
-      <li>
-        <strong>Domicilio:</strong> {domicilio}
-      </li>
-    )
-  }
-  {
-    modo === 'aviso' ? (
-      <li>
-        <strong>Correo electrónico:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-      </li>
-    ) : (
-      <li>
-        <strong>Contacto para privacidad:</strong> <a href={`mailto:${SITE.emailPrivacidad}`}>{SITE.emailPrivacidad}</a>
-      </li>
-    )
-  }
-  {
-    modo === 'aviso' && legal.registro && (
-      <li>
-        <strong>Datos registrales:</strong> {legal.registro}
-      </li>
+      <>
+        <li>
+          <strong>Responsable:</strong> {titular} (nombre comercial: {SITE.name})
+        </li>
+        {legal.nif && (
+          <li>
+            <strong>NIF:</strong> {legal.nif}
+          </li>
+        )}
+        {a && (
+          <li>
+            <strong>Domicilio:</strong> {domicilio}
+          </li>
+        )}
+        <li>
+          <strong>Contacto para privacidad:</strong> <a href={`mailto:${SITE.emailPrivacidad}`}>{SITE.emailPrivacidad}</a>
+        </li>
+      </>
     )
   }
 </ul>
