@@ -12,11 +12,25 @@ import figtree from '@fontsource-variable/figtree/files/figtree-latin-wght-norma
 import carlito400 from '@fontsource/carlito/files/carlito-latin-400-normal.woff2?url';
 import carlito700 from '@fontsource/carlito/files/carlito-latin-700-normal.woff2?url';
 
+/*
+ * Fuentes de reserva ajustadas: mientras llegan Figtree y Carlito (font-display: swap), el texto se
+ * pinta con Arial (Windows/Mac) o Roboto (Android) escaladas para ocupar lo mismo. Así, el cambio
+ * de fuente no mueve las líneas (CLS 0), y el titular puede ser visible desde el primer pintado.
+ * Valores medidos en Chrome comparando el ancho de un texto largo y las métricas verticales.
+ */
+const reservas = `
+@font-face{font-family:'Figtree Fallback';font-weight:100 599;src:local('Arial'),local('ArialMT');size-adjust:97%;ascent-override:97.9%;descent-override:25.8%;line-gap-override:0%}
+@font-face{font-family:'Figtree Fallback';font-weight:600 900;src:local('Arial Bold'),local('Arial-BoldMT');size-adjust:97.1%;ascent-override:97.8%;descent-override:25.7%;line-gap-override:0%}
+@font-face{font-family:'Figtree Fallback Roboto';font-weight:100 900;src:local('Roboto');size-adjust:102.8%;ascent-override:92.4%;descent-override:24.3%;line-gap-override:0%}
+@font-face{font-family:'Carlito Fallback';src:local('Arial'),local('ArialMT');size-adjust:90.37%;ascent-override:105.12%;descent-override:29.88%;line-gap-override:0%}
+@font-face{font-family:'Carlito Fallback Roboto';src:local('Roboto');size-adjust:90.59%;ascent-override:104.87%;descent-override:29.81%;line-gap-override:0%}
+`;
+
 const css = `
 @font-face{font-family:'Figtree Variable';font-style:normal;font-display:swap;font-weight:300 900;src:url(${figtree}) format('woff2-variations'),url(${figtree}) format('woff2');}
 @font-face{font-family:'Carlito';font-style:normal;font-display:swap;font-weight:400;src:url(${carlito400}) format('woff2');}
 @font-face{font-family:'Carlito';font-style:normal;font-display:swap;font-weight:700;src:url(${carlito700}) format('woff2');}
-`;
+${reservas}`;
 ---
 
 <link rel="preload" href={figtree} as="font" type="font/woff2" crossorigin />

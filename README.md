@@ -35,6 +35,7 @@ npm run build          # astro check + build en .vercel/output
 | --- | --- | --- |
 | `TURNSTILE_SECRET_KEY` | Secret, obligatoria | Clave secreta de Turnstile, solo en servidor |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Opcional | Site key pública. Si falta, se usa la del código (`src/config/zoho.ts`) |
+| `PUBLIC_HERO_V2` | Opcional | `false` vuelve al hero anterior y quita la cinta, el hilo, el cursor y los botones magnéticos. Sin definir → sistema de movimiento v2. Se lee en build: tras cambiarla, redesplegar |
 | `RESEND_API_KEY` | Secret, obligatoria (Production y Preview) | Clave de Resend para el correo de confirmación del formulario, solo en servidor. El dominio `somospedazo.com` tiene que estar verificado en Resend. |
 
 En el build, Astro inserta `TURNSTILE_SECRET_KEY` en el código de la función de servidor (nunca en el del navegador). Si cambias la clave en Vercel, vuelve a desplegar.
@@ -168,3 +169,23 @@ Respuestas: `{ ok: true }` o `{ ok: false, error }`, con `error` igual a `captch
 - El texto siempre es navy sobre fondos claros (crema, blanco, sol, chicle, mandarina o amarillo), o crema sobre navy. Nunca uses texto claro sobre sol, mandarina o amarillo, porque no pasa el contraste.
 - En las páginas y componentes hay un solo `h1` por página y la jerarquía de encabezados no se salta niveles.
 - La animación se reduce cuando el usuario tiene activado `prefers-reduced-motion`. El foco es visible en todos los elementos y los objetivos táctiles miden al menos 44 px.
+
+## Movimiento
+
+Solo GSAP (ScrollTrigger y MotionPath), CSS y SVG o HTML: ni WebGL ni canvas. Se anima solo `transform` y `opacity`. El HTML y el CSS por defecto son el **estado final**: sin JS o con `prefers-reduced-motion: reduce` la página se ve completa y quieta (`src/scripts/motion/base.ts`).
+
+**Sistema v2** (interruptor `PUBLIC_HERO_V2`, `src/config/motion.ts`; componentes en `src/components/hero-v2/`, lógica en `src/scripts/hero-v2/`):
+- **Hero vivo** (`HeroV2.astro`, `hero.ts`):
+  - Fondo navy con aurora de gradientes radiales en Sol, Chicle y Mandarina, solo CSS.
+  - 11 piezas sueltas flotan con física de muelle y deriva orgánica, en un único bucle `requestAnimationFrame`.
+  - Escritorio: se apartan del cursor. Móvil: reaccionan al scroll y a la inclinación (Android; en iOS no se pide permiso).
+  - Al hacer scroll encajan junto al titular. En escritorio la escena se fija con `sticky` durante 1,2 pantallas; la última pieza hace «clic» al encajar.
+  - Composición y posiciones sueltas: `src/data/hero-v2.ts`.
+  - El H1 se revela palabra a palabra con máscara (`clip-path` + `translateY`), con CSS. Nunca se oculta: es el elemento LCP.
+- **Cinta de palabras** (`Cinta.astro`, `cinta.ts`): bucle horizontal cuya velocidad sigue al scroll, con `skewX` al bajar rápido.
+- **Hilo conductor** (`Hilo.astro`, `hilo.ts`): un pedazo recorre con MotionPath el margen derecho, desde la cinta hasta la escalera. Allí la escalera se construye con la misma animación de `/servicios` (`src/scripts/motion/escalera.ts`). Solo escritorio.
+- **Microinteracciones** (`Microinteracciones.astro`, `micro.ts`; todas las páginas, solo con `(hover: hover) and (pointer: fine)`):
+  - cursor-pedazo con inercia, que crece sobre enlaces y botones; el cursor nativo no se oculta;
+  - botones magnéticos (`<Boton magnetico>`).
+- Los bucles se paran con la pestaña oculta o la sección fuera de pantalla (IntersectionObserver), y entonces también se pausa la aurora.
+- **Volver atrás:** en Vercel, `PUBLIC_HERO_V2=false` y redesplegar. Se vuelve al hero anterior (`src/components/hero-v1/HeroActual.astro`) sin tocar código.

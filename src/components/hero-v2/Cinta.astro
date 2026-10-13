@@ -1,0 +1,88 @@
+---
+/**
+ * Cinta de palabras entre secciones: palabras clave del servicio separadas por pedazos.
+ * Se desplaza en bucle; su velocidad responde a la del scroll y se inclina (skew) al bajar rápido
+ * (src/scripts/hero-v2/cinta.ts). Sin JS o con reduced motion queda quieta.
+ * Es decorativa (repite lo que ya dice la página): aria-hidden.
+ */
+import { PALABRAS_CINTA } from '../../data/hero-v2';
+
+const colores = ['navy', 'mandarina', 'chicle', 'crema'];
+// Tres copias: la pista siempre cubre pantallas muy anchas mientras da la vuelta.
+const copias = [0, 1, 2];
+---
+
+<div class="cinta" aria-hidden="true" data-cinta>
+  <div class="cinta__banda">
+    <div class="cinta__pista" data-cinta-pista>
+      {
+        copias.map(() => (
+          <div class="cinta__grupo" data-cinta-grupo>
+            {PALABRAS_CINTA.map((palabra, i) => (
+              <>
+                <span class="cinta__palabra">{palabra}</span>
+                <span class="cinta__pieza" style={`--color: var(--c-${colores[i % colores.length]})`} />
+              </>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../../scripts/hero-v2/cinta';
+</script>
+
+<style>
+  /* El contenedor recorta lo que sobresale de la banda girada: sin scroll horizontal. */
+  .cinta {
+    position: relative;
+    z-index: 2;
+    overflow: clip;
+    padding-block: var(--s-3);
+    margin-block: calc(var(--s-6) * -1) calc(var(--s-3) * -1);
+  }
+
+  .cinta__banda {
+    width: 110%;
+    margin-inline-start: -5%;
+    padding-block: var(--s-2);
+    background: var(--c-sol);
+    color: var(--c-navy);
+    transform: rotate(-1.5deg);
+  }
+
+  .cinta__pista {
+    display: flex;
+    width: max-content;
+    /* Compensa el 5 % que la banda sobresale a la izquierda: quieta, empieza en una palabra entera. */
+    padding-inline-start: calc(5% / 1.1 + var(--gutter));
+    will-change: transform;
+  }
+
+  .cinta__grupo {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    padding-inline-end: var(--s-3);
+  }
+
+  .cinta__palabra {
+    font-family: var(--font-titular);
+    font-weight: var(--peso-impacto);
+    font-size: var(--t-xl);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .cinta__pieza {
+    flex: none;
+    width: 2.2em;
+    height: 1.1em;
+    border-radius: var(--radio-pildora);
+    background: var(--color);
+    font-size: var(--t-xl);
+  }
+</style>

@@ -1,14 +1,19 @@
 ---
 interface Props {
   href: string;
-  variante?: 'primario' | 'secundario' | 'sol';
+  /** `claro`: para fondos oscuros (navy). */
+  variante?: 'primario' | 'secundario' | 'sol' | 'claro';
+  /** Llamada a la acción principal: se acerca al cursor (src/scripts/hero-v2/micro.ts). */
+  magnetico?: boolean;
   class?: string;
 }
 
-const { href, variante = 'primario', class: className } = Astro.props;
+const { href, variante = 'primario', magnetico = false, class: className } = Astro.props;
 ---
 
-<a href={href} class:list={['boton', `boton--${variante}`, className]}><slot /></a>
+<a href={href} class:list={['boton', `boton--${variante}`, className]} data-magnetico={magnetico ? '' : undefined}
+  ><span class="boton__texto"><slot /></span></a
+>
 
 <style>
   .boton {
@@ -28,6 +33,17 @@ const { href, variante = 'primario', class: className } = Astro.props;
     text-decoration: none;
     /* Solo transform: el cambio de color es instantáneo, sin repintados animados. */
     transition: transform var(--transicion);
+  }
+
+  .boton__texto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  /* Mientras el imán sigue al cursor, el script mueve el botón: sin transición CSS que lo retrase. */
+  .boton[data-iman-activo] {
+    transition: none;
   }
 
   .boton:hover,
@@ -56,6 +72,17 @@ const { href, variante = 'primario', class: className } = Astro.props;
   .boton--sol {
     background: var(--c-sol);
     border-color: var(--c-sol);
+    color: var(--c-navy);
+  }
+
+  .boton--claro {
+    background: transparent;
+    border-color: var(--c-crema);
+    color: var(--c-crema);
+  }
+
+  .boton--claro:hover {
+    background: var(--c-crema);
     color: var(--c-navy);
   }
 </style>
